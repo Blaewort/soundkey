@@ -8,8 +8,10 @@ router.get('/getChord/:chordNotation', (req,res) => {
     try{
       var newChord = chord.getChordFromNotation(req.params.chordNotation);
     } catch(err){
+        console.log(err.message);
         res.send(err.message);
     }
+    console.log(newChord);
     res.json(newChord.notes);
     console.log('Sent chord');
 });
