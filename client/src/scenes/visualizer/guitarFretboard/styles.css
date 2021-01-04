@@ -1,0 +1,122 @@
+.string {
+    padding: 0;
+    margin: 0 auto;
+    width: 80%;
+    list-style: none;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: row wrap;
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.fret-wrapper {
+    background: rgb(40, 31, 18);;
+    width: 200px;
+    height: 30px;
+    line-height: 150px;
+    color: white;
+    font-weight: bold;
+    font-size: 3em;
+    text-align: center;
+    flex:12;
+    position: relative;
+}
+
+.fret-wrapper:first-child .nut {
+    position: absolute;
+        background-color: rgb(156, 156, 156);
+    /* left: 36px; */
+    width: 3px;
+    height: 100%;
+    z-index: 0;
+    /* box-shadow: inset -1px 0px 11px 0px rgba(0, 0, 0, 0.75); */
+    /* float: right; */
+    right: -3px;
+}
+
+.fret-wrapper:first-child .marker {
+  background-color: rgb(119, 171, 175);
+}
+
+.marker {
+    background-color: #d6d2d2;
+    line-height: initial;
+    border-radius: 50%;
+    /* width: fit-content; */
+    /* width: 10px; */
+    /* padding: 2px; */
+    width: 24px;
+    background-color: rgb(209, 129, 14);
+    height: 22px;
+    line-height: 22px;
+    text-shadow: 0px 1px 2px rgb(68, 68, 68);
+    box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.75);
+}
+
+
+.fret{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    border-right: solid black;
+ }
+ 
+ .string-line {
+    content: "";
+    border-top: solid #958963 1px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    z-index: 120;
+  }
+
+.fret-wrapper:first-child {
+  flex: 6;
+}
+
+
+.note {
+    height: 100%;
+    color: gray;
+    font-size: 0.3em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    margin: 0.5em;
+    z-index: 2;
+    color: white;
+    user-select: none;
+    z-index: 5000000;
+    /* margin: 0 auto; */
+    width: fit-content;
+    margin: 0 auto;
+    /* left: 30%; */
+    /* right: 50%; */
+    /* display: inline-block; */
+    width: 24px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+li.fret-wrapper:first-child .marker {
+    width: 14px;
+    font-size: 14px;
+    height: 14px;
+    line-height: 14px;
+    text-align: center;
+}
+
+.hide {
+    display: none;
+}
