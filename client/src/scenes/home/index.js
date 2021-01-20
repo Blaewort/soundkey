@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../../components/sidebar/index'
 import Content from '../../components/content/index'
-
+import ListArea from '../../components/options/content/listArea/index.js'
 function Home() {
     return (
         <div>
@@ -18,6 +18,8 @@ function Home() {
     Cras mollis porttitor scelerisque. Aliquam auctor, lacus a fermentum varius, velit dolor pellentesque sapien, vitae posuere nibh leo eget mi. Nam lobortis, arcu vitae bibendum dictum, neque lorem pharetra ante, eget sollicitudin leo est quis leo. Etiam in sodales ligula, eget suscipit sem. Nunc nec sem elit. Donec porta, ligula non feugiat suscipit, lacus dui convallis massa, sit amet ullamcorper ligula orci a tortor. Sed felis magna, gravida nec aliquet id, condimentum sed orci. Phasellus interdum fringilla enim vitae ultrices.
 
     Aliquam ornare dignissim viverra. Sed a erat hendrerit, fringilla nulla sed, aliquam dui. Etiam pulvinar lectus ac lorem consequat sodales. Aliquam elementum nisi risus, rhoncus dapibus mi consectetur et. Proin eu lorem nibh. Etiam id tempus turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur sit amet mauris bibendum sapien luctus dictum. Nulla urna neque, scelerisque a lobortis a, iaculis ut neque.
+
+            <ListArea title="Instrument" list={["Guitar","Bass"]}/>
             </Content>
         </div>
     );

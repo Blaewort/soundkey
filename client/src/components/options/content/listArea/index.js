@@ -1,33 +1,32 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './styles.css'
 
 class ListArea extends Component {
+
+    constructor(props) {
+        super(props);
+        this.handleChange = this.HandleChange.bind(this);
+        this.state = {selected: null};
+      }
+
+    HandleChange(e){
+        console.log(e);
+        this.setState({selected: e});
+    }
+
     render () {
+        const list = this.props.list;
+        const listItems = list.map((item) => 
+            <li key={item} onClick={(e) => this.handleChange({item})}>{item}</li>
+        );
         return (
-            <div className="list_areao">
+            <div className="list_area">
                 <span>
-                    Scales
+                    {this.props.title}
                 </span>
                 <ul>
-                    <div class="option_container">
-                    <li>
-                    C Lydian
-                    </li>
-                    <li>
-                    C Lydian Dominant
-                    </li>
-                    <li>
-                    C Lydian Augmented
-                    </li>
-                    <li>
-                    C Lydian Dominant b6
-                    </li>
-                    <li >
-                    C Lydian Dominant b2
-                    </li>
-                    <li>
-                    C Lydian Dominant #2
-                    </li>
+                    <div className="option_container">
+                        {listItems}
                     </div>
                 </ul>
             </div>
