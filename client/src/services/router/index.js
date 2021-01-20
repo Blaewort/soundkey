@@ -10,6 +10,7 @@ import Dictionary from '../../scenes/dictionary/index';
 function App() {
     return (
         <>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"></link>
             <Switch>
                 <Route sensitive path="/visualizer/:mode(chord|scale)/:notation">
                     <Visualizer />
