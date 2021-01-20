@@ -1,0 +1,69 @@
+.visual_mod_bar {
+    background-color: #45434e;
+   justify-content: space-evenly;
+   border-width: 1px;
+   margin: 0 auto;
+   user-select: none;
+   margin-bottom: 6px;
+   border-radius: 3px;
+   display: flex;
+   justify-content: space-between;
+   margin: 0 auto;
+transition: background-color 0.125s ease;
+
+}
+
+
+.visual_mod_bar > * {
+   flex: 1;
+}
+
+.visual_mod_bar .option button {
+ background-color:transparent;
+ font-size: 12px;
+   width: 30px;
+   margin: 0 auto;
+   height: 30px;
+   border-radius: 3px;
+   display: inline-block;
+   border-style: none;
+ 
+ outline:none;
+ color: #bdc0d4;
+ 
+}
+
+.visual_mod_bar .option label {
+   font-size: 10px;
+   color: #9396a7;
+   text-align:center;
+}
+
+.visual_mod_bar .option {
+   display: flex;
+   flex-direction:column;
+   padding-top:4px;
+   padding-bottom:4px;
+}
+
+
+.visual_mod_bar.engaged .option.engaged button{
+ color: #adddff;
+}
+
+
+.visual_mod_bar.engaged .option.engaged label{
+ color: #74add6;
+}
+
+.visual_mod_bar.engaged .option button {
+ color: #13141b;
+}
+
+.visual_mod_bar.engaged {
+ background-color: #4f5471;
+}
+
+.visual_mod_bar:first-child {
+   flex: 2;
+}

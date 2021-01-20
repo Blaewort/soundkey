@@ -1,0 +1,79 @@
+.note_navigator > * {
+    flex: 1;
+  }
+  
+  .note_navigator {
+    display: flex;
+    justify-content:space-between;
+    background-color: #4f5471;
+    height:40px;
+    padding-top:4px;
+    padding-bottom:4px;
+  }
+  
+  .note_navigator .arrow_container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+   .note_navigator .note_container {
+     display: flex;
+      flex-direction: column;
+      justify-content: center;
+   }
+      
+      .note_navigator .arrow_container button {
+      color: #bdc0d4;
+      background-color: #393d54;
+      font-size: 12px;
+      width: 30px;
+      margin: 0 auto;
+      height: 30px;
+      border-radius: 3px;
+      display: inline-block;
+      border-style: none;
+      }
+       .note_navigator .arrow_container button:focus {
+       outline: none;
+      }
+      
+      
+      
+      .note_navigator .select-selected {
+      color: #bdc0d4;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+      cursor: pointer;
+      border-radius: 3px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      background-color: #393d54;
+      text-align:center;
+      border-radius: 3px;
+  }
+  
+      
+      .note_navigator .select-items:last-child {
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+  }
+  
+  .note_navigator .select-hide {
+      display: none;
+  }
+  .note_navigator .select-items {
+      position: absolute;
+      background-color: #3A8778;
+      background-color: #393d54;
+      top: 100%;
+      right: 0;
+      z-index: 99;
+      width: 100%;
+      text-align:center;
+  }
+  
+  .note_navigator .note_select select {
+      display: none;
+  }

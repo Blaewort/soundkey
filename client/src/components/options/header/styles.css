@@ -1,0 +1,118 @@
+/* left */
+.visual_header .icon_panel:first-child icon.logo {
+    background-color:transparent;
+  }
+  
+  
+  .visual_header {
+    background-color: #413e4c;
+    /* this needs to be done for some reason!?! */
+       border-radius: 3px;
+      justify-content: space-evenly;
+      /* border-style: solid; */
+      border-width: 1px;
+      margin: 0 auto;
+      user-select: none;
+      margin-bottom: 6px;
+      border-radius: 3px;
+      padding-bottom:4px;
+      height: 40px;
+      padding-top: 4px;
+          display: flex;
+      justify-content: space-between;
+  }
+  
+  .visual_header.engaged {
+    background-color: #4f5471;
+  }
+  
+  .visual_header .search_panel {
+      display: flex;
+      justify-content: space-between;
+      flex: 4;
+      
+      
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .visual_header .search_container input{
+    background-color: #393d54;
+    border:none;
+    border-radius: 3px;
+    color: #bdc0d4;
+    height:30px;
+    width: 100%;
+    font-size:15px;
+    padding-left: 8px;
+      padding-right: 8px;
+  }
+  
+  
+  .visual_header .search_container input:focus{
+  outline: none;
+  
+  }
+  
+  .visual_header .search_container input::placeholder{
+  color: #7c7e8e;
+  font-size:13px;
+  
+  }
+  
+  .visual_header .search_container button:focus{
+  outline: none;
+  
+  }
+  
+  .visual_header .search_container {
+    display:none;
+  }
+  
+  .visual_header.user_text .search_container {
+    display:flex;
+    justify-content: center;
+  }
+  
+  .visual_header .icon_panel {
+    display: flex;
+    flex-direction: column;
+    flex:1;
+    justify-content: center;
+    align-items:center;
+  }
+  
+  /* left */
+  .visual_header .icon_panel:first-child {
+    padding-left: 12px;
+  }
+  
+  /* right */
+  .visual_header .icon_panel:last-child {
+    padding-right: 12px;
+  }
+  
+  .visual_header .icon_panel .icon {
+      border-radius: 3px;
+      background-color: #393d54;
+      color: #bdc0d4;
+      font-size: 14px;
+      height: 30px;
+      width: 30px;
+      user-select: none;
+      line-height:14px;
+      border:none;
+  }
+  
+  /* left */
+  .visual_header .icon_panel:first-child .icon.logo {
+    background-color:transparent;
+      border: none;
+  }
+  
+  .visual_header .icon_panel .icon:focus {
+      user-select: none;
+      outline:none;
+  }
+  

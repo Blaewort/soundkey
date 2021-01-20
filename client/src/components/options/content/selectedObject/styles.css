@@ -1,0 +1,64 @@
+.object_selection {
+    display: flex;
+      justify-content: space-between;
+      height: 80px;
+      text-align: center;
+      flex: 5;
+      padding-top: 4px;
+      background-color: #4f5471;
+  }
+  
+  /* left */
+  .object_selection .icon_panel:first-child {
+      padding-left: 12px;
+  }
+  
+  /* right */
+  .object_selection .icon_panel:last-child {
+      padding-right: 12px;
+  }
+  
+  .object_selection .icon_panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      text-align:center;
+  }
+  
+  .object_selection .label_panel {
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align:center;
+  }
+  
+  .object_selection .icon_panel .icon {
+      border: none;
+      border-radius: 3px;
+      background-color: #393d54;
+      color: #bdc0d4;
+      font-size: 14px;
+      height: 30px;
+      width: 30px;
+      user-select: none;
+      line-height: 14px;
+  }
+  
+  .object_selection .icon_panel .icon:focus {
+      outline: none;
+  }
+  
+  .object_selection .label_panel .title {
+      color: #bdc0d4;
+      font-size: 22px;
+  }
+  
+  .object_selection .label_panel .roman {
+      color: #8b94d4a1;
+      font-size: 12px;
+  }
+  
+  .object_selection .label_panel span {
+     display:block;
+  }
