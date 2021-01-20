@@ -2,6 +2,7 @@ import React from 'react';
 import Sidebar from '../../components/sidebar/index'
 import Content from '../../components/content/index'
 import ListArea from '../../components/options/content/listArea/index.js'
+import NoteNav from '../../components/options/content/noteNav/index.js'
 function Home() {
     return (
         <div>
@@ -20,6 +21,7 @@ function Home() {
     Aliquam ornare dignissim viverra. Sed a erat hendrerit, fringilla nulla sed, aliquam dui. Etiam pulvinar lectus ac lorem consequat sodales. Aliquam elementum nisi risus, rhoncus dapibus mi consectetur et. Proin eu lorem nibh. Etiam id tempus turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur sit amet mauris bibendum sapien luctus dictum. Nulla urna neque, scelerisque a lobortis a, iaculis ut neque.
 
             <ListArea title="Instrument" list={["Guitar","Bass"]}/>
+            <NoteNav/>
             </Content>
         </div>
     );

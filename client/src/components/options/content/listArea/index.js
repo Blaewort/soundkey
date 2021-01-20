@@ -10,7 +10,6 @@ class ListArea extends Component {
       }
 
     HandleChange(e){
-        console.log(e);
         this.setState({selected: e});
     }
 
