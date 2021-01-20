@@ -1,8 +1,8 @@
 import React from 'react';
 import './styles.css'
 
-import selectedObjectIconPanel from './iconPanel/index';
-import selectedObjectLabelhPanel from './labelPanel/index';
+import selectedObjectIconPanel from './iconPanel';
+import selectedObjectLabelhPanel from './labelPanel';
 
 class SelectedObject extends Component(props) {
     render() {

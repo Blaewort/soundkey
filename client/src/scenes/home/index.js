@@ -2,10 +2,17 @@ import React from 'react';
 import Sidebar from '../../components/sidebar/index'
 import Content from '../../components/content/index'
 
+
+import Radio from '../../components/options/content/radio/index'
+import Toggle from '../../components/options/content/toggle/index'
+
+
 function Home() {
+    
+
     return (
         <div>
-            <Sidebar/>
+            <Sidebar />
             <Content>
                 <h1>Home Page!</h1>
 

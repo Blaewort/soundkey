@@ -22,6 +22,7 @@ class Options extends Component (props) {
             selectedChordNotes: null, //array
             selectedScaleName: null, //ditto
             selectedScaleNotes: null, //array
+            
         };
     }
 
@@ -32,6 +33,7 @@ class Options extends Component (props) {
         return (
             <div className="options">
                     <OptHeader active={this.state.active}></OptHeader>
+                    {/* maybe ditch idea of content and just have the toggles and stuff up here */}
                     <OptContent active={this.state.active}></OptContent>
                     <OptFooter active={this.state.active} selection={this.state.mainSelection}></OptFooter>
             </div>

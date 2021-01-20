@@ -1,8 +1,8 @@
 import React from 'react';
 import './styles.css'
 
-import optHeaderIconPanel from './iconPanel/index';
-import optHeaderSearchPanel from './searchPanel/index';
+import optHeaderIconPanel from './iconPanel';
+import optHeaderSearchPanel from './searchPanel';
 
 class OptHeader extends Component {
     render () {
