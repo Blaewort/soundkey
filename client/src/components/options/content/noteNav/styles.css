@@ -77,3 +77,37 @@
   .note_navigator .note_select select {
       display: none;
   }
+
+  
+.note_navigator .select-items {
+    position: absolute;
+    background-color: #3A8778;
+    background-color: #393d54;
+    top: 100%;
+    right: 0;
+    z-index: 99;
+    width: 100%;
+    text-align:center;
+}
+
+
+.note_navigator .select-items div:hover, .same-as-selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+.note_navigator .select-items div{
+    color: #bdc0d4;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    cursor: pointer;
+    border-radius: 3px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    }
+    
+.note_navigator .select-items:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
