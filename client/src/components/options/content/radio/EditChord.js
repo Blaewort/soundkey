@@ -13,19 +13,19 @@ import Radio from './index'
         const title = "Edit Chord";
         const options = [
             {
-                icon: <i class="fas fa-layer-group"></i>,
+                html: <i class="fas fa-layer-group"></i>,
                 value: "Extensions"
             },
             {
-                icon: <i class="fas fa-car-battery"></i>,
+                html: <i class="fas fa-car-battery"></i>,
                 value: "Alterations"
             },
             {
-                icon: <i class="fas fa-plus"></i>,
+                html: <i class="fas fa-plus"></i>,
                 value: "Added Tones"
             },
             {
-                icon: <i class="fas fa-minus"></i>,
+                html: <i class="fas fa-minus"></i>,
                 value: "Removed Tones"
             }
         ];

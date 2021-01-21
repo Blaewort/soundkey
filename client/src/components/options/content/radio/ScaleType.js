@@ -13,23 +13,23 @@ import Radio from './index'
         const title = "Scale Type";
         const options = [
             {
-                icon: <>5</>,
+                html: <>5</>,
                 value: "Pentatonic"
             },
             {
-                icon: <>6</>,
+                html: <>6</>,
                 value: "Hexatonic"
             },
             {
-                icon: <>7</>,
+                html: <>7</>,
                 value: "Heptatonic"
             },
             {
-                icon: <>8</>,
+                html: <>8</>,
                 value: "Octatonic"
             },
             {
-                icon: <>12</>,
+                html: <>12</>,
                 value: "Dodecatonic"
             },
         ];

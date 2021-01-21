@@ -13,27 +13,27 @@ import Radio from './index'
         const title = "Chord Type";
         const options = [
             {
-                icon: <>3</>,
+                html: <>3</>,
                 value: "Triads"
             },
             {
-                icon: <>7</>,
+                html: <>7</>,
                 value: "Seventh Chords"
             },
             {
-                icon: <>9</>,
+                html: <>9</>,
                 value: "Ninth Chords"
             },
             {
-                icon: <>11</>,
+                html: <>11</>,
                 value: "Eleventh Chords"
             },
             {
-                icon: <>13</>,
+                html: <>13</>,
                 value: "Thirteenth Chords"
             },
             {
-                icon: <>6</>,
+                html: <>6</>,
                 value: "Sixth Chords"
             }
         ];
