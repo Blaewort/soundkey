@@ -30,6 +30,8 @@ function Home() {
 
             { /* <ListArea title="Instrument" list={["Guitar","Bass"]}/> */}
             { /* <NoteNav/> */}
+            { /* <Header engaged={true} userText={true} leftIcon="logo" rightIcon="keyboard" placeholder=""/> */}
+            {/* <SelectedObject label="Bm" subLabel="i"/> */}
             </Content>
         </div>
     );

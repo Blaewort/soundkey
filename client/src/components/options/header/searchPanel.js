@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 class OptHeaderSearchPanel extends Component {
     render() {
         return (
             <div className="search_panel">
                 <div className="search_container">
-                    <input type="text" placeholder="" />
+                    <input type="text" placeholder={this.props.placeholder} />
                 </div>
             </div>
         );
@@ -13,7 +13,3 @@ class OptHeaderSearchPanel extends Component {
 }
   
   export default OptHeaderSearchPanel;
-
-  
-
-        
