@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './styles.css'
 
 import optHeaderIconPanel from './iconPanel';
 import optHeaderSearchPanel from './searchPanel';
 
 class OptHeader extends Component {
+
+    
+
+
     render () {
       return (
           <div className="visual_header">
@@ -15,11 +19,5 @@ class OptHeader extends Component {
       );
   }
 }
-  
+
   export default OptHeader;
-
-
-
-
-
-

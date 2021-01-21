@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 class OptHeaderSearchPanel extends Component {
     render() {
@@ -13,7 +13,3 @@ class OptHeaderSearchPanel extends Component {
 }
   
   export default OptHeaderSearchPanel;
-
-  
-
-        
