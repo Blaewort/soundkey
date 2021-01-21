@@ -2,6 +2,11 @@ import React from 'react';
 import './styles.css'
 
 class OptFooter extends Component {
+
+    constructor(props) {
+      super(props);
+    }
+    
     render() {
     return (
         <div className="visual_mod_bar">

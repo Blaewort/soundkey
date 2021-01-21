@@ -32,7 +32,7 @@ function Home() {
 
     Aliquam ornare dignissim viverra. Sed a erat hendrerit, fringilla nulla sed, aliquam dui. Etiam pulvinar lectus ac lorem consequat sodales. Aliquam elementum nisi risus, rhoncus dapibus mi consectetur et. Proin eu lorem nibh. Etiam id tempus turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur sit amet mauris bibendum sapien luctus dictum. Nulla urna neque, scelerisque a lobortis a, iaculis ut neque.
 
-            <Header/>
+            <Header engaged={true} userText={true} leftIcon="logo" rightIcon="keyboard" placeholder=""/>
             <SelectedObject label="Bm" subLabel="i"/>
             </Content>
         </div>
