@@ -77,6 +77,7 @@ class Options extends Component{
                 header = <Header engaged={this.state.focus !== null} userText={false} rightIcon="keyboard" placeholder="" />
                 break;
             case null:
+                header = <Header engaged={false} leftIcon="logo" />
                 break;
             default:
                 throw new Error("state.focus not a valid option");
