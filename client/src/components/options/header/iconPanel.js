@@ -1,50 +1,49 @@
 import React, { Component } from 'react';
 
-class OptHeaderIconPanel extends Component {
+class HeaderIconPanel extends Component {
     constructor(props) {
         super(props);
       }
     render() {
-        let logo;
-        if(this.props.icon === null){
-            logo = <button className="icon logo">
-                   </button>;
-        } else if (this.props.icon === "logo"){
-            logo = <button className="icon logo">
-                <i className="fas fa-music"></i>
-            </button>;
-        } else if (this.props.icon === "stream"){
-            logo = <button className="icon logo">
-                <i className="fas fa-stream"></i>
-            </button>;
-        } else if (this.props.icon === "search"){
-            logo = <button className="icon logo">
-                <i className="fas fa-search"></i>
-            </button>;
-        } else if (this.props.icon === "check"){
-            logo = <button className="icon logo">
-                <i className="fas fa-check"></i>
-            </button>;
-        } else if (this.props.icon === "check"){
-            logo = <button className="icon logo">
-                <i className="fas fa-check"></i>
-            </button>;
-        } else if (this.props.icon === "x"){
-            logo = <button className="icon logo">
-                <i className="fas fa-times"></i>
-            </button>;
-        } else if (this.props.icon === "keyboard"){
-            logo = <button className="icon logo">
-                <i className="fas fa-keyboard"></i>
-            </button>;
+        const logo = this.props.icon === "logo";
+        let icon;
+
+        switch(this.props.icon) {
+            case "logo":
+                icon = <i className="fas fa-music"></i>
+                break;
+            case "stream":
+                icon = <i className="fas fa-stream"></i>
+                break;
+            case "search":
+                icon = <i className="fas fa-search"></i>
+                break;
+            case "check":
+                icon = <i className="fas fa-check"></i>
+                break;
+            case "x":
+                icon = <i className="fas fa-times"></i>
+                break;
+            case "keyboard":
+                icon = <i className="fas fa-keyboard"></i>
+                break;
         }
+
+        let element;
+        if (icon) {
+            element = <button className={"icon" + (logo ? " logo" : "")}  >
+                {icon}
+            </button>
+
+        }
+
         return ( 
             <div className="icon_panel">
-                {logo}
+                {element}
             </div>
         );
   }
 }
   
-  export default OptHeaderIconPanel;
+  export default HeaderIconPanel;
 

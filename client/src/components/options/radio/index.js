@@ -15,7 +15,7 @@ class Radio extends Component {
 
         const {selectedValue, options, title=null, defaultValue=null, baseClassName=null, itemClassName=null} = props;
 
-        if (selectedValue && !options.find(option => option.value === defaultValue)) {
+        if (selectedValue && !options.find(option => option.value === selectedValue)) {
             throw new TypeError("props.defaultValue does not match any props.options item value");
         }
         if (baseClassName && typeof baseClassName !== 'string') {
@@ -32,13 +32,15 @@ class Radio extends Component {
     }
 
     handleClick(event) {
-        const newSelection = this.props.options.find(option => option.value === event.currentTarget.dataset.value);
+        const {options} = this.props;
+        const newSelection = options.find(option => option.value === event.currentTarget.dataset.value);
 
         this.props.onUpdate(newSelection.value);
     }
 
 
     render() {
+
         const {selectedValue, options, baseClassName="radio", itemClassName="radio_options"} = this.props;
         const title = this.props.title ? <span>{this.props.title}</span> : null;
         

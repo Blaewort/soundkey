@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class OptHeaderSearchPanel extends Component {
+class HeaderSearchPanel extends Component {
     render() {
         return (
             <div className="search_panel">
@@ -12,4 +12,4 @@ class OptHeaderSearchPanel extends Component {
   }
 }
   
-  export default OptHeaderSearchPanel;
+  export default HeaderSearchPanel;

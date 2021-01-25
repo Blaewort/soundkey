@@ -15,7 +15,7 @@ class SelectedObjectLabelPanel extends Component {
                     {this.props.label}
                 </span>
                 <span className="roman">
-                {this.props.subLabel}
+                {this.props.subLabel || null}
                 </span>
             </div>
             </div>

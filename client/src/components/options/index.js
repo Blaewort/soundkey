@@ -1,41 +1,91 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './styles.css'
 
-import OptHeader from './header/index';
-import OptContent from './content/index';
-import OptFooter from './footer/index';
+import Header from './header/index';
+import Footer from './footer/index';
+import SelectedObject from './selectedObject/index';
 
-class Options extends Component (props) {
+class Options extends Component{
 
     constructor(props) {
         super(props);
 
         this.state = {
-            active: false,
-            mainSelection: null, //chords, scales, settings
-            radioType: null, //nav chord or scale, edit selected chord or scale, settings
-            radioSelection: null, //the absolute selection of radio
-            listType: null, //chords, scales, tunings, instruments, modes (special list which items link to relevant scale list area)
-            noteNavSelection: null, //the note that is selected by the note nav component
-            toggleAvailable: false, //whether the toggle is there
-            selectedChordName: null, //ditto
-            selectedChordNotes: null, //array
-            selectedScaleName: null, //ditto
-            selectedScaleNotes: null, //array
-            
-        };
+            chord: {
+                root: "E",
+                name: "E Major",
+                symbol: "E",
+                notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}]
+            },
+            scale: {
+                root: "E",
+                name: "E Lydian",
+                notes: [
+                    {label: "E", value: 7},
+                    {label: "F#", value: 9}, 
+                    {label: "G#", value: 11}, 
+                    {label: "A#", value: 1}, 
+                    {label: "B", value: 2}, 
+                    {label: "C#", value: 4}, 
+                    {label: "D#", value: 6}
+                ]
+            },
+            matchToggle: {
+                // The toggle is visible when the focus is scale or chord and the other is not null
+                scale: true,
+                chord: true,
+            },
+            radio: {
+                settings: "tuning" //this would just default on mounting
+            },
+            // "chord", "scale", "settings", null
+            focus: "chord",
+        }
+
+        this.onFooterUpdate = this.onFooterUpdate.bind(this);
     }
 
-// How do I set a default state?    props
+    onFooterUpdate(newValue) {
+        // Compare previous selectedValue to newSelection
+        // Deselect and unengage if same, make clicked option the selection and set to engaged if not
+        this.setState((state, props) => {
+          const sameValue = (state.focus === newValue);
+  
+          return {
+              ...state, //copy it
+            focus: sameValue ? null : newValue, 
+          }
+        });
+    }
+
 
 
     render() {
+        let selectedObject = null;
+        let header = null;
+
+        switch(this.state.focus) {
+            case "chord":
+                selectedObject = <SelectedObject label={this.state.chord.name}/>
+                header = <Header engaged={true} userText={this.state.chord ? true : false} leftIcon="stream" rightIcon="search" placeholder="C7, E, Gm, etc" />
+                break;
+            case "scale":
+                selectedObject = <SelectedObject label={this.state.scale.name}/>
+                header = <Header engaged={this.state.focus !== null} userText={this.state.scale ? true : false} leftIcon="stream" rightIcon="search" placeholder="C Major, E Lydian, etc" />
+                break;
+            case "settings":
+                header = <Header engaged={this.state.focus !== null} userText={false} rightIcon="keyboard" placeholder="" />
+                break;
+            case null:
+                break;
+            default:
+                throw new Error("state.focus not a valid option");
+        }
         return (
             <div className="options">
-                    <OptHeader active={this.state.active}></OptHeader>
-                    {/* maybe ditch idea of content and just have the toggles and stuff up here */}
-                    <OptContent active={this.state.active}></OptContent>
-                    <OptFooter active={this.state.active} selection={this.state.mainSelection}></OptFooter>
+                    {header}
+                    {selectedObject}
+                    <Footer onUpdate={this.onFooterUpdate} selectedValue={this.state.focus} />
             </div>
         );
   }

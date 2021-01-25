@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './styles.css'
 
-import OptHeaderIconPanel from './iconPanel';
-import OptHeaderSearchPanel from './searchPanel';
+import HeaderIconPanel from './iconPanel';
+import HeaderSearchPanel from './searchPanel';
 
-class OptHeader extends Component {
+class Header extends Component {
 
   constructor(props) {
     super(props);
@@ -13,12 +13,12 @@ class OptHeader extends Component {
     render () {
       return (
           <div className={"visual_header " + (this.props.engaged ? "engaged " : " ") + (this.props.userText ? "user_text " : " ")}>
-              <OptHeaderIconPanel icon={this.props.leftIcon}></OptHeaderIconPanel>
-              <OptHeaderSearchPanel placeholder={this.props.placeholder}></OptHeaderSearchPanel>
-              <OptHeaderIconPanel icon={this.props.rightIcon}></OptHeaderIconPanel>
+              <HeaderIconPanel icon={this.props.leftIcon}></HeaderIconPanel>
+              <HeaderSearchPanel placeholder={this.props.placeholder}></HeaderSearchPanel>
+              <HeaderIconPanel icon={this.props.rightIcon}></HeaderIconPanel>
           </div>
       );
   }
 }
 
-  export default OptHeader;
+  export default Header;
