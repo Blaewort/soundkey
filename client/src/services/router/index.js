@@ -12,7 +12,7 @@ function App() {
         <>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"></link>
             <Switch>
-                <Route sensitive path="/visualizer/:mode(chord|scale)/:notation">
+                <Route sensitive path="/visualizer/:instrument/:mode(chord|scale)/:notation">
                     <Visualizer />
                 </Route>
                 <Route path="/dictionary">
