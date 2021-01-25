@@ -1,0 +1,137 @@
+
+
+.keyboard{
+    position: relative;
+    margin: 1em auto;
+    background-color: rgb(40, 31, 18);
+
+    width: 100%;
+    min-width: 300px;
+    height: 32vw;
+    
+    box-shadow: inset -1px 0px 11px 0px rgba(0, 0, 0, 0.75);
+    
+    padding: 5vw 5vw 0 5vw;
+    border-radius: 2.03045vw;
+    
+    /* Unselectable text */
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+
+    box-sizing: border-box;
+}
+
+.keyboard li {
+    background-color: white;
+    padding: 0;
+    list-style: none;
+    position: relative;
+    float: left;
+  }
+
+.key.black{
+    height: 13vw;
+    width: 3.6%;
+    margin: 0 0 0 0;
+
+    left: -2.2%;
+    z-index: 2;
+    border-radius: 0 0 0.1875em 0.1875em;
+    box-shadow: -1px -1px 2px rgba(255,255,255,0.2) inset, 0 -5px 2px 3px rgba(0,0,0,0.6) inset, 0 2px 4px rgba(0,0,0,0.5);
+    background-color: black;
+    
+    background:linear-gradient(45deg, #222 0%,#555 100%);
+}
+
+
+
+.key.white{
+    color: grey;
+    height: 27.5vw;
+    width: 7%;
+    z-index: 1;
+    border-left: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    box-shadow: -1px 0 0 rgba(255,255,255,0.8) inset, 0 0 5px #ccc inset, 0 0 3px rgba(0,0,0,0.2);
+}
+
+.note {
+    opacity: 0;
+    display: inline;
+}
+
+.note.visible {
+    opacity: 100%;
+}
+
+.key.black .note {
+    position: absolute;
+    bottom: 10%;
+    height: 2.5vw;
+    width: 2.5vw;
+    line-height: 2.5vw;
+    font-size: 1.6vw;
+    border-radius: 50%;
+    text-align: center;
+    box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.75);
+    color: white;
+    background-color: rgb(209, 129, 14);
+
+
+}
+
+.key.white .note {
+    position: absolute;
+    bottom: 10%;
+    margin: 0 auto;
+    height: 2.5vw;
+    width: 2.5vw;
+
+    border-radius: 50%;
+    text-align: center;
+    box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.75);
+    color: white;
+    background-color: rgb(209, 129, 14);
+
+    line-height: 2.5vw;
+    font-size: 2vw;
+}
+
+.key.white.oneOctave {
+    width: 14%;
+}
+.key.black.oneOctave {
+    width: 7.2%;
+}
+.key.white.oneOctave.left {
+    margin:0 0 0 -7.4%;
+}
+
+.key.white.twoOctave {
+    width: 6.7%;
+}
+.key.black.twoOctave {
+    width: 3.6%;
+}
+.key.white.twoOctave.left {
+    margin:0 0 0 -3.7%;
+}
+.key.white.twoOctave .note {
+    margin-left: 25%;
+}
+
+.key.white.threeOctave {
+    width: 4.8%;
+}
+.key.black.threeOctave {
+    width: 3.6%;
+}
+.key.white.threeOctave.left {
+    margin:0 0 0 -4.2%;
+}
+.key.white.threeOctave .note {
+    margin-left: 6%;
+}
