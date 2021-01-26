@@ -25,10 +25,10 @@ import Radio from './index'
                 value: "Removed Tones"
             }
         ];
-        const defaultValue = "Alterations";
+        const selectedValue = "Alterations";
 
         return (
-            <Radio title={title} options={options} defaultValue={defaultValue} />
+            <Radio title={title} options={options} selectedValue={selectedValue} />
         );
     }
 }

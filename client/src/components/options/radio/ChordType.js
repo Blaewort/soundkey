@@ -37,10 +37,10 @@ import Radio from './index'
                 value: "Sixth Chords"
             }
         ];
-        const defaultValue = "Triads";
+        const selectedValue = "Triads";
 
         return (
-            <Radio title={title} options={options} defaultValue={defaultValue} />
+            <Radio title={title} options={options} selectedValue={selectedValue} />
         );
     }
 }

@@ -13,7 +13,7 @@ class Radio extends Component {
         // ARG: onUpdate: is a function that receives 1 arg of 'newSelection' with .value attribute
         // ARG: selectedValue: a value to be selected, must be in among values in options objects. For no selection pass nothing and make sure props.allowDeselect is true
 
-        const {selectedValue, options, title=null, defaultValue=null, baseClassName=null, itemClassName=null} = props;
+        const {selectedValue, options, title=null, baseClassName=null, itemClassName=null} = props;
 
         if (selectedValue && !options.find(option => option.value === selectedValue)) {
             throw new TypeError("props.defaultValue does not match any props.options item value");
@@ -41,7 +41,7 @@ class Radio extends Component {
 
     render() {
 
-        const {selectedValue, options, baseClassName="radio", itemClassName="radio_options"} = this.props;
+        const {selectedValue, options, baseClassName="radio", itemClassName="radio_option"} = this.props;
         const title = this.props.title ? <span>{this.props.title}</span> : null;
         
 
@@ -52,10 +52,20 @@ class Radio extends Component {
             return <div onClick={this.handleClick} data-value={option.value} className={className}>{option.html}</div>;
         });
 
+        let optionContainer;
+        if (this.props.footerOverride) {
+            //footer needs options near container for styling (maybe TODO, see if we can remove that req?)
+            optionContainer = <>{choices}</>;
+
+        }else {
+            optionContainer = <div className="radio_options">{choices}</div>;
+        }
+
         return (
             <div className={baseClassName}>
                 {title}
-                {choices}
+                {optionContainer}
+                
             </div>
         );
     }

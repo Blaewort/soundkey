@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './styles.css'
 
-const OPTIONS = [
+const OPTIONS = [ //props.options default
     {value:'0', label: "A"},
     {value:'1', label: "A#"},
     {value:'2', label: "B"},
@@ -108,9 +108,10 @@ class NoteNav extends Component {
     }
 
     render() {
+        const opts = this.props.options ? [...this.props.options] : OPTIONS;
 
         // sort order for user
-        const options = [...this.props.options].sort((a,b) => {
+        const options = opts.sort((a,b) => {
             return parseInt(a.value) - parseInt(b.value); 
         });
         

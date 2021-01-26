@@ -34,7 +34,7 @@ class Footer extends Component {
 
 
     return (
-        <Radio onUpdate={this.props.onUpdate} selectedValue={this.props.selectedValue} baseClassName={baseClassName} itemClassName={itemClass} options={options} allowDeselect={true} ></Radio>
+        <Radio footerOverride={true} onUpdate={this.props.onUpdate} selectedValue={this.props.selectedValue} baseClassName={baseClassName} itemClassName={itemClass} options={options} allowDeselect={true} ></Radio>
     );
   }
 }

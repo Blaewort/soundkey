@@ -10,7 +10,7 @@ import Radio from './index'
 
 
     render() {
-        const title = "Scale Type";
+        const title = "Scale Notes";
         const options = [
             {
                 html: <>5</>,
@@ -33,10 +33,10 @@ import Radio from './index'
                 value: "Dodecatonic"
             },
         ];
-        const defaultValue = "Heptatonic";
+        const selectedValue = "Heptatonic";
 
         return (
-            <Radio title={title} options={options} defaultValue={defaultValue} />
+            <Radio title={title} options={options} selectedValue={selectedValue} />
         );
     }
 }

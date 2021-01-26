@@ -21,10 +21,10 @@ import Radio from './index'
                 value: "Intruments"
             },
         ];
-        const defaultValue = "Tunings";
+        const selectedValue = "Tunings";
 
         return (
-            <Radio title={title} options={options} defaultValue={defaultValue} />
+            <Radio title={title} options={options} selectedValue={selectedValue} />
         );
     }
 }
