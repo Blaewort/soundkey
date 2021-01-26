@@ -260,7 +260,7 @@ class ChordScalePane extends Component{
             case "selected":
                 if(!this.props.selection) {
                     // act like search if there's no selection
-                    header = <Header engaged={true} userText={true} placeholder={placeholder} leftIcon={"stream"} rightIcon={"search"}/>;
+                    header = <Header engaged={true} userText={true} placeholder={placeholder} leftIconClick={this.props.toNavView} leftIcon={"stream"} rightIcon={"search"}/>;
                 } else {
                     header = <Header engaged={true} userText={false} placeholder={placeholder} leftIconClick={this.props.toNavView} leftIcon={"stream"} onRightIconClick={this.props.toSearchView} rightIcon={"search"}/>;
                     selectedObject = <SelectedObject onEditRequest={this.props.toEditView} onDeselect={this.props.onDeselect} label={this.props.selection.name}/>;
