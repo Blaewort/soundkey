@@ -3,14 +3,9 @@ import './styles.css'
 
 import Radio from '../radio/index'
 
-class Footer extends Component {
+function Footer(props){
 
-  constructor(props) {
-      super(props);
-  }
-
-    render() {
-      const engaged = this.props.selectedValue !== null;
+      const engaged = props.selectedValue !== null;
 
       const containerClass = "visual_mod_bar";
       const itemClass = "option";
@@ -34,9 +29,8 @@ class Footer extends Component {
 
 
     return (
-        <Radio footerOverride={true} onUpdate={this.props.onUpdate} selectedValue={this.props.selectedValue} baseClassName={baseClassName} itemClassName={itemClass} options={options} allowDeselect={true} ></Radio>
+        <Radio footerOverride={true} onUpdate={props.onUpdate} selectedValue={props.selectedValue} baseClassName={baseClassName} itemClassName={itemClass} options={options} allowDeselect={true} ></Radio>
     );
-  }
 }
-  
-  export default Footer;
+
+export default Footer;

@@ -15,10 +15,8 @@ const NOTES_ARRAY = [
     "G#"
 ];
 
-class GuitarFretboard extends Component {
-  
-  render() {
-    const {tuningNotes, selectedNotes } = this.props;
+function GuitarFretboard(props) {
+    const {tuningNotes, selectedNotes } = props;
     let strings = [];
     for(var i = 0; i < tuningNotes.length; i++) {
         strings.push(<String key={i} stringNote={tuningNotes[i]} selectedNotes={selectedNotes}/>);
@@ -26,11 +24,8 @@ class GuitarFretboard extends Component {
     return strings;
 }
 
-}
-
-class String extends Component {
-  render(){
-    const {stringNote, selectedNotes } = this.props;
+function String(props) {
+    const {stringNote, selectedNotes } = props;
     var notes = [];
     const index = NOTES_ARRAY.indexOf(stringNote);
     for(let i = 0; i < 13; i++) {
@@ -46,12 +41,10 @@ class String extends Component {
       }
       
     return <ul className="string"> {frets} </ul>;
-  }
 }
 
-class Fret extends Component {
-	render() {
-    const { note, notePosition, selected } = this.props;
+function Fret(props) {
+    const { note, notePosition, selected } = props;
   	return (
     		 <li className="fret-wrapper">
            <div className="fret">
@@ -63,7 +56,6 @@ class Fret extends Component {
            </div>
         </li>
     );
-  }
 }
 
 export default GuitarFretboard

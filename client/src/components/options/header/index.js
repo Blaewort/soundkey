@@ -1,34 +1,25 @@
 import React, { Component } from 'react';
 import './styles.css'
 
-class Header extends Component {
+function Header(props){
 
-  constructor(props) {
-    super(props);
-  }
 
-    render () {
       return (
-          <div className={"visual_header " + (this.props.engaged ? "engaged " : " ") + (this.props.userText ? "user_text " : " ")}>
-              <IconPanel onClick={this.props.leftIconClick} icon={this.props.leftIcon} />
-              <SearchPanel placeholder={this.props.placeholder} />
-              <IconPanel onClick={this.props.onRightIconClick || null} icon={this.props.rightIcon} />
+          <div className={"visual_header " + (props.engaged ? "engaged " : " ") + (props.userText ? "user_text " : " ")}>
+              <IconPanel onClick={props.leftIconClick} icon={props.leftIcon} />
+              <SearchPanel placeholder={props.placeholder} />
+              <IconPanel onClick={props.onRightIconClick || null} icon={props.rightIcon} />
           </div>
       );
-  }
 }
 
   export default Header;
 
-  class IconPanel extends Component {
-    constructor(props) {
-        super(props);
-      }
-    render() {
-        const logo = this.props.icon === "logo";
+function IconPanel(props) {
+        const logo = props.icon === "logo";
         let icon;
 
-        switch(this.props.icon) {
+        switch(props.icon) {
             case "logo":
                 icon = <i className="fas fa-music"></i>
                 break;
@@ -51,7 +42,7 @@ class Header extends Component {
 
         let element;
         if (icon) {
-            element = <button onClick={this.props.onClick} className={"icon" + (logo ? " logo" : "")}  >
+            element = <button onClick={props.onClick} className={"icon" + (logo ? " logo" : "")}  >
                 {icon}
             </button>
 
@@ -63,16 +54,13 @@ class Header extends Component {
             </div>
         );
   }
-}
 
-class SearchPanel extends Component {
-  render() {
+function SearchPanel(props){
       return (
           <div className="search_panel">
               <div className="search_container">
-                  <input type="text" placeholder={this.props.placeholder} />
+                  <input type="text" placeholder={props.placeholder} />
               </div>
           </div>
       );
-  }
-}
+    }
