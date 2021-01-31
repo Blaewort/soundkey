@@ -40,13 +40,6 @@ class NoteNav extends Component {
     constructor(props) {
         super(props);
 
-        const {value="0", label="A", customListIsOpen=false} = props;
-
-        this.state = {
-            value: value,
-            label: label,
-            customListIsOpen: customListIsOpen,
-        };
 
         this.sharp = this.buttonChange.bind(this, 1);
         this.flat = this.buttonChange.bind(this, -1);
@@ -57,21 +50,12 @@ class NoteNav extends Component {
       }
  
 
-    buttonChange(degree){
-        const valueLabels = ["A","A#","B","C","C#","D","D#","E","F","F#","G","G#"];
+    handleCustomSelectClick(event) {
+        this.props.handleCustomSelectClick(event, this.props.name);
+    }
 
-        this.setState((state, props) => {
-            const currentValue = parseInt(state.value);
-            // Add and convert sum to 0-11 number
-            let sum = currentValue + parseInt(degree);
-            let newValue = sum % 12;
-            newValue = (newValue >= 0) ? newValue : newValue + 12;
-
-            return {
-                value: newValue.toString(), 
-                label: valueLabels[newValue],
-            };
-        });
+    handleClickOutside(event) {
+        this.props.handleClickOutside(event, this.noteSelectNode, this.props.name);
     }
 
     componentDidMount() {
@@ -82,29 +66,27 @@ class NoteNav extends Component {
         document.removeEventListener("mousedown", this.handleClickOutside);
     }
 
-    handleClickOutside(event) {
-        // Abort if it's not an outside click
-        if (this.noteSelectNode.contains(event.target)) {return;}
+    buttonChange(degree){
+        const valueLabels = ["A","A#","B","C","C#","D","D#","E","F","F#","G","G#"];
 
-        this.setState({
-            customListIsOpen: false,
-        });
-    }
+        const currentValue = parseInt(this.props.value);
+        // Add and convert sum to 0-11 number
+        let sum = currentValue + parseInt(degree);
+        let newValue = sum % 12;
+        newValue = (newValue >= 0) ? newValue : newValue + 12;
 
-    handleCustomSelectClick(event) {
-        this.setState((state, props) => ({
-            customListIsOpen: !state.customListIsOpen,
-        }));
+        this.props.onNoteUpdate({
+            value: newValue.toString(), 
+            label: valueLabels[newValue],
+        }, this.props.name);
+
     }
 
     handleCustomOptionClick(event) {
-        const newValue = event.currentTarget.dataset.value;
-        const newLabel = event.currentTarget.textContent;
-
-        this.setState({
-            value: newValue,
-            label: newLabel,
-        });
+        this.props.onNoteUpdate({
+            value: event.currentTarget.dataset.value,
+            label: event.currentTarget.textContent
+        }, this.props.name);
     }
 
     render() {
@@ -117,17 +99,17 @@ class NoteNav extends Component {
         
 
         const selectOptions = options.map(option => {
-            if (this.state.value === option.value) {
+            if (this.props.value === option.value) {
                 return <option value={option.value} selected>{option.label}</option>
             } else {
                 return <option value={option.value}>{option.label}</option>
             }
         });
 
-        let customOptions = [...options].sort(selectedFocus.bind(null, this.state.value));
+        let customOptions = [...options].sort(selectedFocus.bind(null, this.props.value));
 
         customOptions = customOptions.map(option => {
-            const thisValue = (this.state.value === option.value);
+            const thisValue = (this.props.value === option.value);
             if (thisValue) {return null;}; //don't render at all
             return <div onClick={this.handleCustomOptionClick} className={thisValue ? "same-as-selected" : ""} data-value={option.value}>{option.label}</div>
         });
@@ -144,11 +126,11 @@ class NoteNav extends Component {
 
                 <div className="note_container">
                     <div ref={(node) => {this.noteSelectNode = node;}} className="note_select" onClick={this.handleCustomSelectClick}>
-                        <select>
+                        <select name={this.props.name}>
                             {selectOptions}
                         </select>
-                        <div className={"select-selected" + (this.state.customListIsOpen ? " select-arrow-active" : "") }>{this.state.label}</div>
-                        <div className={"select-items" + (this.state.customListIsOpen ? " select-open" : "" )} >
+                        <div className={"select-selected" + (this.props.customListIsOpen ? " select-arrow-active" : "") }>{this.props.label}</div>
+                        <div className={"select-items" + (this.props.customListIsOpen ? " select-open" : "" )} >
                             {customOptions}
                         </div>
                     </div>
