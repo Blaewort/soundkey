@@ -422,7 +422,7 @@ class ChordScalePane extends Component{
                 if (!this.props.selection) {throw new TypeError(this.props.view + " requires this.props.selection (" + this.props.type + ")");}
                 header = <EditHeader />
                 listArea = <ListArea />;
-                radio = this.props.type === "chord" ? <EditChordRadio /> : <EditScaleRadio />
+                radio = this.props.type === "chord" ? <EditChordRadio selectedValue={this.props.radio.edit} onUpdate={this.props.onRadioUpdate}/> : <EditScaleRadio selectedValue={this.props.radio.edit} onUpdate={this.props.onRadioUpdate} />
                 break;
             default:
                 throw new TypeError("this.props.view (" + this.props.view +  " ) is not valid");
