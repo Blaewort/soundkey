@@ -29,10 +29,10 @@ import Radio from './index'
                 value: "Removed Tones"
             }
         ];
-        const selectedValue = "Extensions";
+        //const selectedValue = "Extensions";
 
         return (
-            <Radio title={title} options={options} selectedValue={selectedValue} />
+            <Radio name={"Edit Chord"} onUpdate={this.props.onUpdate} title={title} options={options} selectedValue={this.props.selectedValue || "Extensions"} />
         );
     }
 }

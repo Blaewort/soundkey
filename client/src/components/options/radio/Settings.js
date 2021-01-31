@@ -13,18 +13,18 @@ import Radio from './index'
         const title = "Change";
         const options = [
             {
-                html: <i class="fas fa-sliders-h">Tun</i>,
+                html: <i class="fas fa-sliders-h"></i>,
                 value: "Tunings"
             },
             {
-                html: <i class="fas fa-theater-masks">Inst</i>,
+                html: <i class="fas fa-theater-masks"></i>,
                 value: "Intruments"
             },
         ];
-        const selectedValue = "Tunings";
+        //const selectedValue = "Tunings";
 
         return (
-            <Radio title={title} options={options} selectedValue={selectedValue} />
+            <Radio name={"Settings"} title={title} onUpdate={this.props.onUpdate}  options={options} selectedValue={this.props.selectedValue || "Tunings"} />
         );
     }
 }

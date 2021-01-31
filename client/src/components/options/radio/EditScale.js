@@ -25,10 +25,10 @@ import Radio from './index'
                 value: "Removed Tones"
             }
         ];
-        const selectedValue = "Alterations";
+        //const selectedValue = "Alterations";
 
         return (
-            <Radio title={title} options={options} selectedValue={selectedValue} />
+            <Radio name={"Edit Scale"} onUpdate={this.props.onUpdate}  title={title} options={options} selectedValue={this.props.selectedValue || "Alterations"} />
         );
     }
 }

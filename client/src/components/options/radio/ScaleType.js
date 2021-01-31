@@ -33,10 +33,10 @@ import Radio from './index'
                 value: "Dodecatonic"
             },
         ];
-        const selectedValue = "Heptatonic";
+        //const selectedValue = "Heptatonic";
 
         return (
-            <Radio title={title} options={options} selectedValue={selectedValue} />
+            <Radio name={"Scale Type"} title={title} onUpdate={this.props.onUpdate}  options={options} selectedValue={this.props.selectedValue || "Heptatonic"} />
         );
     }
 }

@@ -37,10 +37,10 @@ import Radio from './index'
                 value: "Sixth Chords"
             }
         ];
-        const selectedValue = "Triads";
+        //const selectedValue = "Triads";
 
         return (
-            <Radio title={title} options={options} selectedValue={selectedValue} />
+            <Radio name={"Chord Type"} onUpdate={this.props.onUpdate} title={title} options={options} selectedValue={this.props.selectedValue || "Triads"} />
         );
     }
 }

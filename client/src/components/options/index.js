@@ -14,6 +14,7 @@ import ChordTypeRadio from './radio/ChordType';
 import ScaleTypeRadio from './radio/ScaleType';
 import EditChordRadio from './radio/EditChord';
 import EditScaleRadio from './radio/EditScale';
+import SettingsRadio from './radio/Settings';
 
 class Options extends Component{
 
@@ -58,7 +59,15 @@ class Options extends Component{
                 }
             },
             radio: {
-                settings: "tuning" //this would just default on mounting
+                settings: null, //this would just default on mounting,
+                chord: {
+                    edit: null,
+                    nav: null,
+                },
+                scale: {
+                    edit: null,
+                    nav: null,
+                },
             },
             focus: "chord", // "chord", "scale", "settings", null
             view: {
@@ -83,6 +92,7 @@ class Options extends Component{
         this.handleCustomClickOutsideNoteNav = this.handleCustomClickOutsideNoteNav.bind(this);
         this.handleCustomNoteNavSelectClick = this.handleCustomNoteNavSelectClick.bind(this);
         this.onNoteSelectionUpdate = this.onNoteSelectionUpdate.bind(this);
+        this.onRadioUpdate = this.onRadioUpdate.bind(this);
     }
 
     onFooterUpdate(newValue) {
@@ -259,23 +269,63 @@ class Options extends Component{
         });
     }
 
+    // radio stuff
+    onRadioUpdate(updated, name) {
+        let which;
+
+        if (name.includes("Type")) {
+            which = "nav";
+        } else if (name.includes("Edit")) {
+            which = "edit";
+        }
+        else if (name === "Settings") {
+            which = "settings";
+        }
+
+        this.setState((state, props) => {
+            const radioFocus = state.radio[state.focus];
+            const whichObj = radioFocus ? radioFocus[which] : null;
+
+            if (state.focus === "settings") {
+                return {
+                    ...state,
+                    radio: {
+                        ...state.radio,
+                        [state.focus]: updated
+                    }
+                };
+            } else {
+                return {
+                    ...state,
+                    radio: {
+                        ...state.radio,
+                        [state.focus]: {
+                            ...radioFocus,
+                            [which]: updated
+                        }
+                    }
+                };
+            }
+            
+
+        });
+    }
+
 
 
     render() {
 
-        console.log("d");
-        console.log(this.onNoteSelectionUpdate);
         let pane;
 
         switch(this.state.focus) {
             case "chord":
-                pane = <ChordScalePane noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
+                pane = <ChordScalePane radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
                 break;
             case "scale":
-                pane = <ChordScalePane noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
+                pane = <ChordScalePane radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
-                pane = <SettingsPane type="settings" view={this.state.view.settings} />
+                pane = <SettingsPane radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
                 break;
             case null:
                 pane = <NoFocusPane />;
@@ -342,7 +392,7 @@ class ChordScalePane extends Component{
 
         
 
-        console.log(this.props);
+  
 
         switch(this.props.view) {
             case "selected":
@@ -361,7 +411,7 @@ class ChordScalePane extends Component{
                 header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>;
                 noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
                 listArea = <ListArea />;
-                radio = this.props.type === "chord" ? <ChordTypeRadio /> : <ScaleTypeRadio />;
+                radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
                 break;
             case "navsearchmode":
                 if (this.props.type === "chord") {throw new TypeError("props.type 'chord' has no 'navsearchmode'");}
@@ -410,9 +460,11 @@ class SettingsPane extends Component{
         //const header = <Header engaged={true} userText={visibleText} rightIcon={rightIcon} placeholder="" />;
 
         const header = <NavSearchHeader focus={"settings"}/>;
+        const radio = <SettingsRadio selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>
 
         return <>
             {header}
+            {radio}
             TODO: SETTINGS
         </>
     }

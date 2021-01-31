@@ -69,6 +69,8 @@ class NoteNav extends Component {
     buttonChange(degree){
         const valueLabels = ["A","A#","B","C","C#","D","D#","E","F","F#","G","G#"];
 
+        //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
+
         const currentValue = parseInt(this.props.value);
         // Add and convert sum to 0-11 number
         let sum = currentValue + parseInt(degree);

@@ -16,7 +16,7 @@ class Radio extends Component {
         const {selectedValue, options, title=null, baseClassName=null, itemClassName=null} = props;
 
         if (selectedValue && !options.find(option => option.value === selectedValue)) {
-            throw new TypeError("props.defaultValue does not match any props.options item value");
+            throw new TypeError("props.selectedValue does not match any props.options item value");
         }
         if (baseClassName && typeof baseClassName !== 'string') {
             throw new TypeError("props.baseClassName is not a string");
@@ -32,10 +32,11 @@ class Radio extends Component {
     }
 
     handleClick(event) {
+        //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
         const {options} = this.props;
         const newSelection = options.find(option => option.value === event.currentTarget.dataset.value);
 
-        this.props.onUpdate(newSelection.value);
+        this.props.onUpdate(newSelection.value, this.props.name);
     }
 
 
