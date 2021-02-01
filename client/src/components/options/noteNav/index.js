@@ -51,10 +51,12 @@ class NoteNav extends Component {
  
 
     handleCustomSelectClick(event) {
+        //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
         this.props.handleCustomSelectClick(event, this.props.name);
     }
 
     handleClickOutside(event) {
+        //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
         this.props.handleClickOutside(event, this.noteSelectNode, this.props.name);
     }
 

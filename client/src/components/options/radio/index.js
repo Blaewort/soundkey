@@ -33,6 +33,7 @@ class Radio extends Component {
 
     handleClick(event) {
         //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
+        // because this.props.options could change as controller component state changes
         const {options} = this.props;
         const newSelection = options.find(option => option.value === event.currentTarget.dataset.value);
 

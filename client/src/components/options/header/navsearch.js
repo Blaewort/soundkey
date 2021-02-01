@@ -3,7 +3,13 @@ import './styles.css'
 import Header from './index'
 
 function NavSearchHeader(props){
-    const rightIcon = ["chord", "scale"].includes(props.focus) ? "search" : "keyboard";
+    let rightIcon;
+
+    if (["chord", "scale"].includes(props.focus)) {
+      rightIcon = "search";
+    } else { //"settings"
+      rightIcon = props.tuning ? "keyboard" : null;
+    }
 
     return (
     <Header onRightIconClick={props.toSearchView} rightIcon={rightIcon} engaged={true} userText={false} />

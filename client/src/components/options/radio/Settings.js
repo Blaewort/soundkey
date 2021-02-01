@@ -18,7 +18,7 @@ import Radio from './index'
             },
             {
                 html: <i class="fas fa-theater-masks"></i>,
-                value: "Intruments"
+                value: "Instruments"
             },
         ];
         //const selectedValue = "Tunings";
