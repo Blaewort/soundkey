@@ -541,10 +541,10 @@ class ChordScalePane extends Component{
                 header = <EditHeader />
 
                 if (this.props.type === "chord") {
-                    listArea = <ListArea handleItemClick={this.props.onNavSearchItemClick} list={this.props.getChordNearbys(this.props.selection,this.props.radio.edit)} />;
+                    listArea = <ListArea title={this.props.radio.edit || "Extensions"} handleItemClick={this.props.onNavSearchItemClick} list={this.props.getChordNearbys(this.props.selection,this.props.radio.edit)} />;
                     radio = <EditChordRadio selectedValue={this.props.radio.edit} onUpdate={this.props.onRadioUpdate}/>;
                 }else if (this.props.type === "scale") {
-                    listArea = <ListArea handleItemClick={this.props.onNavSearchModeItemClick} list={this.props.getScaleNearbys(this.props.selection, this.props.radio.edit)} />;
+                    listArea = <ListArea title={this.props.radio.edit || "Alterations"} handleItemClick={this.props.onNavSearchModeItemClick} list={this.props.getScaleNearbys(this.props.selection, this.props.radio.edit)} />;
                     radio = <EditScaleRadio selectedValue={this.props.radio.edit} onUpdate={this.props.onRadioUpdate} />;
                 } else  {throw new Error("edit must be chord or scale")};
 
