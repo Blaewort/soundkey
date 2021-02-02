@@ -11,7 +11,9 @@ import Radio from './index'
 
     render() {
         const title = "Change";
-        const options = [
+
+
+        const optionsTunable = [
             {
                 html: <i className="fas fa-sliders-h"></i>,
                 value: "Tunings"
@@ -21,6 +23,29 @@ import Radio from './index'
                 value: "Instruments"
             },
         ];
+
+        const optionsNonTunable = [
+            {
+                html: <i className="fas fa-theater-masks"></i>,
+                value: "Instruments"
+            },
+        ];
+
+
+        let options;
+
+        switch(this.props.instrument) {
+            case "Guitar":
+                options = optionsTunable;
+                break;
+            case "Piano":
+                options = optionsNonTunable;
+                break;
+            default:
+                throw new Error("figure out what you did wrong");
+        }
+
+
         //const selectedValue = "Tunings";
 
         return (

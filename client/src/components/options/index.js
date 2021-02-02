@@ -137,6 +137,9 @@ class Options extends Component{
 
         this.handleToggleClick = this.handleToggleClick.bind(this);
 
+        this.onTuningNavSearchItemClick = this.onTuningNavSearchItemClick.bind(this);
+        this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
+
         
         
     }
@@ -550,6 +553,33 @@ class Options extends Component{
         });
       }
 
+    onTuningNavSearchItemClick(e, item) {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                instrument: {
+                    ...state.instrument,
+                    tuning: item.label
+                },
+                focus: null
+            };
+        });
+    }
+
+    onInstrumentNavSearchItemClick(e, item) {
+        //TODO: remove .tuning when it's a piano? nonsensical
+        this.setState((state, props) => {
+            return {
+                ...state,
+                instrument: {
+                    ...state.instrument,
+                    name: item.label
+                },
+                focus: null
+            };
+        });
+    }
+
 
 
 
@@ -566,7 +596,7 @@ class Options extends Component{
                 pane = <ChordScalePane handleToggleClick={this.handleToggleClick} otherSelection={this.state.chord} toggleValue={this.state.toggle.scale} onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
-                pane = <SettingsPane selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
+                pane = <SettingsPane instrumentName={this.state.instrument.name} onInstrumentNavSearchItemClick={this.onInstrumentNavSearchItemClick} onTuningNavSearchItemClick={this.onTuningNavSearchItemClick} selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
                 break;
             case null:
                 pane = <NoFocusPane />;
@@ -632,9 +662,11 @@ class ChordScalePane extends Component{
         let listArea;
         let toggle;
 
-        
-        const searchGets = this.props.textSearch(this.props.searchInputValue);
+        const limitByOther = this.props.toggleValue === true ? this.props.otherSelection : null;
+        const searchGets = this.props.textSearch(this.props.searchInputValue, limitByOther);
         const toggleRequired = this.props.otherSelection;
+
+        
   
 
         switch(this.props.view) {
@@ -646,6 +678,9 @@ class ChordScalePane extends Component{
                     if (searchGets) {
                         listArea = <ListArea handleItemClick={this.props.onSearchItemClick} list={searchGets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
                     }
+                    if (toggleRequired) {
+                        toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;
+                    }
                 } else {
                     header = <SelectedObjectHeader toNavView={this.props.toNavView} toSearchView={this.props.toSearchView} /> ;
                     selectedObject = <SelectedObject onEditRequest={this.props.toEditView} onDeselect={this.props.onDeselect} label={this.props.selection.name}/>;
@@ -656,12 +691,16 @@ class ChordScalePane extends Component{
                 if (searchGets) {
                     listArea = <ListArea handleItemClick={this.props.onSearchItemClick} list={searchGets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
                 }
+
+                if (toggleRequired) {
+                    toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;
+                }
                 break;
             case "navsearch":
                 if (this.props.type === "chord") {
                     header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>;
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
-                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.getChords(this.props.noteSelect.value, this.props.radio.nav)} />;
+                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther)} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
                     if (toggleRequired) {
                         toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;
@@ -670,7 +709,7 @@ class ChordScalePane extends Component{
                     // need to make it a mode list that links to other lists
                     header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>;
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
-                    listArea = <ListArea title={"Scale Groups"} handleItemClick={this.props.onNavSearchItemClick} list={this.props.getModes(this.props.noteSelect.value, this.props.radio.nav)} />;
+                    listArea = <ListArea title={"Scale Groups"} handleItemClick={this.props.onNavSearchItemClick} list={this.props.getModes(this.props.noteSelect.value, this.props.radio.nav, limitByOther)} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
                     if (toggleRequired) {
                         toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Chord"}/>;
@@ -681,7 +720,7 @@ class ChordScalePane extends Component{
             case "navsearchmode":
                 if (this.props.type === "chord") {throw new TypeError("props.type 'chord' has no 'navsearchmode'");}
 
-                let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode);
+                let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode, limitByOther);
 
                 
                 header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>;
@@ -746,12 +785,12 @@ class SettingsPane extends Component{
         if (this.props.view === "navsearch" || (this.props.view === "textEnter" && this.props.radioValue==="Instruments")) {
             tuning = (this.props.radioValue === "Tunings" || !this.props.radioValue) ? true : false;
             header = <NavSearchHeader toSearchView={this.props.toTuningTextInputView} tuning={tuning} focus={"settings"}/>;
-            radio = <SettingsRadio selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
+            radio = <SettingsRadio instrument={this.props.instrumentName} selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
 
             if (this.props.radioValue === "Tunings" || !this.props.radioValue) {
-                listArea = <ListArea title={"Tunings"} list={this.props.getTunings("Guitar")}></ListArea>;
+                listArea = <ListArea handleItemClick={this.props.onTuningNavSearchItemClick} title={"Tunings"} list={this.props.getTunings("Guitar")}></ListArea>;
             } else { // "Instruments"
-                listArea = <ListArea title={"Instruments"} list={this.props.getInstruments()}></ListArea>;
+                listArea = <ListArea handleItemClick={this.props.onInstrumentNavSearchItemClick} title={"Instruments"} list={this.props.getInstruments()}></ListArea>;
             }
 
         } else { // "textEnter" and "Tunings"
