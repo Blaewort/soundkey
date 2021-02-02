@@ -3,11 +3,12 @@ import './styles.css'
 import Header from './index'
 
 function TextEnterHeader(props){
-    //TODO: checkmark or X based on input
-    //TODO: make it not look like a button
+    const validatorIcon = props.isValidText ? "check" : "x";
+
       return (
-        <Header textValidator={true} placeholder={props.placeholder} leftIconClick={props.toNavView} engaged={true} userText={true} leftIcon={"stream"} rightIcon={"x"}/>
+        <Header onTextChange={props.onChange} textValidator={true} placeholder={props.placeholder} leftIconClick={props.toNavView} engaged={true} userText={true} leftIcon={"stream"} rightIcon={validatorIcon}/>
       )
 }
 
   export default TextEnterHeader;
+

@@ -24,6 +24,7 @@ import { fapi_getModes,
     fapi_getScaleNearbys,
     fapi_getTunings,
     fapi_getInstruments,
+    fapi_isValidTextTuning
 }  from '../../services/api/index';
 
 class Options extends Component{
@@ -79,6 +80,11 @@ class Options extends Component{
                     nav: null,
                 },
             },
+            textInput: {
+                settings: null,
+                chord: null,
+                scale: null,
+            },
             focus: "chord", // "chord", "scale", "settings", null
             view: {
                 scale: "selected", // "selected", "search", "Navearch"
@@ -111,6 +117,8 @@ class Options extends Component{
 
         this.toTuningTextInputView = this.toTuningTextInputView.bind(this);
         this.toSettingsNavView = this.toSettingsNavView.bind(this);
+
+        this.onTuningTextChange = this.onTuningTextChange.bind(this);
 
         
         
@@ -412,6 +420,20 @@ class Options extends Component{
         });
     }
 
+    onTuningTextChange(event) {
+        const evt = event.nativeEvent.target.value;
+
+        this.setState((state, props) => {
+            return {
+                ...state,
+                textInput: {
+                    ...state.textInput,
+                    settings: evt,
+                },
+            };
+        });
+    }
+
 
 
     render() {
@@ -429,7 +451,7 @@ class Options extends Component{
                 pane = <ChordScalePane  getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
-                pane = <SettingsPane toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
+                pane = <SettingsPane tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
                 break;
             case null:
                 pane = <NoFocusPane />;
@@ -586,6 +608,8 @@ class SettingsPane extends Component{
         let header;
         let radio;
 
+        
+
         //                                           //so switches from "Tunings" with "textEnter" to "Instruments" will still act as "navsearch"
         if (this.props.view === "navsearch" || (this.props.view === "textEnter" && this.props.radioValue==="Instruments")) {
             tuning = (this.props.radioValue === "Tunings" || !this.props.radioValue) ? true : false;
@@ -599,7 +623,8 @@ class SettingsPane extends Component{
             }
 
         } else { // "textEnter"
-            header = <TextEnterHeader placeholder={"E,A,D,G,B,E etc"} toNavView={this.props.toNavView} />;
+                    
+            header = <TextEnterHeader isValidText={this.props.isValidTextTuning(this.props.tuningText)} onChange={this.props.onTuningTextChange} placeholder={"E,A,D,G,B,E etc"} toNavView={this.props.toNavView} />;
             radio = <SettingsRadio selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
 
         }

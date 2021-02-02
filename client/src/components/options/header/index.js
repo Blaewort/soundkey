@@ -7,7 +7,7 @@ function Header(props){
       return (
           <div className={"visual_header " + (props.engaged ? "engaged " : " ") + (props.userText ? "user_text " : " ")}>
               <IconPanel onClick={props.leftIconClick} icon={props.leftIcon} />
-              <SearchPanel placeholder={props.placeholder} />
+              <SearchPanel onTextChange={props.onTextChange} placeholder={props.placeholder} />
               <IconPanel textValidator={props.textValidator} onClick={props.onRightIconClick || null} icon={props.rightIcon} />
           </div>
       );
@@ -63,7 +63,7 @@ function SearchPanel(props){
       return (
           <div className="search_panel">
               <div className="search_container">
-                  <input type="text" placeholder={props.placeholder} />
+                  <input onInput={props.onTextChange} type="text" placeholder={props.placeholder} />
               </div>
           </div>
       );

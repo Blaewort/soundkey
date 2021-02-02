@@ -761,6 +761,13 @@ function getGuitarTunings(stringCount) {
     ];
 }
 
+function fapi_isValidTextTuning(str, instrument) {
+
+    //not a real solution
+    return !str ? false : str.length >= 10;
+
+}
+
 
 export { 
     fetchChord, 
@@ -771,4 +778,5 @@ export {
     fapi_getScaleNearbys,
     fapi_getTunings,
     fapi_getInstruments,
+    fapi_isValidTextTuning
 }
