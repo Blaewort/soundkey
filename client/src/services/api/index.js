@@ -768,6 +768,56 @@ function fapi_isValidTextTuning(str, instrument) {
 
 }
 
+function fapi_getChordsFromUserString(str) {
+    if (!str || str === "") {return null;} 
+
+    //not a real solution
+    return [
+        {
+            label: "A Text-Searched Chord 1",
+            name: "B Seven"
+        },
+        {
+            label: "A Text-Searched Chord 2",
+            name: "B Seven"
+        },
+        {
+            label: "A Text-Searched Chord 3",
+            name: "B Seven"
+        },
+        {
+            label: "A Text-Searched Chord 4",
+            name: "B Seven"
+        },
+    ];
+
+}
+
+function fapi_getScalesFromUserString(str) {
+    if (!str || str === "") {return null;} 
+
+    //not a real solution
+    return [
+        {
+            label: "A Text-Searched Scale 1",
+            name: "B Locrian"
+        },
+        {
+            label: "A Text-Searched Scale 2",
+            name: "B Locrian"
+        },
+        {
+            label: "A Text-Searched Scale 3",
+            name: "B Locrian"
+        },
+        {
+            label: "A Text-Searched Scale 4",
+            name: "B Locrian"
+        },
+    ];
+
+}
+
 
 export { 
     fetchChord, 
@@ -778,5 +828,7 @@ export {
     fapi_getScaleNearbys,
     fapi_getTunings,
     fapi_getInstruments,
-    fapi_isValidTextTuning
+    fapi_isValidTextTuning,
+    fapi_getChordsFromUserString,
+    fapi_getScalesFromUserString
 }

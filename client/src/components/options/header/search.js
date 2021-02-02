@@ -4,7 +4,7 @@ import Header from './index'
 
 function SearchHeader(props){
       return (
-        <Header placeholder={props.placeholder} leftIconClick={props.toNavView} engaged={true} userText={true} leftIcon={"stream"} rightIcon={"search"}/>
+        <Header onTextChange={props.onChange} placeholder={props.placeholder} leftIconClick={props.toNavView} engaged={true} userText={true} leftIcon={"stream"} rightIcon={"search"}/>
       )
 }
 

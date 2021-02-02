@@ -24,7 +24,9 @@ import { fapi_getModes,
     fapi_getScaleNearbys,
     fapi_getTunings,
     fapi_getInstruments,
-    fapi_isValidTextTuning
+    fapi_isValidTextTuning,
+    fapi_getChordsFromUserString,
+    fapi_getScalesFromUserString
 }  from '../../services/api/index';
 
 class Options extends Component{
@@ -119,12 +121,18 @@ class Options extends Component{
         this.onNavSearchChordItemClick = this.onNavSearchChordItemClick.bind(this);
         this.onNavSearchScaleItemClick = this.onNavSearchScaleItemClick.bind(this);
 
+        // these two might be redundant to the above 2
+        this.onSearchChordItemClick = this.onSearchChordItemClick.bind(this);
+        this.onSearchScaleItemClick = this.onSearchScaleItemClick.bind(this);
+
         this.toTuningTextInputView = this.toTuningTextInputView.bind(this);
         this.toSettingsNavView = this.toSettingsNavView.bind(this);
 
         this.onTuningTextChange = this.onTuningTextChange.bind(this);
 
         this.selectTextTuningButtonClick = this.selectTextTuningButtonClick.bind(this);
+        this.onScaleSearchTextChange = this.onScaleSearchTextChange.bind(this);
+        this.onChordSearchTextChange = this.onChordSearchTextChange.bind(this);
 
         
         
@@ -381,12 +389,12 @@ class Options extends Component{
         // click chord item to select
 
         //convert from {label: ddd} to {item.name}
-        const newItem = {name: item.name};
+        //const newItem = {name: item.name};
 
         this.setState((state, props) => {
             return {
                 ...state,
-                chord: newItem,
+                chord: item,
                 view: {
                     ...state.view,
                     chord: "selected"
@@ -460,21 +468,86 @@ class Options extends Component{
         });
     }
 
+    onChordSearchTextChange(event) {
+        const evt = event.nativeEvent.target.value;
+
+        this.setState((state, props) => {
+            return {
+                ...state,
+                textInput: {
+                    ...state.textInput,
+                    chord: evt,
+                },
+            };
+        });
+    }
+
+    onScaleSearchTextChange(event) {
+        const evt = event.nativeEvent.target.value;
+
+        this.setState((state, props) => {
+            return {
+                ...state,
+                textInput: {
+                    ...state.textInput,
+                    scale: evt,
+                },
+            };
+        });
+    }
+
+    onSearchScaleItemClick(e, item) {
+        // click from a scale navsearch menu (list of modes)
+        // should open menu for mode where items are scales to select
+      
+        
+        this.setState((state, props) => {
+            return {
+                ...state,
+                scale: item,
+                view: {
+                    ...state.view,
+                    scale: "selected"
+                    
+                }
+            };
+        });
+
+    }
+
+    onSearchChordItemClick(e, item) {
+        // click chord item to select
+
+        //convert from {label: ddd} to {item.name}
+        const newItem = {name: item.name};
+
+        this.setState((state, props) => {
+            return {
+                ...state,
+                chord: item,
+                view: {
+                    ...state.view,
+                    chord: "selected"
+                    
+                }
+            };
+        });
+
+    }
+
 
 
     render() {
 
         let pane;
 
-        console.log("fapi_getScaleNearbys:")
-        console.log(fapi_getScaleNearbys);
 
         switch(this.state.focus) {
             case "chord":
-                pane = <ChordScalePane getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
+                pane = <ChordScalePane onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
                 break;
             case "scale":
-                pane = <ChordScalePane  getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
+                pane = <ChordScalePane onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
                 pane = <SettingsPane selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
@@ -542,20 +615,29 @@ class ChordScalePane extends Component{
         let noteNav;
         let listArea;
 
+        
+        const searchGets = this.props.textSearch(this.props.searchInputValue);
   
 
         switch(this.props.view) {
+
             case "selected":
                 if(!this.props.selection) {
                     // act like search if there's no selection
-                    header = <SearchHeader placeholder={placeholder} toNavView={this.props.toNavView} />;
+                    header = <SearchHeader onChange={this.props.onSearchTextChange} placeholder={placeholder} toNavView={this.props.toNavView} />;
+                    if (searchGets) {
+                        listArea = <ListArea handleItemClick={this.props.onSearchItemClick} list={searchGets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
+                    }
                 } else {
                     header = <SelectedObjectHeader toNavView={this.props.toNavView} toSearchView={this.props.toSearchView} /> ;
                     selectedObject = <SelectedObject onEditRequest={this.props.toEditView} onDeselect={this.props.onDeselect} label={this.props.selection.name}/>;
                 }
                 break;
             case "search":
-                header = <SearchHeader placeholder={placeholder} toNavView={this.props.toNavView} />;
+                header = <SearchHeader onChange={this.props.onSearchTextChange} placeholder={placeholder} toNavView={this.props.toNavView} />;
+                if (searchGets) {
+                    listArea = <ListArea handleItemClick={this.props.onSearchItemClick} list={searchGets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
+                }
                 break;
             case "navsearch":
                 if (this.props.type === "chord") {
