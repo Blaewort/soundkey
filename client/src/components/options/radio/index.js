@@ -51,7 +51,7 @@ class Radio extends Component {
             //TODO: For accessibility, this should be an input/radio setup rather than the div it is now
             //                         It would alter our use of data-value and have CSS implications
             const className = itemClassName + (selectedValue === option.value ? " selected" : "" );
-            return <div onClick={this.handleClick} data-value={option.value} className={className}>{option.html}</div>;
+            return <div key={option.value} onClick={this.handleClick} data-value={option.value} className={className}>{option.html}</div>;
         });
 
         let optionContainer;
