@@ -140,6 +140,8 @@ class Options extends Component{
         this.onTuningNavSearchItemClick = this.onTuningNavSearchItemClick.bind(this);
         this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
 
+        this.onTextEnterKeyUp = this.onTextEnterKeyUp.bind(this);
+
         
         
     }
@@ -469,6 +471,11 @@ class Options extends Component{
                     ...state.instrument,
                     tuning: newTuning
                 },
+                textInput: {
+                    //reset text input state
+                    ...state.textInput,
+                    settings: ""
+                },
                 focus: null //kick them out to the instrument
             };
         });
@@ -515,7 +522,12 @@ class Options extends Component{
                     ...state.view,
                     scale: "selected"
                     
-                }
+                },
+                textInput: {
+                    //reset text input state
+                    ...state.textInput,
+                    scale: ""
+                },
             };
         });
 
@@ -535,7 +547,12 @@ class Options extends Component{
                     ...state.view,
                     chord: "selected"
                     
-                }
+                },
+                textInput: {
+                    //reset text input state
+                    ...state.textInput,
+                    chord: ""
+                },
             };
         });
 
@@ -561,6 +578,11 @@ class Options extends Component{
                     ...state.instrument,
                     tuning: item.label
                 },
+                textInput: {
+                    //reset text input state
+                    ...state.textInput,
+                    settings: ""
+                },
                 focus: null
             };
         });
@@ -580,6 +602,38 @@ class Options extends Component{
         });
     }
 
+    // when user presses enter in tuning text input, update tuning if it's valid
+    onTextEnterKeyUp(e, component) {
+        if (e.keyCode === 13) {
+            //enter
+            
+        
+            //update the tuning in state
+            this.setState((state, props) => {
+
+                // but if it's not valid, set the state to the same
+                if (!fapi_isValidTextTuning(component.value)) {
+                    console.log("bad tuning");
+                    return state;
+                }
+
+                return {
+                    ...state,
+                    instrument: {
+                        ...state.instrument,
+                        tuning: component.value
+                    },
+                    textInput: {
+                        //reset text input state
+                        ...state.textInput,
+                        settings: ""
+                    },
+                    focus: null
+                };
+            });
+        }  
+    }
+ 
 
 
 
@@ -590,13 +644,13 @@ class Options extends Component{
 
         switch(this.state.focus) {
             case "chord":
-                pane = <ChordScalePane handleToggleClick={this.handleToggleClick} otherSelection={this.state.scale} toggleValue={this.state.toggle.chord} onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
+                pane = <ChordScalePane textValue={this.state.textInput.chord} handleToggleClick={this.handleToggleClick} otherSelection={this.state.scale} toggleValue={this.state.toggle.chord} onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
                 break;
             case "scale":
-                pane = <ChordScalePane handleToggleClick={this.handleToggleClick} otherSelection={this.state.chord} toggleValue={this.state.toggle.scale} onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
+                pane = <ChordScalePane textValue={this.state.textInput.scale} handleToggleClick={this.handleToggleClick} otherSelection={this.state.chord} toggleValue={this.state.toggle.scale} onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
-                pane = <SettingsPane instrumentName={this.state.instrument.name} onInstrumentNavSearchItemClick={this.onInstrumentNavSearchItemClick} onTuningNavSearchItemClick={this.onTuningNavSearchItemClick} selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
+                pane = <SettingsPane textValue={this.state.textInput.settings} onTextEnterKeyUp={this.onTextEnterKeyUp} instrumentName={this.state.instrument.name} onInstrumentNavSearchItemClick={this.onInstrumentNavSearchItemClick} onTuningNavSearchItemClick={this.onTuningNavSearchItemClick} selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
                 break;
             case null:
                 pane = <NoFocusPane />;
@@ -674,7 +728,7 @@ class ChordScalePane extends Component{
             case "selected":
                 if(!this.props.selection) {
                     // act like search if there's no selection
-                    header = <SearchHeader onChange={this.props.onSearchTextChange} placeholder={placeholder} toNavView={this.props.toNavView} />;
+                    header = <SearchHeader textValue={this.props.textValue} onChange={this.props.onSearchTextChange} placeholder={placeholder} toNavView={this.props.toNavView} />;
                     if (searchGets) {
                         listArea = <ListArea handleItemClick={this.props.onSearchItemClick} list={searchGets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
                     }
@@ -687,7 +741,7 @@ class ChordScalePane extends Component{
                 }
                 break;
             case "search":
-                header = <SearchHeader onChange={this.props.onSearchTextChange} placeholder={placeholder} toNavView={this.props.toNavView} />;
+                header = <SearchHeader textValue={this.props.textValue} onChange={this.props.onSearchTextChange} placeholder={placeholder} toNavView={this.props.toNavView} />;
                 if (searchGets) {
                     listArea = <ListArea handleItemClick={this.props.onSearchItemClick} list={searchGets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
                 }
@@ -797,8 +851,8 @@ class SettingsPane extends Component{
             const isValidTextTuning = this.props.isValidTextTuning(this.props.tuningText);
             const rightIconClick= isValidTextTuning ? this.props.selectTextTuning : null;
                     
-            header = <TextEnterHeader rightIconClick={rightIconClick} isValidText={isValidTextTuning} onChange={this.props.onTuningTextChange} placeholder={"E,A,D,G,B,E etc"} toNavView={this.props.toNavView} />;
-            radio = <SettingsRadio selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
+            header = <TextEnterHeader textValue={this.props.textValue} onTextEnterKeyUp={this.props.onTextEnterKeyUp} rightIconClick={rightIconClick} isValidText={isValidTextTuning} onChange={this.props.onTuningTextChange} placeholder={"E,A,D,G,B,E etc"} toNavView={this.props.toNavView} />;
+            radio = <SettingsRadio instrument={this.props.instrumentName} selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
 
         }
 
