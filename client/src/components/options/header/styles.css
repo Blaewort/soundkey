@@ -106,7 +106,7 @@
   }
   
   /* left */
-  .visual_header .icon_panel:first-child .icon.logo {
+  .visual_header .icon_panel .icon.logo {
     background-color:transparent;
       border: none;
   }

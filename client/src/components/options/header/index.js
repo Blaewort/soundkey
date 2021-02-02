@@ -8,7 +8,7 @@ function Header(props){
           <div className={"visual_header " + (props.engaged ? "engaged " : " ") + (props.userText ? "user_text " : " ")}>
               <IconPanel onClick={props.leftIconClick} icon={props.leftIcon} />
               <SearchPanel placeholder={props.placeholder} />
-              <IconPanel onClick={props.onRightIconClick || null} icon={props.rightIcon} />
+              <IconPanel textValidator={props.textValidator} onClick={props.onRightIconClick || null} icon={props.rightIcon} />
           </div>
       );
 }
@@ -41,8 +41,12 @@ function IconPanel(props) {
         }
 
         let element;
+
+        const textValidator = props.textValidator;
+        
+
         if (icon) {
-            element = <button onClick={props.onClick} className={"icon" + (logo ? " logo" : "")}  >
+            element = <button onClick={props.onClick} className={"icon" + (logo || textValidator ? " logo" : "")}  >
                 {icon}
             </button>
 
