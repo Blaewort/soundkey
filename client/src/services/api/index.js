@@ -9,17 +9,17 @@ function fetchChord(notation) {
 // below is the data the UI knows how to read, not necessarily the format in db
 // although this might be limited to the simple addition of a label attribute for item display in the UI
 
-function fapi_getModes(noteValue, type = "Heptatonic") {
+function fapi_getModes(noteValue, type = "Heptatonic", chordToLimitBy) {
     type = type === null ? "Heptatonic": type;
 
     //noteValue would be 0-12 and we'd grab all chords with root note 0-12
 
     switch(type) {
         case "Heptatonic":
-            return getHeptatonicModes();
+            return getHeptatonicModes(chordToLimitBy);
             break;
         case "Dodecatonic":
-            return getDodecatonicModes();
+            return getDodecatonicModes(chordToLimitBy);
             break;
         default:
             throw new TypeError("note length of " + type + " not suppored");
@@ -28,7 +28,7 @@ function fapi_getModes(noteValue, type = "Heptatonic") {
 
 //let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode); blark
 
-function fapi_getScalesFromModeName(noteValue, mode) {
+function fapi_getScalesFromModeName(noteValue, mode, chordToLimitBy) {
 
 
     noteValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][noteValue];
@@ -274,7 +274,7 @@ function fapi_getScalesFromModeName(noteValue, mode) {
 
 }
 
-function getHeptatonicModes() {
+function getHeptatonicModes(chordToLimitBy) {
     //queries a _Mode_ table which is a list of modes (string=name, makeup=notsure)
 
     return [
@@ -306,7 +306,7 @@ function getHeptatonicModes() {
 }
 
 
-function getDodecatonicModes() {
+function getDodecatonicModes(chordToLimitBy) {
     //queries a _Mode_ table which is a list of modes (string=name, makeup=notsure)
     return [
         {
@@ -321,36 +321,36 @@ function getDodecatonicModes() {
 
 
 
-function fapi_getChords(noteValue, type = "Triads") {
+function fapi_getChords(noteValue, type = "Triads", scaleToLimitBy) {
     type = type === null ? "Triads": type;
 
     //noteValue would be 0-12 and we'd grab all chords with root note 0-12
 
     switch(type) {
         case "Triads":
-            return getTriads(noteValue);
+            return getTriads(noteValue, scaleToLimitBy);
             break;
         case "Seventh Chords":
-            return getSeventhChords(noteValue);
+            return getSeventhChords(noteValue, scaleToLimitBy);
             break;
         case "Ninth Chords":
-            return getNinthChords(noteValue);
+            return getNinthChords(noteValue, scaleToLimitBy);
             break;
         case "Eleventh Chords":
-            return getEleventhChords(noteValue);
+            return getEleventhChords(noteValue, scaleToLimitBy);
             break;
         case "Thirteenth Chords":
-            return getThirteenthChords(noteValue);
+            return getThirteenthChords(noteValue, scaleToLimitBy);
             break;
         case "Sixth Chords":
-            return getSixthChords(noteValue);
+            return getSixthChords(noteValue, scaleToLimitBy);
             break;
         default:
             throw new TypeError("bad chord type");
     }
 }
 
-function getTriads(rootValue) {
+function getTriads(rootValue, scaleToLimitBy) {
     rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
 
     const triads = [
@@ -390,7 +390,7 @@ function getTriads(rootValue) {
 
 }
 
-function getSixthChords(rootValue) {
+function getSixthChords(rootValue, scaleToLimitBy) {
     rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
 
     const triads = [
@@ -425,7 +425,7 @@ function getSixthChords(rootValue) {
 
 }
 
-function getSeventhChords(rootValue) {
+function getSeventhChords(rootValue, scaleToLimitBy) {
     rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
 
     const triads = [
@@ -475,7 +475,7 @@ function getSeventhChords(rootValue) {
 
 }
 
-function getNinthChords(rootValue) {
+function getNinthChords(rootValue, scaleToLimitBy) {
     rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
 
     const triads = [
@@ -525,7 +525,7 @@ function getNinthChords(rootValue) {
 
 }
 
-function getEleventhChords(rootValue) {
+function getEleventhChords(rootValue, scaleToLimitBy) {
     rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
 
     const triads = [
@@ -575,7 +575,7 @@ function getEleventhChords(rootValue) {
 
 }
 
-function getThirteenthChords(rootValue) {
+function getThirteenthChords(rootValue, scaleToLimitBy) {
     rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
 
     const triads = [
@@ -625,22 +625,22 @@ function getThirteenthChords(rootValue) {
 
 }
 
-function fapi_getChordNearbys(chord, type) {
+function fapi_getChordNearbys(chord, type, scaleToLimitBy) {
     type = type === null ? "Extensions": type;
 
 
     switch(type) {
         case "Extensions":
-            return getExtensionsForChord(chord);
+            return getExtensionsForChord(chord, scaleToLimitBy);
             break;
         case "Alterations":
-            return getAlteredChordsForChord(chord);
+            return getAlteredChordsForChord(chord, scaleToLimitBy);
             break;
         case "Added Tones":
-            return getAddedToneChordsForChord(chord);
+            return getAddedToneChordsForChord(chord, scaleToLimitBy);
             break;
         case "Removed Tones":
-            return getRemoveToneChordsForChord(chord);
+            return getRemoveToneChordsForChord(chord, scaleToLimitBy);
             break;
         default:
             throw new TypeError("wrong type");
@@ -648,19 +648,19 @@ function fapi_getChordNearbys(chord, type) {
 
 }
 
-function fapi_getScaleNearbys(scale, type) {
+function fapi_getScaleNearbys(scale, type, chordToLimitBy) {
     type = type === null ? "Alterations": type;
 
 
     switch(type) {
         case "Alterations":
-            return getAlteredScalesForScale(scale);
+            return getAlteredScalesForScale(scale, chordToLimitBy);
             break;
         case "Added Tones":
-            return getAddedToneScalesForScales(scale);
+            return getAddedToneScalesForScales(scale, chordToLimitBy);
             break;
         case "Removed Tones":
-            return getRemoveToneScaleForScale(scale);
+            return getRemoveToneScaleForScale(scale, chordToLimitBy);
             break;
         default:
             throw new TypeError("wrong type");
@@ -669,7 +669,7 @@ function fapi_getScaleNearbys(scale, type) {
 }
 
 
-function getExtensionsForChord(chord) {
+function getExtensionsForChord(chord, scaleToLimitBy) {
     // this function would give us the next logical piece from chord
     //E7 would return E9, Cmaj9 would return Cmaj11 I guess it's just one item in the list
 
@@ -677,18 +677,24 @@ function getExtensionsForChord(chord) {
     
     return [{label: "-An Extension-",
     symbol:  "B13",
-    name: "B Thirteen"}];
+    name: "B Thirteen"},{label: "-An Extension 2-",
+    symbol:  "B13",
+    name: "B Thirteen"} ,{label: "-An Extension 3-",
+    symbol:  "B13",
+    name: "B Thirteen"},{label: "-An Extension 4-",
+    symbol:  "B13",
+    name: "B Thirteen"} ];
 
 }
 
-function getAlteredChordsForChord(chord) {
+function getAlteredChordsForChord(chord, scaleToLimitBy) {
     // this would give us chords where foundChord.noteCount === chord.noteCount but only (chord.noteCount-1) amount of notes match between the two chords
     return [{label: "-An Alteration-",
     symbol:  "B13",
     name: "B Thirteen"}];
 }
 
-function getAddedToneChordsForChord(chord) {
+function getAddedToneChordsForChord(chord, scaleToLimitBy) {
     // this would give us chords where foundChord.noteCount === (chord.noteCount + 1) and all notes in chord are found in foundChord
     return [{label: "-A + Tone chord-",
     symbol:  "B13",
@@ -696,7 +702,7 @@ function getAddedToneChordsForChord(chord) {
 
 }
 
-function getRemoveToneChordsForChord(chord) {
+function getRemoveToneChordsForChord(chord, scaleToLimitBy) {
     // this would give us chords where foundChord.noteCount === (chord.noteCount - 1) and all notes in foundChord are found in chord
     return [{label: "-A - Tone Chord-",
     symbol:  "B13",
@@ -705,20 +711,20 @@ function getRemoveToneChordsForChord(chord) {
 }
 
 
-function getAlteredScalesForScale(scale) {
+function getAlteredScalesForScale(scale, chordToLimitBy) {
     // this would give us scaless where foundScale.noteCount === scale.noteCount but only (scale.noteCount-1) amount of notes match between the two scales
     return [{label: "-An Alteration-",
     name: "B Lydian"}];
 }
 
-function getAddedToneScalesForScales(scale) {
+function getAddedToneScalesForScales(scale, chordToLimitBy) {
     // this would give usscales where foundScale.noteCount === (scale.noteCount + 1) and all notes in scale are found in foundSCale
     return [{label: "-A + Tone-",
     name: "B Lydian"}];
 
 }
 
-function getRemoveToneScaleForScale(scale) {
+function getRemoveToneScaleForScale(scale, chordToLimitBy) {
     // this would give us scales where foundScale.noteCount === (scale.noteCount - 1) and all notes in foundScale are found in scale
     return [{label: "-A - Tone-",
     name: "B Lydian"}];
@@ -768,7 +774,7 @@ function fapi_isValidTextTuning(str, instrument) {
 
 }
 
-function fapi_getChordsFromUserString(str) {
+function fapi_getChordsFromUserString(str, scaleToLimitBy) {
     if (!str || str === "") {return null;} 
 
     //not a real solution
@@ -793,7 +799,7 @@ function fapi_getChordsFromUserString(str) {
 
 }
 
-function fapi_getScalesFromUserString(str) {
+function fapi_getScalesFromUserString(str, scaleToLimitBy) {
     if (!str || str === "") {return null;} 
 
     //not a real solution
