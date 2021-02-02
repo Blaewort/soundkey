@@ -16,6 +16,7 @@ import ScaleTypeRadio from './radio/ScaleType';
 import EditChordRadio from './radio/EditChord';
 import EditScaleRadio from './radio/EditScale';
 import SettingsRadio from './radio/Settings';
+import Toggle from './toggle/index';
 
 import { fapi_getModes, 
     fapi_getScalesFromModeName, 
@@ -54,7 +55,7 @@ class Options extends Component{
                     {label: "D#", value: 6}
                 ]
             },
-            matchToggle: {
+            toggle: {
                 // The toggle is visible when the focus is scale or chord and the other is not null (calculate it)
                 scale: true,
                 chord: true,
@@ -133,6 +134,8 @@ class Options extends Component{
         this.selectTextTuningButtonClick = this.selectTextTuningButtonClick.bind(this);
         this.onScaleSearchTextChange = this.onScaleSearchTextChange.bind(this);
         this.onChordSearchTextChange = this.onChordSearchTextChange.bind(this);
+
+        this.handleToggleClick = this.handleToggleClick.bind(this);
 
         
         
@@ -535,6 +538,19 @@ class Options extends Component{
 
     }
 
+     /* delete this when options state is working */
+     handleToggleClick(event) {
+        this.setState((state, props) => {
+            return {
+                toggle: {
+                    ...state.toggle,
+                    [state.focus]: !state.toggle[state.focus]
+                }
+            };
+        });
+      }
+
+
 
 
     render() {
@@ -544,10 +560,10 @@ class Options extends Component{
 
         switch(this.state.focus) {
             case "chord":
-                pane = <ChordScalePane onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
+                pane = <ChordScalePane handleToggleClick={this.handleToggleClick} otherSelection={this.state.scale} toggleValue={this.state.toggle.chord} onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
                 break;
             case "scale":
-                pane = <ChordScalePane onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
+                pane = <ChordScalePane handleToggleClick={this.handleToggleClick} otherSelection={this.state.chord} toggleValue={this.state.toggle.scale} onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
                 pane = <SettingsPane selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
@@ -614,9 +630,11 @@ class ChordScalePane extends Component{
         let radio;
         let noteNav;
         let listArea;
+        let toggle;
 
         
         const searchGets = this.props.textSearch(this.props.searchInputValue);
+        const toggleRequired = this.props.otherSelection;
   
 
         switch(this.props.view) {
@@ -645,13 +663,18 @@ class ChordScalePane extends Component{
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
                     listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.getChords(this.props.noteSelect.value, this.props.radio.nav)} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
+                    if (toggleRequired) {
+                        toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;
+                    }
                 } else if (this.props.type === "scale") {
                     // need to make it a mode list that links to other lists
                     header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>;
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
                     listArea = <ListArea title={"Scale Groups"} handleItemClick={this.props.onNavSearchItemClick} list={this.props.getModes(this.props.noteSelect.value, this.props.radio.nav)} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
-
+                    if (toggleRequired) {
+                        toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Chord"}/>;
+                    }
                 } else {throw new Error("navsearch must be chord or scale")};
                 
                 break;
@@ -692,6 +715,7 @@ class ChordScalePane extends Component{
             {listArea}
             {radio}
             {selectedObject}
+            {toggle}
         </>
     }
 }

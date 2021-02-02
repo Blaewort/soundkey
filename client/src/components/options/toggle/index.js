@@ -6,23 +6,15 @@ class Toggle extends Component{
 
     constructor(props) {
         super(props);
-        //ARG: props.title is the title
-        //ARG (optional): props.checked true/false. Default is off
 
-        this.state = {
-            checked: Boolean(this.props.checked),
-        };
     }
 
-    handleChange(event) {
-        this.setState((state, props) => ({
-            checked: !state.checked,
-        }));
-      }
-
+   
 
     render() {
-        const input = this.state.checked ? <input className="custom_checkbox" type="checkbox" checked /> : <input className="custom_checkbox" type="checkbox" />;
+        const onClick = this.props.handleClick;
+        
+        const input = Boolean(this.props.checked) ? <input onClick={onClick} className="custom_checkbox" type="checkbox" checked /> : <input onClick={onClick} className="custom_checkbox" type="checkbox" />;
 
         return (
             <div className="toggle_container">
