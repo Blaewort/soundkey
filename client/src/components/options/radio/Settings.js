@@ -13,11 +13,11 @@ import Radio from './index'
         const title = "Change";
         const options = [
             {
-                html: <i class="fas fa-sliders-h"></i>,
+                html: <i className="fas fa-sliders-h"></i>,
                 value: "Tunings"
             },
             {
-                html: <i class="fas fa-theater-masks"></i>,
+                html: <i className="fas fa-theater-masks"></i>,
                 value: "Instruments"
             },
         ];

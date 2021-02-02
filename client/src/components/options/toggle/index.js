@@ -13,8 +13,8 @@ class Toggle extends Component{
 
     render() {
         const onClick = this.props.handleClick;
-        
-        const input = Boolean(this.props.checked) ? <input onClick={onClick} className="custom_checkbox" type="checkbox" checked /> : <input onClick={onClick} className="custom_checkbox" type="checkbox" />;
+    
+       
 
         return (
             <div className="toggle_container">
@@ -22,9 +22,9 @@ class Toggle extends Component{
                     {this.props.title}
                 </span>
 
-                <div class="switch_container">
-                    <label class="switch">
-                        {input}
+                <div className="switch_container">
+                    <label className="switch">
+                    <input onClick={onClick} className="custom_checkbox" type="checkbox" checked={this.props.checked} />
                         <span className="slider round"></span>
                     </label>
                 </div>
