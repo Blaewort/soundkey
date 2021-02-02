@@ -91,6 +91,10 @@ class Options extends Component{
                 chord: "selected", // navsearch is the list of modes that link to [navmode] 
                 settings: "navsearch",
                 scaleNavSearchMode: null,
+            },
+            instrument: {
+                name: "Guitar",
+                tuning: "EADGBE",
             }
         };
 
@@ -119,6 +123,8 @@ class Options extends Component{
         this.toSettingsNavView = this.toSettingsNavView.bind(this);
 
         this.onTuningTextChange = this.onTuningTextChange.bind(this);
+
+        this.selectTextTuningButtonClick = this.selectTextTuningButtonClick.bind(this);
 
         
         
@@ -434,6 +440,26 @@ class Options extends Component{
         });
     }
 
+    selectTextTuningButtonClick() {
+        this.setState((state, props) => {
+            //TODO: there should be a converter from text input to array maybe
+            const newTuning = state.textInput.settings;
+
+            return {
+                ...state,
+                textInput: {
+                    ...state.textInput,
+                    settings: null,
+                },
+                instrument: {
+                    ...state.instrument,
+                    tuning: newTuning
+                },
+                focus: null //kick them out to the instrument
+            };
+        });
+    }
+
 
 
     render() {
@@ -451,7 +477,7 @@ class Options extends Component{
                 pane = <ChordScalePane  getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
                 break;
             case "settings":
-                pane = <SettingsPane tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
+                pane = <SettingsPane selectTextTuning={this.selectTextTuningButtonClick} tuningText={this.state.textInput.settings} isValidTextTuning={fapi_isValidTextTuning} onTuningTextChange={this.onTuningTextChange} toNavView={this.toSettingsNavView} toTuningTextInputView={this.toTuningTextInputView} getTunings={fapi_getTunings} getInstruments={fapi_getInstruments} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" view={this.state.view.settings} />
                 break;
             case null:
                 pane = <NoFocusPane />;
@@ -622,9 +648,11 @@ class SettingsPane extends Component{
                 listArea = <ListArea title={"Instruments"} list={this.props.getInstruments()}></ListArea>;
             }
 
-        } else { // "textEnter"
+        } else { // "textEnter" and "Tunings"
+            const isValidTextTuning = this.props.isValidTextTuning(this.props.tuningText);
+            const rightIconClick= isValidTextTuning ? this.props.selectTextTuning : null;
                     
-            header = <TextEnterHeader isValidText={this.props.isValidTextTuning(this.props.tuningText)} onChange={this.props.onTuningTextChange} placeholder={"E,A,D,G,B,E etc"} toNavView={this.props.toNavView} />;
+            header = <TextEnterHeader rightIconClick={rightIconClick} isValidText={isValidTextTuning} onChange={this.props.onTuningTextChange} placeholder={"E,A,D,G,B,E etc"} toNavView={this.props.toNavView} />;
             radio = <SettingsRadio selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
 
         }
