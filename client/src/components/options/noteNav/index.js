@@ -104,9 +104,9 @@ class NoteNav extends Component {
 
         const selectOptions = options.map(option => {
             if (this.props.value === option.value) {
-                return <option value={option.value} selected>{option.label}</option>
+                return <option key={option.value} value={option.value} selected>{option.label}</option>
             } else {
-                return <option value={option.value}>{option.label}</option>
+                return <option key={option.value} value={option.value}>{option.label}</option>
             }
         });
 

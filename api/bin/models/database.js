@@ -209,7 +209,11 @@ function getSubscalesFromScale(scale) {
  
  
 }
+
+module.exports = { getScalesFromChord, getChordsFromChord, getScalesFromScale, getChordAlterations, getScaleAlterations, getSubscalesFromScale }
+/*
 test = async() => {
     var results = await getChordAlterations(['A','C','E','G'],0,4,1);
 } 
 temp();
+*/
