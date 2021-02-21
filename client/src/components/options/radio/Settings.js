@@ -42,7 +42,7 @@ import Radio from './index'
                 options = optionsNonTunable;
                 break;
             default:
-                throw new Error("figure out what you did wrong");
+                throw new Error("figure out what you did wrong" + this.props.instrument);
         }
 
 

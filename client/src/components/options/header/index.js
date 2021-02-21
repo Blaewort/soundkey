@@ -7,7 +7,7 @@ function Header(props){
       return (
           <div className={"visual_header " + (props.engaged ? "engaged " : " ") + (props.userText ? "user_text " : " ")}>
               <IconPanel onClick={props.leftIconClick} icon={props.leftIcon} />
-              <SearchPanel onTextChange={props.onTextChange} placeholder={props.placeholder} />
+              <SearchPanel value={props.textValue} onKeyUp={props.onTextEnterKeyUp} onTextChange={props.onTextChange} placeholder={props.placeholder} />
               <IconPanel isAValidatorOfText={props.isAValidatorOfText} userText={props.userText} textValidator={props.textValidator} onClick={props.onRightIconClick || null} icon={props.rightIcon} />
           </div>
       );
@@ -60,10 +60,11 @@ function IconPanel(props) {
   }
 
 function SearchPanel(props){
+    let ITEM_VALUE;
       return (
           <div className="search_panel">
               <div className="search_container">
-                  <input onInput={props.onTextChange} type="text" placeholder={props.placeholder} />
+                  <input value={props.value} ref={(component)=>{ITEM_VALUE = component}} onKeyUp={props.onKeyUp} onKeyUp={ props.onKeyUp ? (e) => props.onKeyUp(e,ITEM_VALUE) : null } onInput={props.onTextChange} type="text" placeholder={props.placeholder} />
               </div>
           </div>
       );

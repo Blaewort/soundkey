@@ -9,7 +9,7 @@ function TextEnterHeader(props){
     const rightIconClick = props.isValidText ? props.rightIconClick : null;
 
       return (
-        <Header onRightIconClick={rightIconClick} isAValidatorOfText={true} onTextChange={props.onChange} textValidator={button} placeholder={props.placeholder} leftIconClick={props.toNavView} engaged={true} userText={true} leftIcon={"stream"} rightIcon={validatorIcon}/>
+        <Header textValue={props.textValue} onTextEnterKeyUp={props.onTextEnterKeyUp} onRightIconClick={rightIconClick} isAValidatorOfText={true} onTextChange={props.onChange} textValidator={button} placeholder={props.placeholder} leftIconClick={props.toNavView} engaged={true} userText={true} leftIcon={"stream"} rightIcon={validatorIcon}/>
       )
 }
 
