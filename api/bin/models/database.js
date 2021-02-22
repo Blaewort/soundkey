@@ -13,6 +13,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
+
 pool.on('acquire', function (connection) {
     console.log('Connection %d acquired', connection.threadId);
   });
@@ -144,55 +145,6 @@ async function getChordAlterations(chord,minNotes = 1,maxNotes = 1, noteDiff) {
     return results;
  
 }
-
-async function temp(){
-    console.log("temp");
-    const scales = {
-    "major": ["1","2","3","4","5","6","7"],
-    "dorian": ["1","2","b3","4","5","6","b7"],
-    "phrygian": ["1","b2","b3","4","5","6","b7"],
-    "lydian": ["1","2","3","#4","5","6","7"],
-    "mixolydian": ["1","2","3","4","5","6","b7"],
-    "aeolian": ["1","2","b3","4","5","b6","b7"],
-    "locrian": ["1","b2","b3","4","b5","b6","b7"],
-    "lydianDominant": ["1","2","3","#4","5","6","b7"], //alteration of lydian
-    "rocryllic": ["1","2","3","#4","5","6", "b7", "7"], //added tone or 1-tone extension (superscale) of lydian dominant
-    "salimic": ["1","2","3","#4","5", "b7"] // salimic is a subscale of lydian dominant (minus one tone)
-    };
-    const noteNames = [
-        "A",
-        "A#",
-        "B",
-        "C",
-        "C#",
-        "D",
-        "D#",
-        "E",
-        "F",
-        "F#",
-        "G",
-        "G#"
-    ];
-    let results = [];
-    Object.entries(scales).forEach(entry => {
-        const [name, scale] = entry;
-        noteNames.forEach(note => {
-            let obj = {name:name,root:note,notes:[]};
-            try{
-            (obj.notes).push(new chordExp.Scale(note,scale).notes);
-            } catch(err){
-                console.log(err);
-            }
-            results.push(obj);
-        });
-    });
-    results.forEach(result => {
-        pool.query('INSERT INTO  scale (name,root) VALUES(?,?)',[result.name,result.root] );
-        (result.notes[0]).forEach(note => {
-            pool.query('INSERT INTO  note_has_scale (note_name, scale_name, scale_root) VALUES(?,?,?)',[note.name,result.name,result.root]);
-        });
-    });
-}
  
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
@@ -211,9 +163,3 @@ function getSubscalesFromScale(scale) {
 }
 
 module.exports = { getScalesFromChord, getChordsFromChord, getScalesFromScale, getChordAlterations, getScaleAlterations, getSubscalesFromScale }
-/*
-test = async() => {
-    var results = await getChordAlterations(['A','C','E','G'],0,4,1);
-} 
-temp();
-*/
