@@ -15,7 +15,7 @@ const chordExp = require('chord-expressions');
     con.connect(function(err) {
         if (err) throw err;
         console.log("Connected!");
-        con.query("CREATE DATABASE IF NOT EXISTS sound_key", function (err, result) {
+        con.query("CREATE DATABASE IF NOT EXISTS sound_key DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("Database created");
         });
@@ -23,11 +23,11 @@ const chordExp = require('chord-expressions');
             if (err) throw err;
           });
         const chords = chordExp.generateChords();
-        con.query("CREATE TABLE IF NOT EXISTS chords (chord_name VARCHAR(255), chord_symbol VARCHAR(255), root_note VARCHAR(255), PRIMARY KEY (chord_symbol,root_note))", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS chords (chord_name VARCHAR(255), chord_symbol VARCHAR(255), root_note VARCHAR(255), PRIMARY KEY (chord_symbol,root_note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("chords table created");
         });
-        con.query("CREATE TABLE IF NOT EXISTS notes (note VARCHAR(255) NOT NULL PRIMARY KEY )", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS notes (note VARCHAR(255) NOT NULL PRIMARY KEY ) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("notes table created");
         });
@@ -35,7 +35,7 @@ const chordExp = require('chord-expressions');
             if (err) throw err;
             console.log("pupulate notes table");
         });
-        con.query("CREATE TABLE IF NOT EXISTS chord_has_note (chord_symbol VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (chord_symbol, root_note, note))", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS chord_has_note (chord_symbol VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (chord_symbol, root_note, note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("chord has notes table created");
         });
@@ -51,11 +51,11 @@ const chordExp = require('chord-expressions');
             });
         });
 
-        con.query("CREATE TABLE IF NOT EXISTS scales (scale_name VARCHAR(255), scale_mode VARCHAR(255), root_note VARCHAR(255) ,PRIMARY KEY (scale_name,root_note))", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS scales (scale_name VARCHAR(255), scale_mode VARCHAR(255), root_note VARCHAR(255) ,PRIMARY KEY (scale_name,root_note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("scales table created");
         });
-        con.query("CREATE TABLE IF NOT EXISTS scale_has_note (scale_name VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (scale_name, root_note, note))", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS scale_has_note (scale_name VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (scale_name, root_note, note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("scale has notes table created");
         });
