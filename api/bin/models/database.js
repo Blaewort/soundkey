@@ -1,5 +1,6 @@
-
 const chordExp = require('chord-expressions');
+const Chord = require('chord-expressions').Chord;
+const Scale = require('chord-expressions').Scale;
 const Settings = require("../../settings");
 const mysql = require('mysql2');
 const dbSettings = Settings[Settings.env].db;
@@ -49,48 +50,57 @@ function validateLookupInput(obj){
 function getScalesFromChord(chord) {
     
 }
+
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
-async function getChordsFromChord(chord,minNotes = 1,maxNotes = 1) {
+async function getChordsFromChord(chord, maxNotes = 12) {
     let notes = chord.notes ? chord.notes : chord;
     validateLookupInput(notes);
-    async function fetchChords(notes){
-        return new Promise((resolve, reject) => {
-            pool.query('SELECT * FROM `chord_has_note`', function (error, results, fields) {
-                if (error) {
-                    console.log(error);
-                    reject(error);
-                };
-                resolve(results);
+    
+            let sql = `SELECT
+            c.chord_name,
+            c.chord_symbol,
+            c.root_note,
+            GROUP_CONCAT(cn.note) as notes
+          FROM
+            chords c
+            INNER JOIN chord_has_note cn ON c.chord_symbol = cn.chord_symbol
+            and c.root_note = cn.root_note
+          WHERE
+            cn.chord_symbol = ANY (
+              SELECT
+                chord_symbol
+              FROM
+                chord_has_note
+              where
+                note IN ("` + notes.join('","') + `")
+              group by 
+               chord_symbol
+              HAVING count(note) >= ` + notes.length + `
+            )
+          GROUP BY
+            cn.chord_symbol
+          HAVING Count(cn.note) <= ` + maxNotes ;
+
+          async function fetchChords(notes){
+            return new Promise((resolve, reject) => {
+                pool.query(sql, function (error, results, fields) {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    };
+                    resolve(results);
+                });
             });
+        }
+        
+        let qResults = await fetchChords(notes);
+        let results = [];
+        qResults.forEach(ele => {
+            results.push(Chord.chordFromNotation(ele.chord_symbol));
         });
-    }
-    let qResults = await fetchChords(notes);
-    let chords = {};
-    var results = [];
-    qResults.forEach(function(item){
-        if(chords[item.chord_symbol] === undefined){
-            chords[item.chord_symbol] = [item.note_name];
-        } else {
-            chords[item.chord_symbol].push(item.note_name);
-        }
-    });
-    Object.entries(chords).forEach(entry => {
-        const [key, value] = entry;
-        var count = value.reduce(function(accumulator,value){
-            if(notes.findIndex(note => note === value) > -1){
-                return accumulator + 1;
-            } else {
-                return accumulator;
-            }
-        }, 0);
-        let lng = value.length ;
-        if((lng-count) >= minNotes && (lng-count) <= maxNotes){
-            results.push(key);
-        }
-      });
-    return results;
+        return results;
 }
  
 //ARG is a scal eor notes array
@@ -161,5 +171,10 @@ function getSubscalesFromScale(scale) {
  
  
 }
+async function test(){
+   let r = await getChordsFromChord(["A", "C#", "E"]);
+   console.log(r);
+}
+test();
 
 module.exports = { getScalesFromChord, getChordsFromChord, getScalesFromScale, getChordAlterations, getScaleAlterations, getSubscalesFromScale }
