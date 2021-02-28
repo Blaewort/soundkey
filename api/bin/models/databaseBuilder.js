@@ -23,7 +23,7 @@ const chordExp = require('chord-expressions');
             if (err) throw err;
           });
         const chords = chordExp.generateChords();
-        con.query("CREATE TABLE IF NOT EXISTS chords (chord_name VARCHAR(255), chord_symbol VARCHAR(255), root_note VARCHAR(255), PRIMARY KEY (chord_symbol,root_note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS chords (chord_name VARCHAR(255), chord_symbol VARCHAR(255), root_note VARCHAR(255), category VARCHAR(255), PRIMARY KEY (chord_symbol,root_note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("chords table created");
         });
@@ -40,8 +40,8 @@ const chordExp = require('chord-expressions');
             console.log("chord has notes table created");
         });
         chords.forEach(element =>{
-            let sql = "INSERT IGNORE INTO chords (chord_name, chord_symbol, root_note) VALUES(?,?,?)"
-            con.query(sql,[element.name, element.sym, element.root.name ] , function(err,result){
+            let sql = "INSERT IGNORE INTO chords (chord_name, chord_symbol, root_note, category) VALUES(?,?,?,?)"
+            con.query(sql,[element.name, element.sym, element.root.name,element.category] , function(err,result){
                 if (err) throw err;
             });
             element.notes.forEach(note => {
