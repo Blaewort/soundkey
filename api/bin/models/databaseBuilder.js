@@ -55,7 +55,7 @@ const chordExp = require('chord-expressions');
             if (err) throw err;
             console.log("scales table created");
         });
-        con.query("CREATE TABLE IF NOT EXISTS scale_has_note (scale_name VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (scale_name, root_note, note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
+        con.query("CREATE TABLE IF NOT EXISTS scale_has_note (scale_name VARCHAR(255),scale_mode VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (scale_name, scale_mode, root_note, note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
             if (err) throw err;
             console.log("scale has notes table created");
         });
@@ -66,7 +66,7 @@ const chordExp = require('chord-expressions');
                 if (err) throw err;
             });
             element.notes.forEach(note => {
-                con.query("INSERT IGNORE INTO scale_has_note (scale_name, root_note, note) VALUES(?,?,?)", [element.scale_name , element.rootNote.name , note.name ], function(err,result){
+                con.query("INSERT IGNORE INTO scale_has_note (scale_name,scale_mode ,root_note, note) VALUES(?,?,?,?)", [element.scaleName ,element.modeName, element.rootNote.name , note.name ], function(err,result){
                     if (err) throw err;
                 });
             });

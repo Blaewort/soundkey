@@ -1,0 +1,58 @@
+var express = require("express");
+const { ConsoleReporter } = require("jasmine");
+var db = require("../bin/models/database");
+var router = express.Router();
+
+
+router.get('/getChords/', (req,res) => {
+  console.log("Get Chords");
+  res.send('chords');
+}); 
+
+router.post('/getChords/',async (req,res) => {
+  console.log("POST Chords");
+  let body = req.body;
+  let maxNotes = req.body.maxNotes
+  let chords = await db.getChords(body.data);
+  res.send(chords);
+});
+//getScales(obj,root = null,mode = null)
+router.post('/getScales/',async (req,res) => {
+  console.log("POST Scales");
+  let body = req.body;
+  let scales = await db.getScales(body.data, body.root, body.mode);
+  res.send(scales);
+});
+//(noteValue, type = "Heptatonic", obj)
+router.post('/getModes/',async (req,res) => {
+  console.log("POST Modes");
+  let body = req.body;
+  let results = await db.getModes(body.root, body.type , body.data);
+  res.send(results);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = router;

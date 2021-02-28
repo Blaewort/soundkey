@@ -1,332 +1,76 @@
+import {Note } from 'chord-expressions';
+
 //handle all api requests for the applicatiom
 
-function fetchChord(notation) {
-    console.log(notation);
-    return fetch('http://localhost:5000/chordAPI/getChord/d').then(response => response.json);
-}
-
+// returns a promise
+async function postData(url = '', data = {}) {
+    // Default options are marked with *
+    return fetch(url, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify(data) // body data type must match "Content-Type" header
+    });
+  }
 
 // below is the data the UI knows how to read, not necessarily the format in db
 // although this might be limited to the simple addition of a label attribute for item display in the UI
 
-function fapi_getModes(noteValue, type = "Heptatonic", chordToLimitBy) {
+function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
     type = type === null ? "Heptatonic": type;
 
     //noteValue would be 0-12 and we'd grab all chords with root note 0-12
-
-    switch(type) {
-        case "Heptatonic":
-            return getHeptatonicModes(chordToLimitBy);
-            break;
-        case "Dodecatonic":
-            return getDodecatonicModes(chordToLimitBy);
-            break;
-        default:
-            throw new TypeError("note length of " + type + " not suppored");
+    postData('http://localhost:5000/chordAPI/getModes/',
+    {
+        root: Note.fromValue(root).name,
+        type: type,
+        data: chordToLimitBy
     }
+    ).then(response => {return response.json});
+
 }
 
 //let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode); blark
-
-function fapi_getScalesFromModeName(noteValue, mode, chordToLimitBy) {
-
-
-    noteValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][noteValue];
-
-    switch(mode) {
-        //12 notes
-        case "Chromatic":
-            return [
-                {
-                label: "Chromatic",
-                name: noteValue + " Chromatic"
-                }
-            ];
-            break;
-        //7 notes
-        case "Diatonic":
-            return [
-                {
-                    label: "Major",
-                    name: noteValue + " Major"
-                },
-                {
-                    label: "Dorian",
-                    name: noteValue + " Dorian"
-                },
-                {
-                    label: "Phrygian",
-                    name: noteValue + " Phrygian"
-                },
-                {
-                    label: "Lydian",
-                    name: noteValue + " Lydian"
-                },
-                {
-                    label: "Mixolydian",
-                    name: noteValue + " Mixolydian"
-                },
-                {
-                    label: "Minor",
-                    name: noteValue + " Minor"
-                },
-                {
-                    label: "Locrian",
-                    name: noteValue + " Locrian"
-                }
-            ];
-            break;
-            case "Melodic Minor":
-                return [
-                    {
-                        label: "Melodic Minor",
-                        name: noteValue + " Melodic Minor"
-                    },
-                    {
-                        label: "Dorian b2",
-                        name: noteValue + " Dorian b2"
-                    },
-                    {
-                        label: "Lydian Augmented",
-                        name: noteValue + " Lydian Augmented"
-                    },
-                    {
-                        label: "Lydian Dominant",
-                        name: noteValue + " Lydian Dominant"
-                    },
-                    {
-                        label: "Mixolydian b6",
-                        name: noteValue + " Mixolydian b6" 
-                    },
-                    {
-                        label: "Aeolian b5",
-                        name: noteValue + " Aeolian b5"
-                    },
-                    {
-                        label: "Super Locrian",
-                        name: noteValue + " Super Locrian"
-                    }
-                ];
-                break;
-                case "Neapolitan Major":
-                    return [
-                        {
-                            label: "Neapolitan Major",
-                            name: noteValue + " Neapolitan Major"
-                        },
-                        {
-                            label: "Leading Whole Tone",
-                            name: noteValue + " Leading Whole Tone"
-                        },
-                        {
-                            label: "Lydian Augmented Dominant",
-                            name: noteValue + " Lydian Augmented Dominant"
-                        },
-                        {
-                            label: "Lydian Dominant b6",
-                            name: noteValue + " Lydian Dominant b6"
-                        },
-                        {
-                            label: "Major Locrian",
-                            name: noteValue + " Major Locrian"
-                        },
-                        {
-                            label: "Semi-Locrian b4",
-                            name: noteValue + " Semi-Locrian b4"
-                        },
-                        {
-                            label: "Super Locrian bb3",
-                            name: noteValue + " Super Locrian bb3"
-                        }
-                    ];
-                break;
-                case "Neapolitan Minor":
-                    return [
-                        {
-                            label: "Neapolitan Minor",
-                            name: noteValue + " Neapolitan Minor"
-                        },
-                        {
-                            label: "Lydian #6",
-                            name: noteValue + " Lydian #6"
-                        },
-                        {
-                            label: "Mixolydian Augmented",
-                            name: noteValue + " Mixolydian Augmented"
-                        },
-                        {
-                            label: "Hungarian Gypsy",
-                            name: noteValue + " Hungarian Gypsy"
-                        },
-                        {
-                            label: "Locrian Dominant",
-                            name: noteValue + " Locrian Dominant"
-                        },
-                        {
-                            label: "Ionian #2",
-                            name: noteValue + " Ionian #2"
-                        },
-                        {
-                            label: "Ultra Locrian bb3",
-                            name: noteValue + " Ultra Locrian bb3"
-                        }
-                    ];
-                break;
-                case "Harmonic Major":
-                    return [
-                        {
-                            label: "Harmonic Major",
-                            name: noteValue + " Harmonic Major",
-                        },
-                        {
-                            label: "Dorian b5",
-                            name: noteValue + " Dorian b5"
-                        },
-                        {
-                            label: "Phyrgian b4",
-                            name: noteValue + " Phyrgian b4"
-                        },
-                        {
-                            label: "Lydian b3",
-                            name: noteValue + " Lydian b3"
-                        },
-                        {
-                            label: "Mixolydian b9",
-                            name: noteValue + " Mixolydian b9"
-                        },
-                        {
-                            label: "Lydian Augmented #2",
-                            name: noteValue + " Lydian Augmented #2"
-                        },
-                        {
-                            label: "Locrian bb7",
-                            name: noteValue + " Locrian bb7"
-                        }
-                    ];
-                break;
-                case "Harmonic Minor":
-                    return [
-                        {
-                            label: "Harmonic Minor",
-                            name: noteValue + " Harmonic Minor"
-                        },
-                        {
-                            label: "Locrian #6",
-                            name: noteValue + " Locrian #6"
-                        },
-                        {
-                            label: "Ionian Augmented",
-                            name: noteValue + " Ionian Augmented"
-                        },
-                        {
-                            label: "Romanian",
-                            name: noteValue + " Romanian"
-                        },
-                        {
-                            label: "Phrygian Dominant",
-                            name: noteValue + " Phrygian Dominant"
-                        },
-                        {
-                            label: "Lydian #2",
-                            name: noteValue + " Lydian #2"
-                        },
-                        {
-                            label: "Ultra Locrian",
-                            name: noteValue + " Ultra Locrian"
-                        }
-                    ];
-                break;
-                case "Double Harmonic":
-                    return [
-                        {
-                            label: "Double Harmonic Major",
-                            name: noteValue + " Double Harmonic Major"
-                        },
-                        {
-                            label: "Lydian #2 #6",
-                            name: noteValue +" Lydian #2 #6" 
-                        },
-                        {
-                            label: "Ultra Phrygian",
-                            name: noteValue + " Ultra Phrygian"
-                        },
-                        {
-                            label: "Double Harmonic Minor",
-                            name: noteValue + " Double Harmonic Minor"
-                        },
-                        {
-                            label: "Oriental",
-                            name: noteValue + " Oriental"
-                        },
-                        {
-                            label: "Ionian Augmented #2",
-                            name: noteValue + " Ionian Augmented #2"
-                        },
-                        {
-                            label: "Locrian bb3 bb7",
-                            name: noteValue + " Locrian bb3 bb7"
-                        }
-                    ];
-                break;
-        default:
-            throw new TypeError("mode of " + mode + " not suppored");
+async function fapi_getScalesFromModeName(noteValue, mode = null, chordToLimitBy = null) {
+    postData('http://localhost:5000/chordAPI/getScales/',
+    {
+        root: Note.fromValue(noteValue).name,
+        mode: mode,
+        data: chordToLimitBy
     }
-
+    ).then(response => {return response.json});
 }
 
-function getHeptatonicModes(chordToLimitBy) {
-    //queries a _Mode_ table which is a list of modes (string=name, makeup=notsure)
-
-    return [
-        {
-            label: "Diatonic",
-            makeup: "2w h 3w h" //express the pattern all diatonic scales share regardless of reference to a root note
-                                // might be useful for grabbing a list of all diatonic scales
-        },
-        {
-            label: "Melodic Minor",
-            makeup: "1w h 4w h"
-        },
-        {
-            label: "Neapolitan Major",
-        },
-        {
-            label: "Neapolitan Minor",
-        },
-        {
-            label: "Harmonic Major",
-        },
-        {
-            label: "Harmonic Minor",
-        },
-        {
-            label: "Double Harmonic",
-        },
-    ];
+async function getPentatonicModes(noteValue, chordToLimitBy = null) {
+    return await fapi_getScalesFromModeName(noteValue,"pentatonic", chordToLimitBy);
+}
+async function getHexatonicModes(noteValue, chordToLimitBy = null) {
+    return await fapi_getScalesFromModeName(noteValue,"hexatonic", chordToLimitBy);
 }
 
-
-function getDodecatonicModes(chordToLimitBy) {
-    //queries a _Mode_ table which is a list of modes (string=name, makeup=notsure)
-    return [
-        {
-            label: "Chromatic",
-            makeup: "12h" 
-        }
-    ];
+async function getHeptatonicModes(noteValue, chordToLimitBy = null) {
+    return await fapi_getScalesFromModeName(noteValue,"heptatonic", chordToLimitBy);
+}
+async function getOctatonicModes(noteValue, chordToLimitBy = null) {
+    return await fapi_getScalesFromModeName(noteValue,"octatonic", chordToLimitBy);
 }
 
+function getDodecatonicModes(noteValue, chordToLimitBy = null) {
+    return await fapi_getScalesFromModeName(noteValue,"dodecatonic", chordToLimitBy);
+}
 
-
-
-
-
-function fapi_getChords(noteValue, type = "Triads", scaleToLimitBy) {
-    type = type === null ? "Triads": type;
+function fapi_getChords(noteValue, category = "Triads", scaleToLimitBy) {
+    category = category === null ? "Triads": category;
 
     //noteValue would be 0-12 and we'd grab all chords with root note 0-12
 
-    switch(type) {
+    switch(category) {
         case "Triads":
             return getTriads(noteValue, scaleToLimitBy);
             break;
