@@ -11,8 +11,24 @@ describe("Database Suite", function() {
         //getScalesFromModeName(noteValue, mode, chordToLimitBy)
         
     });
-    it("getChords", function() {
-        //fapi_getChords(noteValue, type = "Triads", scaleToLimitBy)
+    it("getChords", async function() {
+        //getChords(obj, category = null , maxNotes = 12)
+        let notesArr = ["C","E","G"];
+        let chords = await getChords(notesArr,"Triad");
+        chords.forEach(chord => {
+            expect(chord.category).toBe("Triad");
+            expect(chord.notes.includes("C"));
+            expect(chord.notes.includes("E"));
+            expect(chord.notes.includes("G"));
+        });
+        chords = await getChords(notesArr,"Six");
+        chords.forEach(chord => {
+            expect(chord.category).toBe("Six");
+            expect(chord.notes.includes("C"));
+            expect(chord.notes.includes("E"));
+            expect(chord.notes.includes("G"));
+        })
+
         
     });
     it("getChordNearbys", function() {
@@ -43,13 +59,8 @@ describe("Database Suite", function() {
             expect(scale.notes.includes("C")).toBe(true);
             expect(scale.notes.includes("E")).toBe(true);
             expect(scale.notes.includes("G")).toBe(true);
-            
+
         });
-
-
-        //getScales(obj,root = null,mode = null)
-
-
     });
   });
   
