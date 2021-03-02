@@ -11,10 +11,11 @@ router.get('/getChords/', (req,res) => {
 
 router.post('/getChords/',async (req,res) => {
   console.log("POST Chords");
-  let body = req.body;
-  let maxNotes = req.body.maxNotes
-  let chords = await db.getChords(body.data);
-  res.send(chords);
+    let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+    let root = req.body.root ? req.body.root : null;
+    let categories = req.body.category ? req.body.category : null;
+    let chords = await db.getChords(req.body.data,root,category,maxNotes);
+    res.send(chords);
 });
 //getScales(obj,root = null,mode = null)
 router.post('/getScales/',async (req,res) => {

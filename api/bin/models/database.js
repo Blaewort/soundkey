@@ -39,7 +39,7 @@ function formatLookupInput(obj){
         validateNotesInput(notes);
         return notes;
     } catch(err) {
-        throw(err);
+        throw("Invalid Notes input");
     }
 }
 
@@ -92,13 +92,33 @@ function validateModeInput(mode){
     }
 }
 
+function validateCategoryInput(category){
+    const categories = [
+        "Triad",
+        "Seven",
+        "Nine",
+        "Eleven",
+        "Thirteen",
+        "Six"
+    ];
+    if (category === null){
+        return
+    } else if(!category.includes(category)){
+        throw("Invalid Chord category: ", category);
+    }
+}
+
 
 
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
-async function getChords(obj, maxNotes = 12) {
+async function getChords(obj, root = null, category = null , maxNotes = 12) {
     let notes = formatLookupInput(obj);
+    validateNotesInput(root);
+    validateCategoryInput(category);
+    category = category !== null ? 'AND c.category = "' + category + '"':  '';
+    root = root !== null ? 'AND c.root_note = "' + root + '"':  '';
     let sql = `SELECT
     c.chord_name,
     c.chord_symbol,
@@ -119,7 +139,7 @@ async function getChords(obj, maxNotes = 12) {
         group by 
         chord_symbol
         HAVING count(note) >= ` + notes.length + `
-    )
+    ) ` + category + root + `
     GROUP BY
     cn.chord_symbol
     HAVING Count(cn.note) <= ` + maxNotes ;
@@ -134,7 +154,7 @@ async function getChords(obj, maxNotes = 12) {
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have ALL notes the scale does plus any extras
 // USE user can see chords with added tones (we may only want this to be 1 extra note so if chord.notes.length is 3 then find 4 note chords)
-async function getScales(obj,root = null,mode = null) {
+async function getScales(obj,root = null,mode = null) { 
     let notes = formatLookupInput(obj);
     validateNotesInput(root);
     validateModeInput(mode);
