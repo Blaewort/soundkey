@@ -39,11 +39,11 @@ function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
 //let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode); blark
 async function fapi_getScalesFromModeName(noteValue, mode = null, chordToLimitBy = null) {
     postData('http://localhost:5000/chordAPI/getScales/',
-    {
-        root: Note.fromValue(noteValue).name,
-        mode: mode,
-        data: chordToLimitBy
-    }
+        {
+            root: Note.fromValue(noteValue).name,
+            mode: mode,
+            data: chordToLimitBy
+        }
     ).then(response => {return response.json});
 }
 
@@ -65,308 +65,40 @@ function getDodecatonicModes(noteValue, chordToLimitBy = null) {
     return await fapi_getScalesFromModeName(noteValue,"dodecatonic", chordToLimitBy);
 }
 
-function fapi_getChords(noteValue, category = "Triads", scaleToLimitBy) {
+function fapi_getChords(noteValue, category = "Triads", scaleToLimitBy, maxNotes = 12) {
     category = category === null ? "Triads": category;
-
-    //noteValue would be 0-12 and we'd grab all chords with root note 0-12
-
-    switch(category) {
-        case "Triads":
-            return getTriads(noteValue, scaleToLimitBy);
-            break;
-        case "Seventh Chords":
-            return getSeventhChords(noteValue, scaleToLimitBy);
-            break;
-        case "Ninth Chords":
-            return getNinthChords(noteValue, scaleToLimitBy);
-            break;
-        case "Eleventh Chords":
-            return getEleventhChords(noteValue, scaleToLimitBy);
-            break;
-        case "Thirteenth Chords":
-            return getThirteenthChords(noteValue, scaleToLimitBy);
-            break;
-        case "Sixth Chords":
-            return getSixthChords(noteValue, scaleToLimitBy);
-            break;
-        default:
-            throw new TypeError("bad chord type");
-    }
+    postData('http://localhost:5000/chordAPI/getChords/',
+        {
+            obj: scaleToLimitBy,
+            category: category,
+            root: Note.fromValue(noteValue).name,
+            maxNotes: maxNotes
+        }
+    ).then(response => {return response.json});
 }
 
-function getTriads(rootValue, scaleToLimitBy) {
-    rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
-
-    const triads = [
-        {
-            label: "Major",
-            symbol: rootValue,
-            name: rootValue + " Major"
-        },
-        {
-            label: "Minor",
-            symbol: rootValue + "m",
-            name: rootValue + " Minor"
-        },
-        {
-            label: "Diminished",
-            symbol: rootValue + "dim",
-            name: rootValue + " Diminished"
-        },
-        {
-            label: "Augmented",
-            symbol: rootValue + "+",
-            name: rootValue + " Augemented"
-        },
-        {
-            label: "Suspended 2",
-            symbol: rootValue + "sus2",
-            name: rootValue + " Suspended Two"
-        },
-        {
-            label: "Suspended 4",
-            symbol: rootValue + "sus4",
-            name: rootValue + " Suspended Four"
-        },
-    ];
-
-    return triads;
-
+function getTriads(hoteValue, scaleToLimitBy, maxNotes = 12) {
+    return fapi_getChords(noteValue, "Triads", scaleToLimitBy, maxNotes = 12);
 }
 
 function getSixthChords(rootValue, scaleToLimitBy) {
-    rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
-
-    const triads = [
-        {
-            label: "Six",
-            symbol: rootValue + "6",
-            name: rootValue + " Six"
-        },
-        {
-            label: "Minor Six",
-            symbol: rootValue + "m6",
-            name: rootValue + " Minor Six"
-        },
-        {
-            label: "Six Suspended Two",
-            symbol: rootValue + "6sus2",
-            name: rootValue + " Six Suspended Two"
-        },
-        {
-            label: "Six Suspended Four",
-            symbol: rootValue + "6sus4",
-            name: rootValue + " Six Suspended Four"
-        },
-        {
-            label: "Augmented Six",
-            symbol: rootValue + "aug6",
-            name: rootValue + " Augmented Six"
-        },
-    ];
-
-    return triads;
-
+    return fapi_getChords(noteValue, "Six", scaleToLimitBy, maxNotes = 12);
 }
 
 function getSeventhChords(rootValue, scaleToLimitBy) {
-    rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
-
-    const triads = [
-        {
-            label: "Seven",
-            symbol: rootValue + "7",
-            name: rootValue + " Seven"
-        },
-        {
-            label: "Minor Seven",
-            symbol: rootValue + "m7",
-            name: rootValue + " Minor Seven"
-        },
-        {
-            label: "Diminished Seven",
-            symbol: rootValue + "dim7",
-            name: rootValue + " Diminished Seven"
-        },
-        {
-            label: "Half-Diminished Seven",
-            symbol: rootValue + "ø7",
-            name: rootValue + " Half-Diminished Seven"
-        },
-        {
-            label: "Diminished Major Seven",
-            symbol: rootValue + "dim-maj7",
-            name: rootValue + " Diminished Major Seven"
-        },
-        {
-            label: "Seven Suspended Two",
-            symbol: rootValue + "7sus2",
-            name: rootValue + " Seven Suspended Two"
-        },
-        {
-            label: "Seven Suspended Four",
-            symbol: rootValue + "7sus4",
-            name: rootValue + " Seven Suspended Four"
-        },
-        {
-            label: "Augmented Seven",
-            symbol: rootValue + "aug7",
-            name: rootValue + " Augmented Seven"
-        },
-    ];
-
-    return triads;
-
+    return fapi_getChords(noteValue, "Seven", scaleToLimitBy, maxNotes = 12);
 }
 
 function getNinthChords(rootValue, scaleToLimitBy) {
-    rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
-
-    const triads = [
-        {
-            label: "Ninth",
-            symbol: rootValue + "9",
-            name: rootValue + " Nine"
-        },
-        {
-            label: "Minor Nine",
-            symbol: rootValue + "m9",
-            name: rootValue + " Minor Nine"
-        },
-        {
-            label: "Diminished Nine",
-            symbol: rootValue + "dim9",
-            name: rootValue + " Diminished Nine"
-        },
-        {
-            label: "Half-Diminished Nine",
-            symbol: rootValue + "ø9",
-            name: rootValue + " Half-Diminished Nine"
-        },
-        {
-            label: "Diminished Major Nine",
-            symbol: rootValue + "dim-maj9",
-            name: rootValue + " Diminished Major Nine"
-        },
-        {
-            label: "Nine Suspended Two",
-            symbol: rootValue + "9sus2",
-            name: rootValue + " Nine Suspended Two"
-        },
-        {
-            label: "Nine Suspended Four",
-            symbol: rootValue + "9sus4",
-            name: rootValue + " Nine Suspended Four"
-        },
-        {
-            label: "Augmented Nine",
-            symbol: rootValue + "aug9",
-            name: rootValue + " Augmented Nine"
-        },
-    ];
-
-    return triads;
-
+    return fapi_getChords(noteValue, "Nine", scaleToLimitBy, maxNotes = 12);
 }
 
 function getEleventhChords(rootValue, scaleToLimitBy) {
-    rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
-
-    const triads = [
-        {
-            label: "Eleven",
-            symbol: rootValue + "11",
-            name: rootValue + " Eleven"
-        },
-        {
-            label: "Minor Eleven",
-            symbol: rootValue + "m11",
-            name: rootValue + " Minor Eleven"
-        },
-        {
-            label: "Diminished Eleven",
-            symbol: rootValue + "dim11",
-            name: rootValue + " Diminished Eleven"
-        },
-        {
-            label: "Half-Diminished Eleven",
-            symbol: rootValue + "ø11",
-            name: rootValue + " Half-Diminished Eleven"
-        },
-        {
-            label: "Diminished Major Eleven",
-            symbol: rootValue + "dim-maj11",
-            name: rootValue + " Diminished Major Eleven"
-        },
-        {
-            label: "Eleven Suspended Two",
-            symbol: rootValue + "11sus2",
-            name: rootValue + " Eleven Suspended Two"
-        },
-        {
-            label: "Eleven Suspended Four",
-            symbol: rootValue + "11sus4",
-            name: rootValue + " Eleven Suspended Four"
-        },
-        {
-            label: "Augmented Eleven",
-            symbol: rootValue + "aug11",
-            name: rootValue + " Augmented Eleven"
-        },
-    ];
-
-    return triads;
-
+    return fapi_getChords(noteValue, "Eleven", scaleToLimitBy, maxNotes = 12);
 }
 
 function getThirteenthChords(rootValue, scaleToLimitBy) {
-    rootValue = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"][rootValue];
-
-    const triads = [
-        {
-            label: "Thirteen",
-            symbol: rootValue + "13",
-            name: rootValue + " Thirteen"
-        },
-        {
-            label: "Minor Thirteen",
-            symbol: rootValue + "m13",
-            name: rootValue + " Minor Thirteen"
-        },
-        {
-            label: "Diminished Thirteen",
-            symbol: rootValue + "dim13",
-            name: rootValue + " Diminished Thirteen"
-        },
-        {
-            label: "Half-Diminished Thirteen",
-            symbol: rootValue + "ø13",
-            name: rootValue + " Half-Diminished Thirteen"
-        },
-        {
-            label: "Diminished Major Thirteen",
-            symbol: rootValue + "dim-maj13",
-            name: rootValue + " Diminished Major Thirteen"
-        },
-        {
-            label: "Thirteen Suspended Two",
-            symbol: rootValue + "13sus2",
-            name: rootValue + " Thirteen Suspended Two"
-        },
-        {
-            label: "Thirteen Suspended Four",
-            symbol: rootValue + "13sus4",
-            name: rootValue + " Thirteen Suspended Four"
-        },
-        {
-            label: "Augmented Thirteen",
-            symbol: rootValue + "aug13",
-            name: rootValue + " Augmented Thirteen"
-        },
-    ];
-
-    return triads;
-
+    return fapi_getChords(noteValue, "Thirteen", scaleToLimitBy, maxNotes = 12);
 }
 
 function fapi_getChordNearbys(chord, type, scaleToLimitBy) {
