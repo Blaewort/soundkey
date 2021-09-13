@@ -113,12 +113,24 @@ function validateCategoryInput(category){
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
-async function getChords(obj, root = null, category = null , maxNotes = 12) {
+async function getChords(obj, root = null, category = null, noteOffset = 0) {
     let notes = formatLookupInput(obj);
     validateNotesInput(root);
     validateCategoryInput(category);
     category = category !== null ? 'AND c.category = "' + category + '"':  '';
     root = root !== null ? 'AND c.root_note = "' + root + '"':  '';
+    let newChordLenght = '';
+    let matchingChordlength = '';
+    switch(noteOffset){
+        case -1:
+            newChordLenght = 'HAVING Count(cn.note) <= ' + notes.length - 1;
+            break;
+        case 0:
+            break;
+        case 1:
+            matchingChordlength = 'HAVING count(note) >= ' + notes.length + 1;
+            break;
+    };
     let sql = `SELECT
     c.chord_name,
     c.chord_symbol,
@@ -138,11 +150,10 @@ async function getChords(obj, root = null, category = null , maxNotes = 12) {
         note IN ("` + notes.join('","') + `")
         group by 
         chord_symbol
-        HAVING count(note) >= ` + notes.length + `
+        ` + matchingChordlength + `
     ) ` + category + root + `
     GROUP BY
-    cn.chord_symbol
-    HAVING Count(cn.note) <= ` + maxNotes ;
+    cn.chord_symbol` + newChordLenght;
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {

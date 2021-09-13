@@ -1,4 +1,4 @@
-import {Note } from 'chord-expressions';
+import { Note } from 'chord-expressions';
 
 //handle all api requests for the applicatiom
 
@@ -61,49 +61,50 @@ async function getOctatonicModes(noteValue, chordToLimitBy = null) {
     return await fapi_getScalesFromModeName(noteValue,"octatonic", chordToLimitBy);
 }
 
-function getDodecatonicModes(noteValue, chordToLimitBy = null) {
+async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
     return await fapi_getScalesFromModeName(noteValue,"dodecatonic", chordToLimitBy);
 }
-
-function fapi_getChords(noteValue, category = "Triads", scaleToLimitBy, maxNotes = 12) {
-    category = category === null ? "Triads": category;
+ 
+async function fapi_getChords(noteValue, category = null, scaleToLimitBy) {
+    console.log(noteValue);
     postData('http://localhost:5000/chordAPI/getChords/',
         {
             obj: scaleToLimitBy,
             category: category,
-            root: Note.fromValue(noteValue).name,
-            maxNotes: maxNotes
+            root: Note.fromValue(noteValue).name
         }
-    ).then(response => {return response.json});
+    ).then(response => {
+        console.log(response.json);
+        
+        return response.json});
 }
 
-function getTriads(hoteValue, scaleToLimitBy, maxNotes = 12) {
-    return fapi_getChords(noteValue, "Triads", scaleToLimitBy, maxNotes = 12);
+function getTriads(noteValue, scaleToLimitBy) {
+    return fapi_getChords(noteValue, "Triads", scaleToLimitBy);
 }
 
-function getSixthChords(rootValue, scaleToLimitBy) {
-    return fapi_getChords(noteValue, "Six", scaleToLimitBy, maxNotes = 12);
+function getSixthChords(noteValue, scaleToLimitBy) {
+    return fapi_getChords(noteValue, "Six", scaleToLimitBy);
 }
 
-function getSeventhChords(rootValue, scaleToLimitBy) {
-    return fapi_getChords(noteValue, "Seven", scaleToLimitBy, maxNotes = 12);
+function getSeventhChords(noteValue, scaleToLimitBy) {
+    return fapi_getChords(noteValue, "Seven", scaleToLimitBy);
 }
 
-function getNinthChords(rootValue, scaleToLimitBy) {
-    return fapi_getChords(noteValue, "Nine", scaleToLimitBy, maxNotes = 12);
+function getNinthChords(noteValue, scaleToLimitBy) {
+    return fapi_getChords(noteValue, "Nine", scaleToLimitBy);
 }
 
-function getEleventhChords(rootValue, scaleToLimitBy) {
-    return fapi_getChords(noteValue, "Eleven", scaleToLimitBy, maxNotes = 12);
+function getEleventhChords(noteValue, scaleToLimitBy) {
+    return fapi_getChords(noteValue, "Eleven", scaleToLimitBy);
 }
 
-function getThirteenthChords(rootValue, scaleToLimitBy) {
-    return fapi_getChords(noteValue, "Thirteen", scaleToLimitBy, maxNotes = 12);
+function getThirteenthChords(noteValue, scaleToLimitBy) {
+    return fapi_getChords(noteValue, "Thirteen", scaleToLimitBy);
 }
-
+//valid types Extensions, Alterations, Added Tones, Removed Tones
 function fapi_getChordNearbys(chord, type, scaleToLimitBy) {
     type = type === null ? "Extensions": type;
-
 
     switch(type) {
         case "Extensions":
@@ -148,19 +149,14 @@ function fapi_getScaleNearbys(scale, type, chordToLimitBy) {
 function getExtensionsForChord(chord, scaleToLimitBy) {
     // this function would give us the next logical piece from chord
     //E7 would return E9, Cmaj9 would return Cmaj11 I guess it's just one item in the list
-
-
-    
-    return [{label: "-An Extension-",
-    symbol:  "B13",
-    name: "B Thirteen"},{label: "-An Extension 2-",
-    symbol:  "B13",
-    name: "B Thirteen"} ,{label: "-An Extension 3-",
-    symbol:  "B13",
-    name: "B Thirteen"},{label: "-An Extension 4-",
-    symbol:  "B13",
-    name: "B Thirteen"} ];
-
+    /*
+    chord.category is a triad you would grab chords with category = seven
+    if seven, then nine
+    if nine, then 11
+    if eleven, then thirteen
+    if thirteen, return nothing
+    */
+   return;
 }
 
 function getAlteredChordsForChord(chord, scaleToLimitBy) {
@@ -301,8 +297,7 @@ function fapi_getScalesFromUserString(str, scaleToLimitBy) {
 }
 
 
-export { 
-    fetchChord, 
+export {  
     fapi_getModes, 
     fapi_getScalesFromModeName, 
     fapi_getChords, 
