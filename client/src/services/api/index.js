@@ -1,5 +1,7 @@
 import { Note } from 'chord-expressions';
 
+const urlRoot = "http://localhost:5000/api";
+
 //handle all api requests for the applicatiom
 
 // returns a promise
@@ -22,23 +24,29 @@ async function postData(url = '', data = {}) {
 // below is the data the UI knows how to read, not necessarily the format in db
 // although this might be limited to the simple addition of a label attribute for item display in the UI
 
-function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
+async function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
     type = type === null ? "Heptatonic": type;
 
     //noteValue would be 0-12 and we'd grab all chords with root note 0-12
-    postData('http://localhost:5000/chordAPI/getModes/',
+    await postData(urlRoot + '/getModes/',
     {
         root: Note.fromValue(root).name,
         type: type,
         data: chordToLimitBy
     }
-    ).then(response => {return response.json});
+    ).then(response => {
+        console.log("getModes - in then");
+        console.log(response);
+        return response.json
+    }).catch((error) => {
+        console.error('Error:', error);
+      });;
 
 }
 
 //let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode); blark
 async function fapi_getScalesFromModeName(noteValue, mode = null, chordToLimitBy = null) {
-    postData('http://localhost:5000/chordAPI/getScales/',
+    postData(urlRoot +'/getScales/',
         {
             root: Note.fromValue(noteValue).name,
             mode: mode,
@@ -66,17 +74,18 @@ async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
 }
  
 async function fapi_getChords(noteValue, category = null, scaleToLimitBy) {
-    console.log(noteValue);
-    postData('http://localhost:5000/chordAPI/getChords/',
+    console.log("fapi_getChords");
+    postData(urlRoot + '/api/getChords/',
         {
             obj: scaleToLimitBy,
             category: category,
             root: Note.fromValue(noteValue).name
         }
-    ).then(response => {
-        console.log(response.json);
-        
-        return response.json});
+    ).then(
+        response => {
+            return response.json
+    });
+
 }
 
 function getTriads(noteValue, scaleToLimitBy) {
