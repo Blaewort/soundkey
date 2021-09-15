@@ -5,11 +5,12 @@ const urlRoot = "http://localhost:5000/api";
 //handle all api requests for the applicatiom
 
 // returns a promise
+
 async function postData(url = '', data = {}) {
     // Default options are marked with *
     return fetch(url, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
+      //mode: 'cors', // no-cors, *cors, same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
       credentials: 'same-origin', // include, *same-origin, omit
       headers: {
@@ -18,11 +19,20 @@ async function postData(url = '', data = {}) {
       redirect: 'follow',
       referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(data) // body data type must match "Content-Type" header
-    });
+    }).then(handleErrors);
   }
+
+  function handleErrors(response) {
+    if (!response.ok) {
+        console.log("POST DATA ERROR: ", response.statusText);
+        throw Error(response.statusText);
+    }
+    return response;
+}
 
 // below is the data the UI knows how to read, not necessarily the format in db
 // although this might be limited to the simple addition of a label attribute for item display in the UI
+
 
 async function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
     type = type === null ? "Heptatonic": type;
@@ -35,14 +45,13 @@ async function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
         data: chordToLimitBy
     }
     ).then(response => {
-        console.log("getModes - in then");
-        console.log(response);
         return response.json
     }).catch((error) => {
         console.error('Error:', error);
       });;
 
 }
+
 
 //let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode); blark
 async function fapi_getScalesFromModeName(noteValue, mode = null, chordToLimitBy = null) {
@@ -52,7 +61,8 @@ async function fapi_getScalesFromModeName(noteValue, mode = null, chordToLimitBy
             mode: mode,
             data: chordToLimitBy
         }
-    ).then(response => {return response.json});
+    )
+    .then(response => {return response.json});
 }
 
 async function getPentatonicModes(noteValue, chordToLimitBy = null) {
@@ -73,19 +83,21 @@ async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
     return await fapi_getScalesFromModeName(noteValue,"dodecatonic", chordToLimitBy);
 }
  
-async function fapi_getChords(noteValue, category = null, scaleToLimitBy) {
-    console.log("fapi_getChords");
-    postData(urlRoot + '/api/getChords/',
+function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+    if(scaleToLimitBy.notes){
+        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
+    }
+    return postData(urlRoot + '/getChords/',
         {
-            obj: scaleToLimitBy,
-            category: category,
-            root: Note.fromValue(noteValue).name
+            notes: scaleToLimitBy,
+            root: Note.fromValue(noteValue).name,
+            category: category
         }
     ).then(
         response => {
-            return response.json
+            return response.json();
     });
-
 }
 
 function getTriads(noteValue, scaleToLimitBy) {

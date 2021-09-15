@@ -14,14 +14,14 @@ describe("Database Suite", function() {
     it("getChords", async function() {
         //getChords(obj, category = null , maxNotes = 12)
         let notesArr = ["C","E","G"];
-        let chords = await getChords(notesArr,"Triad");
+        let chords = await getChords(notesArr,null,"Triad");
         chords.forEach(chord => {
             expect(chord.category).toBe("Triad");
             expect(chord.notes.includes("C"));
             expect(chord.notes.includes("E"));
             expect(chord.notes.includes("G"));
         });
-        chords = await getChords(notesArr,"Six");
+        chords = await getChords(notesArr,null,"Six");
         chords.forEach(chord => {
             expect(chord.category).toBe("Six");
             expect(chord.notes.includes("C"));

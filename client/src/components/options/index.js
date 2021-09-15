@@ -34,7 +34,6 @@ class Options extends Component{
 
     constructor(props) {
         super(props);
-
         this.state = {
             chord: {
                 root: "E",
@@ -98,7 +97,8 @@ class Options extends Component{
             instrument: {
                 name: "Guitar",
                 tuning: "EADGBE",
-            }
+            },
+            list:null
         };
 
         this.onFooterUpdate = this.onFooterUpdate.bind(this);
@@ -201,15 +201,15 @@ class Options extends Component{
     }
 
     toChordNavSearchView() {
-        this.setState((state, props) => {
-            return {
-                ...state,
-                view: {
-                    ...state.view,
-                    chord: "navsearch"
+            this.setState((state, props) => {
+                return {
+                    ...state,
+                    view: {
+                        ...state.view,
+                        chord: "navsearch",
+                    }
                 }
-            }
-        });
+            });
     }
 
     toScaleNavSearchView() {
@@ -720,6 +720,8 @@ class ChordScalePane extends Component{
         const searchGets = this.props.textSearch(this.props.searchInputValue, limitByOther);
         const toggleRequired = this.props.otherSelection;
 
+
+
         
   
 
@@ -752,9 +754,10 @@ class ChordScalePane extends Component{
                 break;
             case "navsearch":
                 if (this.props.type === "chord") {
-                    header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>;
+                    this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther)
+                    header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
-                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther)} />;
+                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.list} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
                     if (toggleRequired) {
                         toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;

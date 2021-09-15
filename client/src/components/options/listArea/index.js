@@ -36,8 +36,13 @@ class ListArea extends Component {
       }
 
     render () {
-        const list = this.props.list || TEMP_ITEMS;
-
+        let list;
+        if(this.props.list.map === undefined) {
+            console.log("Invalid Object, Expected object with map function, received: ",this.props.list );
+            list = TEMP_ITEMS;
+        } else {
+            list = this.props.list;
+        }
         const listItems = list.map((item) => 
             <li key={item.label} onClick={(e) => this.props.handleItemClick(e,item)}>{item.label}</li>
         );

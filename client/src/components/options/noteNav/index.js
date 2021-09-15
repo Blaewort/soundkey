@@ -40,7 +40,6 @@ class NoteNav extends Component {
     constructor(props) {
         super(props);
 
-
         this.sharp = this.buttonChange.bind(this, 1);
         this.flat = this.buttonChange.bind(this, -1);
         this.buttonChange = this.buttonChange.bind(this);
@@ -104,7 +103,7 @@ class NoteNav extends Component {
 
         const selectOptions = options.map(option => {
             if (this.props.value === option.value) {
-                return <option key={option.value} value={option.value} selected>{option.label}</option>
+                return <option key={option.value} value={option.value} defaultValue>{option.label}</option>
             } else {
                 return <option key={option.value} value={option.value}>{option.label}</option>
             }
@@ -115,7 +114,7 @@ class NoteNav extends Component {
         customOptions = customOptions.map(option => {
             const thisValue = (this.props.value === option.value);
             if (thisValue) {return null;}; //don't render at all
-            return <div onClick={this.handleCustomOptionClick} className={thisValue ? "same-as-selected" : ""} data-value={option.value}>{option.label}</div>
+            return <div onClick={this.handleCustomOptionClick} className={thisValue ? "same-as-selected" : ""} key={option.value} data-value={option.value}>{option.label}</div>
         });
         
         

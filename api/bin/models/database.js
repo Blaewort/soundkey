@@ -24,7 +24,7 @@ async function fetchSQL(sql){
     return new Promise((resolve, reject) => {
         pool.query(sql, function (error, results, fields) {
             if (error) {
-                console.log(error);
+                console.log("FetchSQL error: " + error);
                 reject(error);
             };
             resolve(results);
@@ -66,10 +66,11 @@ function validateNotesInput(obj){
     ];
     notes.forEach(note =>{
         if(noteNames.findIndex(name => name === note) === -1){
+            console.log("Invalid Note: " + note);
             throw("Invalid Note: " + note);
         }
     });
-
+    return;
 }
 const modes = [
     "diatonic",
@@ -88,6 +89,7 @@ function validateModeInput(mode){
         return;
     }
     if(modes.find(element => element === mode) === undefined){
+        console.log("Invalid Mode: ", mode);
         throw("Invalid Mode: ", mode);
     }
 }
@@ -104,6 +106,7 @@ function validateCategoryInput(category){
     if (category === null){
         return
     } else if(!category.includes(category)){
+        console.log("Invalid Chord category: ", category);
         throw("Invalid Chord category: ", category);
     }
 }
@@ -114,21 +117,23 @@ function validateCategoryInput(category){
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
 async function getChords(obj, root = null, category = null, noteOffset = 0) {
+    console.log('\n',"GetChords(",obj,",",root,",",category,",",noteOffset,")");
     let notes = formatLookupInput(obj);
     validateNotesInput(root);
     validateCategoryInput(category);
+    console.log("Validation passed");
     category = category !== null ? 'AND c.category = "' + category + '"':  '';
     root = root !== null ? 'AND c.root_note = "' + root + '"':  '';
-    let newChordLenght = '';
-    let matchingChordlength = '';
+    let newChordLength = '';
+    let matchingChordLength = '';
     switch(noteOffset){
         case -1:
-            newChordLenght = 'HAVING Count(cn.note) <= ' + notes.length - 1;
+            newChordLength = 'HAVING Count(cn.note) <= ' + notes.length - 1;
             break;
         case 0:
             break;
         case 1:
-            matchingChordlength = 'HAVING count(note) >= ' + notes.length + 1;
+            matchingChordLength = 'HAVING count(note) >= ' + notes.length + 1;
             break;
     };
     let sql = `SELECT
@@ -150,10 +155,10 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
         note IN ("` + notes.join('","') + `")
         group by 
         chord_symbol
-        ` + matchingChordlength + `
+        ` + matchingChordLength + `
     ) ` + category + root + `
     GROUP BY
-    cn.chord_symbol` + newChordLenght;
+    cn.chord_symbol` + newChordLength;
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
