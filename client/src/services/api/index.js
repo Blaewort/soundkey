@@ -1,6 +1,6 @@
 import { Note } from 'chord-expressions';
 
-const urlRoot = "http://localhost:5000/api";
+const urlRoot = "http://localhost:3000/api";
 
 //handle all api requests for the applicatiom
 

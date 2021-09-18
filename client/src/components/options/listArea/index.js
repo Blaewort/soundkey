@@ -37,7 +37,7 @@ class ListArea extends Component {
 
     render () {
         let list;
-        if(this.props.list.map === undefined) {
+        if(this.props.list === undefined) {
             console.log("Invalid Object, Expected object with map function, received: ",this.props.list );
             list = TEMP_ITEMS;
         } else {
