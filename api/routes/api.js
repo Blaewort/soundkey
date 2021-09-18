@@ -12,6 +12,7 @@ router.get('/getChords/', (req,res) => {
 }); 
 
 router.post('/getChords/',async (req,res) => {
+  console.log("in the route");
   let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
   let root = req.body.root ? req.body.root : null;
   let category = req.body.category ? req.body.category : null;

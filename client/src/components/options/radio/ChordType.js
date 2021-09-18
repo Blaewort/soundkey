@@ -8,6 +8,8 @@ import Radio from './index'
         super(props);
     }
 
+    static defaultValue = "Triads";
+
 
     render() {
         const title = "Chord Type";

@@ -43,6 +43,8 @@ class ListArea extends Component {
         } else {
             list = this.props.list;
         }
+
+        //list = TEMP_ITEMS;
         const listItems = list.map((item) => 
             <li key={item.label} onClick={(e) => this.props.handleItemClick(e,item)}>{item.label}</li>
         );

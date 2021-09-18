@@ -87,6 +87,14 @@ class Options extends Component{
                 chord: null,
                 scale: null,
             },
+            //TODO/ New Addition: list
+            list: {
+                chord: {
+                    nav: null,
+                    edit: null,
+                },
+                //TODO: Add settings, scale
+            },
             focus: "chord", // "chord", "scale", "settings", null
             view: {
                 scale: "selected", // "selected", "search", "Navearch"
@@ -98,7 +106,6 @@ class Options extends Component{
                 name: "Guitar",
                 tuning: "EADGBE",
             },
-            list:null
         };
 
         this.onFooterUpdate = this.onFooterUpdate.bind(this);
@@ -201,12 +208,52 @@ class Options extends Component{
     }
 
     toChordNavSearchView() {
-            this.setState((state, props) => {
+        console.log("dfsdfdsfsdfsdfdfddddddddddddd2222");
+            this.setState(async (state, props) => {
+                console.log("dfsdfdsfsdfsdfdfddddddddddddd33333");
+                //TODO? Do we want to honor prior list state (if any) or keep user snapped to the current chord selection?
+                // We currently honor prior list state as it's easier
+
+                // adding static property defaultValue to radios
+                const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
+                console.log("dfsdfdsfsdfsdfdfddddddddddddd44444");
+
+                let chords;
+                try {
+                    chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
+                }
+                catch(err){
+                    console.log(err);
+                    console.log("badddddd");
+                    return;
+                }
+
+                console.log("goodgood");
+
+                console.log("dfsdfdsfsdfsdfdfddddddddddddd");
+                // format list of chords to list data
+                chords = chords.map(chord => {
+                    return {   
+                        "label": chord.name,
+                        "object": chord
+                    };
+                });
+
+                console.log("dfsdfdsfsdfsdfdf");
+
                 return {
                     ...state,
                     view: {
                         ...state.view,
                         chord: "navsearch",
+                    },
+                    //set list to this.state.list.chord.nav
+                    list: {
+                        ...state.list,
+                        chord: {
+                            ...state.list.chord,
+                            nav: [{"label": "hoi"}],
+                        }
                     }
                 }
             });
@@ -641,10 +688,12 @@ class Options extends Component{
 
         let pane;
 
+        console.log("this.state");
+        console.log(this.state);
 
         switch(this.state.focus) {
             case "chord":
-                pane = <ChordScalePane textValue={this.state.textInput.chord} handleToggleClick={this.handleToggleClick} otherSelection={this.state.scale} toggleValue={this.state.toggle.chord} onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} getChords={fapi_getChords} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
+                pane = <ChordScalePane textValue={this.state.textInput.chord} handleToggleClick={this.handleToggleClick} otherSelection={this.state.scale} toggleValue={this.state.toggle.chord} onSearchItemClick={this.onSearchChordItemClick} textSearch={fapi_getChordsFromUserString} searchInputValue={this.state.textInput.chord} onSearchTextChange={this.onChordSearchTextChange} getChordNearbys={fapi_getChordNearbys} navChordList={this.state.list.chord.nav} onNavSearchItemClick={this.onNavSearchChordItemClick} radio={this.state.radio.chord} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.chord} toEditView={this.toChordEditView} toNavView={this.toChordNavSearchView} toSearchView={this.toChordSearchView} view={this.state.view.chord} selection={this.state.chord} onDeselect={this.onChordDeselect} type="chord" />
                 break;
             case "scale":
                 pane = <ChordScalePane textValue={this.state.textInput.scale} handleToggleClick={this.handleToggleClick} otherSelection={this.state.chord} toggleValue={this.state.toggle.scale} onSearchItemClick={this.onSearchScaleItemClick} textSearch={fapi_getScalesFromUserString} searchInputValue={this.state.textInput.scale} onSearchTextChange={this.onScaleSearchTextChange} getScaleNearbys={fapi_getScaleNearbys} noteSelect={this.state.noteSelect.scale} mode={this.state.view.scaleNavSearchMode} getScalesFromModeName={fapi_getScalesFromModeName} onNavSearchItemClick={this.onNavSearchScaleItemClick} onNavSearchModeItemClick={this.onNavSearchModeItemClick} getModes={fapi_getModes} radio={this.state.radio.scale} onRadioUpdate={this.onRadioUpdate} noteSelectHandleClickOutside={this.handleCustomClickOutsideNoteNav} noteSelectOnUpdate={this.onNoteSelectionUpdate} noteSelectHandleCustomClick={this.handleCustomNoteNavSelectClick} noteSelect={this.state.noteSelect.scale} toEditView={this.toScaleEditView} toNavView={this.toScaleNavSearchView} toSearchView={this.toScaleSearchView} view={this.state.view.scale} selection={this.state.scale} onDeselect={this.onScaleDeselect} type="scale" />
@@ -754,10 +803,12 @@ class ChordScalePane extends Component{
                 break;
             case "navsearch":
                 if (this.props.type === "chord") {
-                    this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther)
+                    //this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther);
+
+
                     header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
-                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.list} />;
+                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.navChordList/*this.props.list*/} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
                     if (toggleRequired) {
                         toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;

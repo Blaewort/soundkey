@@ -1,6 +1,6 @@
 import { Note } from 'chord-expressions';
 
-const urlRoot = "localhost:3000/api";
+const urlRoot = "http://localhost:5000/api";
 
 //handle all api requests for the applicatiom
 
@@ -8,6 +8,7 @@ const urlRoot = "localhost:3000/api";
 
 async function postData(url = '', data = {}) {
     // Default options are marked with *
+    console.log("fetch it");
     return fetch(url, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       //mode: 'cors', // no-cors, *cors, same-origin
