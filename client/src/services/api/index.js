@@ -1,6 +1,6 @@
 import { Note } from 'chord-expressions';
 
-const urlRoot = "http://localhost:3000/api";
+const urlRoot = "localhost:3000/api";
 
 //handle all api requests for the applicatiom
 
@@ -85,7 +85,7 @@ async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
  
 function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
-    if(scaleToLimitBy.notes){
+    if(scaleToLimitBy && scaleToLimitBy.notes){
         scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
     }
     return postData(urlRoot + '/getChords/',
