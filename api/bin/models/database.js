@@ -118,9 +118,14 @@ function validateCategoryInput(category){
 // USE user can see chords with added tones
 async function getChords(obj, root = null, category = null, noteOffset = 0) {
     console.log('\n',"GetChords(",obj,",",root,",",category,",",noteOffset,")");
-    let notes = formatLookupInput(obj);
-    validateNotesInput(root);
-    validateCategoryInput(category);
+    let notes = null;
+    try{
+        notes = formatLookupInput(obj);
+        validateNotesInput(root);
+        validateCategoryInput(category);
+    } catch(err){
+        return err;
+    }
     console.log("Validation passed");
     category = category !== null ? 'AND c.category = "' + category + '"':  '';
     root = root !== null ? 'AND c.root_note = "' + root + '"':  '';
@@ -159,11 +164,13 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
     ) ` + category + root + `
     GROUP BY
     cn.chord_symbol` + newChordLength;
+    console.log(sql);
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
         results.push(Chord.chordFromNotation(ele.chord_symbol));
     });
+    console.log(results);
     return results;
 }
  

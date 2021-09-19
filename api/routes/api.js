@@ -16,7 +16,8 @@ router.post('/getChords/',async (req,res) => {
   let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
   let root = req.body.root ? req.body.root : null;
   let category = req.body.category ? req.body.category : null;
-  let notes = req.body;
+  let notes = req.body.notes;
+  console.log("db.getChords(",notes,",",root,",",category,",",maxNotes,")");
   let chords = await db.getChords(notes,root,category,maxNotes);
   res.json(JSON.stringify(chords));
 });

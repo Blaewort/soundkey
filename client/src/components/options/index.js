@@ -231,13 +231,16 @@ class Options extends Component{
                 console.log("goodgood");
 
                 console.log("dfsdfdsfsdfsdfdfddddddddddddd");
+                console.log(chords);
                 // format list of chords to list data
-                chords = chords.map(chord => {
-                    return {   
-                        "label": chord.name,
-                        "object": chord
-                    };
-                });
+                if(chords.map !== undefined){
+                    chords = chords.map(chord => {
+                        return {   
+                            "label": chord.name,
+                            "object": chord
+                        };
+                    });
+               }
 
                 console.log("dfsdfdsfsdfsdfdf");
 
