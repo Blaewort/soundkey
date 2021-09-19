@@ -220,7 +220,9 @@ class Options extends Component{
 
                 let chords;
                 try {
+                    console.log("d");
                     chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
+                    console.log("f");
                 }
                 catch(err){
                     console.log(err);
