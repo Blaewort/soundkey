@@ -8,7 +8,7 @@ import Radio from './index'
         super(props);
     }
 
-    static defaultValue = "Triads";
+    static defaultValue = "Triad";
 
 
     render() {
@@ -16,33 +16,33 @@ import Radio from './index'
         const options = [
             {
                 html: <>3</>,
-                value: "Triads"
+                value: "Triad"
             },
             {
                 html: <>7</>,
-                value: "Seventh Chords"
+                value: "Seven"
             },
             {
                 html: <>9</>,
-                value: "Ninth Chords"
+                value: "Nine"
             },
             {
                 html: <>11</>,
-                value: "Eleventh Chords"
+                value: "Eleven"
             },
             {
                 html: <>13</>,
-                value: "Thirteenth Chords"
+                value: "Thirteen"
             },
             {
                 html: <>6</>,
-                value: "Sixth Chords"
+                value: "Six"
             }
         ];
         //const selectedValue = "Triads";
 
         return (
-            <Radio name={"Chord Type"} onUpdate={this.props.onUpdate} title={title} options={options} selectedValue={this.props.selectedValue || "Triads"} />
+            <Radio name={"Chord Type"} onUpdate={this.props.onUpdate} title={title} options={options} selectedValue={this.props.selectedValue || "Triad"} />
         );
     }
 }

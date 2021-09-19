@@ -811,7 +811,7 @@ class ChordScalePane extends Component{
 
                     header = <NavSearchHeader toSearchView={this.props.toSearchView} focus={this.props.type}/>
                     noteNav = <NoteNav value={this.props.noteSelect.value} label={this.props.noteSelect.label} handleClickOutside={this.props.noteSelectHandleClickOutside} onNoteUpdate={this.props.noteSelectOnUpdate} handleCustomSelectClick={this.props.noteSelectHandleCustomClick} customListIsOpen={this.props.noteSelect.customListIsOpen} name={this.props.type} />;
-                    listArea = <ListArea title={this.props.radio.nav || "Triads"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.navChordList/*this.props.list*/} />;
+                    listArea = <ListArea title={this.props.radio.nav || "Triad"}  handleItemClick={this.props.onNavSearchItemClick} list={this.props.navChordList/*this.props.list*/} />;
                     radio = this.props.type === "chord" ? <ChordTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate} /> : <ScaleTypeRadio selectedValue={this.props.radio.nav} onUpdate={this.props.onRadioUpdate}/>;
                     if (toggleRequired) {
                         toggle = <Toggle handleClick={this.props.handleToggleClick} checked={this.props.toggleValue} title={"Match Scale"} />;

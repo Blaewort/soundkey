@@ -102,7 +102,7 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
 }
 
 function getTriads(noteValue, scaleToLimitBy) {
-    return fapi_getChords(noteValue, "Triads", scaleToLimitBy);
+    return fapi_getChords(noteValue, "Triad", scaleToLimitBy);
 }
 
 function getSixthChords(noteValue, scaleToLimitBy) {
