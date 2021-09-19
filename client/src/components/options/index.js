@@ -210,7 +210,7 @@ class Options extends Component{
     toChordNavSearchView(state) {
         const fetchChords = async (state) => {
             const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
-
+ 
             let chords;
             try {
                 chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
@@ -233,9 +233,9 @@ class Options extends Component{
                 this.setState((state, props) => {
                     //TODO? Do we want to honor prior list state (if any) or keep user snapped to the current chord selection?
                     // We currently honor prior list state as it's easier
-    
+ 
                     // adding static property defaultValue to radios
-    
+ 
                     return {
                         ...state,
                         view: {
@@ -247,7 +247,7 @@ class Options extends Component{
                             ...state.list,
                             chord: {
                                 ...state.list.chord,
-                                nav: [{"label": "hoi"}],
+                                nav: chords,
                             }
                         }
                     }
