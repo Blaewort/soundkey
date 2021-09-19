@@ -207,59 +207,53 @@ class Options extends Component{
         });
     }
 
-    toChordNavSearchView() {
-        console.log("dfsdfdsfsdfsdfdfddddddddddddd2222");
-            this.setState(async (state, props) => {
-                console.log("dfsdfdsfsdfsdfdfddddddddddddd33333");
-                //TODO? Do we want to honor prior list state (if any) or keep user snapped to the current chord selection?
-                // We currently honor prior list state as it's easier
+    toChordNavSearchView(state) {
+        const fetchChords = async (state) => {
+            const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
 
-                // adding static property defaultValue to radios
-                const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
-                console.log("dfsdfdsfsdfsdfdfddddddddddddd44444");
-
-                let chords;
-                try {
-                    chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
-                }
-                catch(err){
-                    console.log(err);
-                    console.log("badddddd");
-                    return;
-                }
-
-                console.log("goodgood");
-
-                console.log("dfsdfdsfsdfsdfdfddddddddddddd");
-                console.log(chords);
-                // format list of chords to list data
-                if(chords.map !== undefined){
-                    chords = chords.map(chord => {
-                        return {   
-                            "label": chord.name,
-                            "object": chord
-                        };
-                    });
-               }
-
-                console.log("dfsdfdsfsdfsdfdf");
-
-                return {
-                    ...state,
-                    view: {
-                        ...state.view,
-                        chord: "navsearch",
-                    },
-                    //set list to this.state.list.chord.nav
-                    list: {
-                        ...state.list,
-                        chord: {
-                            ...state.list.chord,
-                            nav: [{"label": "hoi"}],
+            let chords;
+            try {
+                chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
+            }
+            catch(err){
+                console.log(err);
+                console.log("badddddd");
+                return;
+            }
+            chords = JSON.parse(chords);
+            console.log(chords);
+            if(Array.isArray(chords)){
+                chords = chords.map(chord => {
+                    console.log(chord);
+                    return {   
+                        "label": chord.name,
+                        "object": chord
+                    };
+                });
+                this.setState((state, props) => {
+                    //TODO? Do we want to honor prior list state (if any) or keep user snapped to the current chord selection?
+                    // We currently honor prior list state as it's easier
+    
+                    // adding static property defaultValue to radios
+    
+                    return {
+                        ...state,
+                        view: {
+                            ...state.view,
+                            chord: "navsearch",
+                        },
+                        //set list to this.state.list.chord.nav
+                        list: {
+                            ...state.list,
+                            chord: {
+                                ...state.list.chord,
+                                nav: [{"label": "hoi"}],
+                            }
                         }
                     }
-                }
-            });
+                });
+       }}
+       return fetchChords(this.state);
     }
 
     toScaleNavSearchView() {
