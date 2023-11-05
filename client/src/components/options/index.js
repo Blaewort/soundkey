@@ -631,7 +631,7 @@ class Options extends Component{
                     ...state.textInput,
                     settings: ""
                 },
-                focus: null
+                focus: state.visualizerFocus, //want to snap back to whatever we were viewing. time in settings is done
             };
         });
     }
@@ -644,7 +644,7 @@ class Options extends Component{
                     ...state.instrument,
                     name: item.label
                 },
-                focus: null
+                focus: state.visualizerFocus, //want to snap back to whatever we were viewing. time in settings is done
             };
         });
     }
