@@ -20,7 +20,8 @@ const NOTES_ARRAY = [
 function GuitarFretboard(props) {
     const {tuningNotes, selectedNotes } = props;
     let strings = [];
-    for(var i = 0; i < tuningNotes.length; i++) {
+    //need to go backwards otherwise EADGBE goes top to bottom EBGDAE in the DOM
+    for(var i = tuningNotes.length - 1; i > -1; i--) {
         strings.push(<String key={i} stringNote={tuningNotes[i]} selectedNotes={selectedNotes}/>);
     }
     return strings;

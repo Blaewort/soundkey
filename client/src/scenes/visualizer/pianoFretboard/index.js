@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './styles.css';
+//import './styles.css';  there's a CSS clash between piano and fretboard, need to resolve that
 
 function PianoFretboard(props){
         let tuningNotes = props.tuningNotes ? props.tuningNotes : ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
