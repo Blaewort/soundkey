@@ -15,6 +15,8 @@ const NOTES_ARRAY = [
     "G#"
 ];
 
+//There's no checking that anything we receive is valid, no error handling
+
 function GuitarFretboard(props) {
     const {tuningNotes, selectedNotes } = props;
     let strings = [];

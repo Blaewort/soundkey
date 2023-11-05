@@ -34,6 +34,8 @@ async function fetchSQL(sql){
 
 function formatLookupInput(obj){
     let notes;
+    console.log("obj");
+    console.log(obj);
     try{
         notes = obj.notes ? obj.notes.map(ele => {return ele.name}) : obj;
         validateNotesInput(notes);
@@ -64,6 +66,8 @@ function validateNotesInput(obj){
         "G",
         "G#"
     ];
+    console.log("notes");
+    console.log(notes);
     notes.forEach(note =>{
         if(noteNames.findIndex(name => name === note) === -1){
             console.log("Invalid Note: " + note);
