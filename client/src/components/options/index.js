@@ -453,7 +453,7 @@ class Options extends Component{
         this.setState((state, props) => {
             return {
                 ...state,
-                chord: item.object,
+                chord: item,
                 view: {
                     ...state.view,
                     chord: "selected"

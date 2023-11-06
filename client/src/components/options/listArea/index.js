@@ -39,7 +39,7 @@ class ListArea extends Component {
         let list;
         console.log("_list");
         console.log(list);
-        if(this.props.list === undefined) {
+        if(!this.props.list || !Array.isArray(this.props.list)) { //was this.props.list === undefined
             console.log("Invalid Object, Expected object with map function, received: ",this.props.list );
             list = TEMP_ITEMS;
         } else {

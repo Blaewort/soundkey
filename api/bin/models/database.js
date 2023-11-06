@@ -34,8 +34,7 @@ async function fetchSQL(sql){
 
 function formatLookupInput(obj){
     let notes;
-    console.log("obj");
-    console.log(obj);
+    
     try{
         notes = obj.notes ? obj.notes.map(ele => {return ele.name}) : obj;
         validateNotesInput(notes);
