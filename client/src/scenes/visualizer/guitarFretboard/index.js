@@ -24,7 +24,7 @@ function GuitarFretboard(props) {
     for(var i = tuningNotes.length - 1; i > -1; i--) {
         strings.push(<String key={i} stringNote={tuningNotes[i]} selectedNotes={selectedNotes}/>);
     }
-    return strings;
+    return <div class="guitarFretboard">{strings}</div>;
 }
 
 function String(props) {

@@ -18,6 +18,7 @@ import EditScaleRadio from './radio/EditScale';
 import SettingsRadio from './radio/Settings';
 import Toggle from './toggle/index';
 import GuitarFretboard from '../../scenes/visualizer/guitarFretboard/index';
+import PianoFretboard from '../../scenes/visualizer/pianoFretboard/index';
 
 import { fapi_getModes, 
     fapi_getScalesFromModeName, 
@@ -107,6 +108,7 @@ class Options extends Component{
             instrument: {
                 name: "Guitar",
                 tuning: "EADGBE",
+                pianoOctaves: 2,
             },
         };
 
@@ -748,7 +750,7 @@ class Options extends Component{
 
                 visualizer = {
                     selectedNotes: notes.map((note) => note.label), //str like "E"
-                    instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE")
+                    instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
                 pane = <ChordScalePane visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection} type="chord" />
 
@@ -811,15 +813,9 @@ class Options extends Component{
                 }
                 visualizer = {
                     selectedNotes: notess.map((note) => note.label), //str like "E"
-                    instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE")
+                    instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
                 pane = <ChordScalePane  visualizer={visualizer} modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} type="scale" />
-
-                
-               
-
-                
-                //pane = <ChordScalePane  modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} type="scale" />
                 break;
             case "settings":
                 search = {
@@ -857,7 +853,7 @@ class Options extends Component{
                 }
                 visualizer = {
                     selectedNotes: notesss.map((note) => note.label), //str like "E"
-                    instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE")
+                    instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
 
                 pane = <SettingsPane visualizer={visualizer} instrument={instruments} search={search} tuning={tuning} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" toNavView={this.toSettingsNavView} view={this.state.view.settings} />
@@ -933,7 +929,8 @@ class ChordScalePane extends Component{
 
 
 
-        
+    
+
   
 
         switch(this.props.view) {
@@ -949,6 +946,8 @@ class ChordScalePane extends Component{
 
                     if (this.props.visualizer.instrument.name === "Guitar") {
                         visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    } else if(this.props.visualizer.instrument.name === "Piano") {
+                        visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
 
                     if (searchGets) {
@@ -967,6 +966,8 @@ class ChordScalePane extends Component{
                     
                     if (this.props.visualizer.instrument.name === "Guitar") {
                         visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    } else if(this.props.visualizer.instrument.name === "Piano") {
+                        visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
                    
 
@@ -986,6 +987,8 @@ class ChordScalePane extends Component{
 
                 if (this.props.visualizer.instrument.name === "Guitar") {
                     visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                } else if(this.props.visualizer.instrument.name === "Piano") {
+                    visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                 }
 
                 if (searchGets) {
@@ -1010,6 +1013,8 @@ class ChordScalePane extends Component{
 
                     if (this.props.visualizer.instrument.name === "Guitar") {
                         visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    } else if(this.props.visualizer.instrument.name === "Piano") {
+                        visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
 
                     const noteNavValue = this.props.search.noteSelect.note.value;
@@ -1048,6 +1053,8 @@ class ChordScalePane extends Component{
                     
                     if (this.props.visualizer.instrument.name === "Guitar") {
                         visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    } else if(this.props.visualizer.instrument.name === "Piano") {
+                        visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
 
                     const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, limitByOther);
@@ -1081,6 +1088,8 @@ class ChordScalePane extends Component{
                 
                 if (this.props.visualizer.instrument.name === "Guitar") {
                     visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                } else if(this.props.visualizer.instrument.name === "Piano") {
+                    visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                 }
 
                 const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.nav.mode, limitByOther);
@@ -1097,6 +1106,8 @@ class ChordScalePane extends Component{
 
                 if (this.props.visualizer.instrument.name === "Guitar") {
                     visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                } else if(this.props.visualizer.instrument.name === "Piano") {
+                    visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                 }
 
                 if (this.props.type === "chord") {
@@ -1167,6 +1178,8 @@ class SettingsPane extends Component{
 
             if (this.props.visualizer.instrument.name === "Guitar") {
                 visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+            } else if(this.props.visualizer.instrument.name === "Piano") {
+                visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
             }
 
             radio = <SettingsRadio instrument={this.props.instrument.name} selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
@@ -1196,6 +1209,12 @@ class SettingsPane extends Component{
             header = <TextEnterHeader textValue={textInput} onTextEnterKeyUp={onKeyUp} rightIconClick={rightIconClick} isValidText={isValidTextTuning} onChange={onChange} placeholder={"E,A,D,G,B,E etc"} toNavView={toNavView} />;
             
             radio = <SettingsRadio instrument={this.props.instrument.name} selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
+
+            if (this.props.visualizer.instrument.name === "Guitar") {
+                visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+            } else if(this.props.visualizer.instrument.name === "Piano") {
+                visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+            }
 
         }
 

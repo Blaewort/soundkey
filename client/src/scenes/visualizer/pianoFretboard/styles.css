@@ -11,7 +11,11 @@
     
     box-shadow: inset -1px 0px 11px 0px rgba(0, 0, 0, 0.75);
     
-    padding: 5vw 5vw 0 5vw;
+    /* padding: 5vw 5vw 0 5vw; removed to make left-right black bar case margin symmetrical */
+    padding: 5vw 0vw 0 5vw; /* added to make left-right black bar case margin symmetrical */
+                            /* this setting seems to work for 2 octave piano */
+
+    /* padding: 5vw 3vw 0 5vw; this setting seems to work for 1 octave piano */
     border-radius: 2.03045vw;
     
     /* Unselectable text */
@@ -58,12 +62,21 @@
     box-shadow: -1px 0 0 rgba(255,255,255,0.8) inset, 0 0 5px #ccc inset, 0 0 3px rgba(0,0,0,0.2);
 }
 
-.note {
+/*.note {
     opacity: 0;
     display: inline;
 }
 
 .note.visible {
+    opacity: 100%;
+} removed in fixing CSS clash between guitar and piano*/ 
+
+.keyboard .note { /* updated in fixing CSS clash between guitar and piano*/ 
+    opacity: 0;
+    display: inline;
+}
+
+.keyboard .note.visible { /* updated in fixing CSS clash between guitar and piano*/ 
     opacity: 100%;
 }
 
