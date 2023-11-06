@@ -1137,13 +1137,25 @@ class ChordScalePane extends Component{
 
         return <>
             {header}
+            {noteNav}
+            {listArea}
+            {selectedObject}
+            {visualInstrument}
+            {radio}
+            {toggle}
+
+            
+        </>
+
+        /* return <>
+            {header}
             {visualInstrument}
             {noteNav}
             {listArea}
             {radio}
             {selectedObject}
             {toggle}
-        </>
+        </>  oldvalue, I decided to rearrange */ 
     }
 }
 
@@ -1226,10 +1238,17 @@ class SettingsPane extends Component{
 
         return <>
             {header}
+            {listArea}
+            {visualInstrument}
+            {radio}
+        </>
+
+       /* return <>
+            {header}
             {visualInstrument}
             {listArea}
             {radio}
-        </>
+        </> oldValue rearranging*/
     }
 }
 

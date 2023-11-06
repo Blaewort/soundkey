@@ -54,7 +54,8 @@ function PianoFretboard(props){
 
         // take NOTES_FROM_C and multiply its contents by the number of octaves
         // for some reason if props.octaves === 3 the whole thing breaks (it prints 4 octaves for some reason?)
-        // whatever. all I'm implementing at the moment is 2 octaves becaus it looks natural on any screen size
+        // props.octaves 1 and 2 work
+        // whatever. all I'm implementing at the moment is 2 octaves because it looks natural on any screen size
         let allNotesFromC = NOTES_FROM_C;
         for (let i = 0; i < props.octaves-1; i++) {
             allNotesFromC = allNotesFromC.concat(allNotesFromC);
