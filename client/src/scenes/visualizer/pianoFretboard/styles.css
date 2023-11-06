@@ -71,14 +71,46 @@
     opacity: 100%;
 } removed in fixing CSS clash between guitar and piano*/ 
 
-.keyboard .note { /* updated in fixing CSS clash between guitar and piano*/ 
+/*.keyboard .note { 
     opacity: 0;
     display: inline;
+
+    line-height: initial;
+    border-radius: 50%;
+    width: 24px;
+    background-color: rgb(209, 129, 14);
+    height: 22px;
+    line-height: 22px;
+    text-shadow: 0px 1px 2px rgb(68, 68, 68);
+    box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.75);
+    color:white;
+} for some reason I had to edit this to get the markers on piano working */ 
+
+.keyboard .note {
+    opacity: 0;
+    display:block;
+    line-height: initial;
+    border-radius: 50%;
+    width: 18px;
+    background-color: rgb(209, 129, 14);
+    height: 18px;
+    line-height: 18px;
+    text-shadow: 0px 1px 2px rgb(68, 68, 68);
+    box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.75);
+    color: white;
+    top: 70%;
+    bottom: "100%";
+    position: relative;
+    text-align: center;
+    font-size: 12px;
+    margin: 0 auto;
 }
 
 .keyboard .note.visible { /* updated in fixing CSS clash between guitar and piano*/ 
     opacity: 100%;
 }
+
+
 
 .key.black .keyboardNote {
     position: absolute;
@@ -147,4 +179,8 @@
 }
 .key.white.threeOctave .keyboardNote {
     margin-left: 6%;
+}
+
+.key.white .note{
+    top:80%;
 }
