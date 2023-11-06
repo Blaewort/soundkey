@@ -88,9 +88,7 @@
   
   /* _END_ Note Nav */
   
-  
-  
-  
+
   
   
   .note_navigator .select-items {
@@ -101,9 +99,10 @@
       top: 100%;
       right: 0;
       z-index: 99;
-      //width: 95px;
+      /*width: 95px;*/
       width: 100%;
       text-align:center;
+      z-index: 50000000000000000;
   }
   
   

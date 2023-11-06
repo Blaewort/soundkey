@@ -728,7 +728,8 @@ class Options extends Component{
                         handleClickOutside: this.handleCustomClickOutsideNoteNav,
                         onUpdate: this.onNoteSelectionUpdate,
                         handleCustomClick: this.handleCustomNoteNavSelectClick,
-                        note: this.state.noteSelect.chord
+                        note: this.state.noteSelect.chord,
+                        customListIsOpen: this.state.noteSelect.chord.customListIsOpen,
                     }
                 };
                 viewSwitch = {
@@ -786,7 +787,8 @@ class Options extends Component{
                         handleClickOutside: this.handleCustomClickOutsideNoteNav,
                         onUpdate: this.onNoteSelectionUpdate,
                         handleCustomClick: this.handleCustomNoteNavSelectClick,
-                        note: this.state.noteSelect.scale
+                        note: this.state.noteSelect.scale,
+                        customListIsOpen: this.state.noteSelect.scale.customListIsOpen,
                     }
                 };
                 viewSwitch = {
