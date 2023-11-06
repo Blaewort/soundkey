@@ -1083,7 +1083,7 @@ class ChordScalePane extends Component{
                     }
 
                     const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, limitByOther);
-                    const itemClick = this.props.search.nav.onItemClick;
+                    const itemClick = this.props.search.nav.onScaleItemClick;
                     listArea = <ListArea title={"Scale Groups"} handleItemClick={itemClick} list={list} />;
 
                     const radioValue = this.props.radio.nav;
