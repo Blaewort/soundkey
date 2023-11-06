@@ -949,7 +949,7 @@ class ChordScalePane extends Component{
         let visualInstrument;
 
         const limitByOther = this.props.toggle.value === true ? this.props.otherSelection : null;
-        const searchGets = this.props.search.text.get(this.props.search.text.input, limitByOther);
+        const searchGets = this.props.search.text.input && this.props.search.text.get(this.props.search.text.input, limitByOther);
         const toggleRequired = this.props.selection.secondary;
 
 
