@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node --inspect ./bin/www",
+    "build": "node ./bin/models/databaseBuilder",
     "test": "npx jasmine spec/tests/*Spec.mjs"
   },
   "dependencies": {

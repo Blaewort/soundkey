@@ -67,7 +67,7 @@
     display: inline;
 }
 
-.note.visible {
+.keyboardNote.visible {
     opacity: 100%;
 } removed in fixing CSS clash between guitar and piano*/ 
 
@@ -80,7 +80,7 @@
     opacity: 100%;
 }
 
-.key.black .note {
+.key.black .keyboardNote {
     position: absolute;
     bottom: 10%;
     height: 2.5vw;
@@ -96,7 +96,7 @@
 
 }
 
-.key.white .note {
+.key.white .keyboardNote {
     position: absolute;
     bottom: 10%;
     margin: 0 auto;
@@ -132,7 +132,7 @@
 .key.white.twoOctave.left {
     margin:0 0 0 -3.7%;
 }
-.key.white.twoOctave .note {
+.key.white.twoOctave .keyboardNote {
     margin-left: 25%;
 }
 
@@ -145,6 +145,6 @@
 .key.white.threeOctave.left {
     margin:0 0 0 -4.2%;
 }
-.key.white.threeOctave .note {
+.key.white.threeOctave .keyboardNote {
     margin-left: 6%;
 }

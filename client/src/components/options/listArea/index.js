@@ -45,6 +45,7 @@ class ListArea extends Component {
         } else {
             list = this.props.list;
         }
+        console.log(list);
 
         //list = TEMP_ITEMS;
         console.log("list");

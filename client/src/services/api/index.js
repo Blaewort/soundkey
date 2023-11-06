@@ -9,7 +9,7 @@ const urlRoot = "http://localhost:5000/api";
 async function postData(url = '', data = {}) {
     // Default options are marked with *
     console.log("fetch it");
-    return fetch(url, {
+    return await fetch(url, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       //mode: 'cors', // no-cors, *cors, same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -268,9 +268,20 @@ function fapi_isValidTextTuning(str, instrument) {
 
 }
 
-function fapi_getChordsFromUserString(str, scaleToLimitBy) {
-    if (!str || str === "") {return null;} 
-
+async function fapi_getChordsFromUserString(string, scaleToLimitBy) {
+    console.log("fapi_getChordsFromUserString");
+    console.log("String: " + string);
+    if (!string || string === "") {return null;} 
+    return await postData(urlRoot + '/getChords/fromStrings/',
+    {
+        string: string
+    }
+    ).then(response => {
+        return response.json();
+    }).catch((error) => {
+        console.error('Error:', error);
+      });;
+    /*
     //not a real solution
     return [
         {
@@ -290,6 +301,7 @@ function fapi_getChordsFromUserString(str, scaleToLimitBy) {
             name: "B Seven"
         },
     ];
+    */
 
 }
 

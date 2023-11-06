@@ -30,8 +30,6 @@ function saveChordAndAlterations(chord) {
 
     saveToChordTable(chord);
     saveToChordNoteTable(chord);
-
-    
     if (chord.alteredChords.mod) {
         chord.alteredChords.mod.forEach(alteredChord => saveChordAndAlterations(alteredChord));
     }
@@ -44,25 +42,38 @@ function saveChordAndAlterations(chord) {
 
 function saveChords() {
     const chords = chordExp.generateChords();
+    let chordsCount = 0;
     chords.forEach(chord =>{
         saveChordAndAlterations(chord);
+        chordsCount = chordsCount+1;
+        process.stdout.write("Chords Completed: " +  chordsCount + '\r');
     });
+    process.stdout.write("\n");
 }
 
 function saveScales() {
     const scales = chordExp.generateScales();
-
+    let scalesCount = 0;
     scales.forEach(element =>{
         let sql = "INSERT IGNORE INTO scales (scale_name, scale_mode, root_note) VALUES(?,?,?)"
         con.query(sql,[element.scaleName, element.modeName, element.rootNote.name ] , function(err,result){
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+                throw err;
+            }
         });
         element.notes.forEach(note => {
             con.query("INSERT IGNORE INTO scale_has_note (scale_name,scale_mode ,root_note, note) VALUES(?,?,?,?)", [element.scaleName ,element.modeName, element.rootNote.name , note.name ], function(err,result){
-                if (err) throw err;
+                if (err) {
+                    console.log(err);
+                    throw err;
+                }
             });
         });
+        scalesCount = scalesCount+1;
+        process.stdout.write("Scales Completed: " +  scalesCount + '\r');
     });
+    process.stdout.write('\n');
 }
 
 console.log(dbSettings);
@@ -89,14 +100,12 @@ con.connect(function(err) {
     });
     con.query("INSERT IGNORE INTO notes(note) VALUES ('A'),('B'),('C'),('D'),('E'),('F'),('G'),('Ab'),('Bb'),('Cb'),('Db'),('Eb'),('Fb'),('Gb'),('A#'),('B#'),('C#'),('D#'),('E#'),('F#'),('G#')", function (err, result) {
         if (err) throw err;
-        console.log("pupulate notes table");
+        console.log("populate notes table");
     });
     con.query("CREATE TABLE IF NOT EXISTS chord_has_note (chord_symbol VARCHAR(255), root_note VARCHAR(255), note VARCHAR(255), PRIMARY KEY (chord_symbol, root_note, note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
         if (err) throw err;
         console.log("chord has notes table created");
     });
-
-    saveChords();
 
     con.query("CREATE TABLE IF NOT EXISTS scales (scale_name VARCHAR(255), scale_mode VARCHAR(255), root_note VARCHAR(255) ,PRIMARY KEY (scale_name,root_note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
         if (err) throw err;
@@ -106,7 +115,7 @@ con.connect(function(err) {
         if (err) throw err;
         console.log("scale has notes table created");
     });
-
+    saveChords();
     saveScales();
     
   });

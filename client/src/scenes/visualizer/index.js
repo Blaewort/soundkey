@@ -4,40 +4,40 @@ import Content from '../../components/content/index';
 import GuitarFretboard from './guitarFretboard/index';
 import {useParams} from 'react-router-dom';
 import { fetchChord } from '../../services/api/index';
-//import { Chord } from 'chord-expressions';
+import { Chord } from 'chord-expressions';
 import PianoFretboard from './pianoFretboard/index';
 
 
 
 function Visualizer(props) {
-    return null;
-    return null;
-    /*
-    let notation = useParams().notation;
-    let instrument = useParams().instrument
-    //let chord = Chord.chordFromNotation(notation);
     let notes = [];
-    chord.notes.forEach(note =>{
-        notes.push(note.name);
-    });
-
-    let instrumentVisualizer;
-    if(instrument === "guitar"){
-        instrumentVisualizer = <GuitarFretboard tuningNotes={["E","B","G","D","A","E"]} selectedNotes={ notes }/>;
-    } else if(instrument === "piano"){
-        instrumentVisualizer = <PianoFretboard tuningNotes={["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]} selectedNotes={ notes }></PianoFretboard>
+    const {selection, instrument} = props;
+    console.log("Selection");
+    console.log(selection);
+    if (selection != null){
+    selection.notes.forEach(note =>{
+        //TODO this is a hack. The ChordScalePanel sometimes gives an array of note objects with the string name in a label field and sometimes i's in a name field. This should be made consistent.
+        console.log(note);
+        if(note.name !== undefined){
+            notes.push(note.name);
+        } else {
+            notes.push(note.label)
+        }
+        });
     }
-    console.log(notes);
+    let instrumentVisualizer;
 
-
+    if(instrument.name === "Guitar"){
+        instrumentVisualizer =  <GuitarFretboard tuningNotes={instrument.tuning} selectedNotes={ notes }/>;
+    } else if(instrument.name === "Piano"){
+        instrumentVisualizer = <PianoFretboard tuningNotes={instrument.tuning} selectedNotes={ notes }/>;
+    }
+    
     return (
-        <div>
-            <Sidebar/>
-            <Content>
+        <Content>
                 {instrumentVisualizer}
-            </Content>
-        </div>
-    );*/
+        </Content>
+    );
   }
   
   export default Visualizer;

@@ -1,8 +1,8 @@
-var express = require("express");
+const express = require("express");
 const { ConsoleReporter } = require("jasmine");
-var db = require("../bin/models/database");
-var router = express.Router();
-
+const db = require("../bin/models/database");
+const router = express.Router();
+const chordExpressions =  require('chord-expressions');
 console.log("Load API Router");
 
 
@@ -10,6 +10,13 @@ router.get('/getChords/', (req,res) => {
   console.log("Get Chords");
   res.send('chords');
 }); 
+
+router.post('/getChords/fromStrings/' ,(req,res) => {
+  console.log(req.body);
+  let chords = chordExpressions.Chord.chordFromNotation(req.body.string);
+  console.log(chords);
+  res.send(JSON.stringify(chords));
+});
 
 router.post('/getChords/',async (req,res) => {
   console.log("in the route");

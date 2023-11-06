@@ -448,11 +448,12 @@ class Options extends Component{
 
         //convert from {label: ddd} to {item.name}
         //const newItem = {name: item.name};
-
+        console.log("onNavSearchChordItemClick");
+        console.log(item);
         this.setState((state, props) => {
             return {
                 ...state,
-                chord: item,
+                chord: item.object,
                 view: {
                     ...state.view,
                     chord: "selected"
@@ -465,8 +466,7 @@ class Options extends Component{
 
     onNavSearchModeItemClick(e, item) {
         // click scale item to select
-
-
+        console.log("onNavSearchModeItemClick");
         this.setState((state, props) => {
             return {
                 ...state,
@@ -562,6 +562,8 @@ class Options extends Component{
     onSearchScaleItemClick(e, item) {
         // click from a scale navsearch menu (list of modes)
         // should open menu for mode where items are scales to select
+        console.log("onSearchScaleItemClick");
+        console.log(item);
       
         
         this.setState((state, props) => {
@@ -587,12 +589,15 @@ class Options extends Component{
         // click chord item to select
 
         //convert from {label: ddd} to {item.name}
+        console.log("onSearchChordItemClick");
+        console.log(item);
+
         const newItem = {name: item.name};
 
         this.setState((state, props) => {
             return {
                 ...state,
-                chord: item,
+                chord: item.object,
                 view: {
                     ...state.view,
                     chord: "selected"
@@ -867,6 +872,7 @@ class Options extends Component{
         return (
             <div className="options">
                     {pane}
+
                     <Footer onUpdate={this.onFooterUpdate} selectedValue={this.state.focus} />
             </div>
         );
@@ -898,6 +904,24 @@ class ChordScalePane extends Component{
     constructor(props) {
         super(props);
         this.getPlaceholder = this.getPlaceholder.bind(this);
+        this.state = {searchGets: null};
+    }
+
+    async componentDidUpdate(prevProps){
+        console.log("componentDidUpdate");
+        console.log(this.props.searchInputValue);
+        console.log(prevProps.searchInputValue);
+        console.log(this.props.view);
+        if( this.props.view === "search" &&this.props.searchInputValue !== prevProps.searchInputValue){
+            let chord = await fapi_getChordsFromUserString(this.props.searchInputValue);
+            console.log(chord);
+            this.setState((state,props) => {
+                return {searchGets: [{
+                    label: chord.name,
+                    object: chord
+                }]};
+            });
+        }
     }
 
     getPlaceholder() {
@@ -912,6 +936,7 @@ class ChordScalePane extends Component{
                 throw TypeError("props.type is not 'scale' or 'chord'");
         }
     }
+
 
     render() {
         const placeholder = this.getPlaceholder();
@@ -1134,7 +1159,7 @@ class ChordScalePane extends Component{
             default:
                 throw new TypeError("this.props.view (" + this.props.view +  " ) is not valid");
         }
-
+        console.log(this.props);
         return <>
             {header}
             {noteNav}

@@ -42,7 +42,6 @@ function String(props) {
          <Fret note={notes[i]} key={i} notePosition={i} selected={selected}/>
        );
       }
-      
     return <ul className="string"> {frets} </ul>;
 }
 
@@ -53,7 +52,7 @@ function Fret(props) {
            <div className="fret">
            {notePosition > 0 && <div className="string-line"></div> }
            {notePosition === 0 && <div className="nut"></div>}
-             <div className="note">
+             <div className="guitarNote">
              {selected ? <span className="marker">{note}</span>: <span className="marker hide">{note}</span>}
              </div>
            </div>
