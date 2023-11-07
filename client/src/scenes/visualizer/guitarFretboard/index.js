@@ -50,7 +50,6 @@ function Fret(props) {
   	return (
     		 <li className="fret-wrapper">
            <div className="fret">
-           {notePosition > 0 && <div className="string-line"></div> }
            {notePosition === 0 && <div className="nut"></div>}
              <div className="guitarNote">
              {selected ? <span className="marker">{note}</span>: <span className="marker hide">{note}</span>}
@@ -58,6 +57,6 @@ function Fret(props) {
            </div>
         </li>
     );
-}
+}/* {notePosition > 0 && <div className="string-line"></div> } */
 
 export default GuitarFretboard
