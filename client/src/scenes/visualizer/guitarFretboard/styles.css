@@ -209,4 +209,8 @@ li.fret-wrapper:first-child .marker {
     border-top: solid #55534f 1px; 
 }
 
+/* make bottom string big */
+.string:last-child .fret-wrapper:nth-child(n+2) .fret::before {
+    border-top: solid #958963 2px;
+}
 
