@@ -125,7 +125,7 @@
 
 
 .fret-wrapper:first-child {
-  flex: 9;
+   flex: 9;
 }
 
 
@@ -181,6 +181,7 @@ li.fret-wrapper:first-child .marker {
     width: 10px;
     border: 14px;
     background-color: white;
+    background-color: #ddd3d3;
     content: "";
     right: calc(50% - 4px);
     margin: 0 auto;
@@ -214,3 +215,22 @@ li.fret-wrapper:first-child .marker {
     border-top: solid #958963 2px;
 }
 
+
+/* idea for staggering the frets a bit like how fret size on a real guitar gets smaller the further you go */
+
+/*
+.fret-wrapper:first-child {
+    flex: 13
+}
+.fret-wrapper:nth-child(n+2):nth-child(-n+5) {
+    flex: 20;
+}
+.fret-wrapper:nth-child(n+6):nth-child(-n+9) {
+    flex: 17;
+}
+.fret-wrapper:nth-child(n+10):nth-child(-n+12) {
+    flex: 16;
+}
+.fret-wrapper:last-child {
+    flex: 14;
+}  */
