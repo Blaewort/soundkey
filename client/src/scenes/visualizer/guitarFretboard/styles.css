@@ -35,7 +35,8 @@
     position: relative;
 }
 
-.fret-wrapper:first-child .nut {
+.fret-wrapper:first-child .fret::before { /* nut */
+    content: "";
     position: absolute;
         background-color: rgb(156, 156, 156);
     /* left: 36px; */
