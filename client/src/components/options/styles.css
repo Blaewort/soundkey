@@ -3,7 +3,28 @@ body {
     background-color: #dce1e1;
 }
 
-/*body,html {
+/* so we can use height: 100vh/100dvh on main options container  */
+body,html {
     margin: 0;
     padding: 0;
-}*/
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;  /* need both values because */
+    height: 100dvh; /* if browser doesn't support dvh, will fallback to vh above */
+}
+
+.top-controls {
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.bottom-controls {
+    margin-bottom: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+}

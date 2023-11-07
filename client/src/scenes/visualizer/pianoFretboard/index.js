@@ -72,9 +72,9 @@ function PianoFretboard(props){
             }
             return <li key={index} className={classStr}>{noteHTML}</li> 
         });
-        return (<ul className="keyboard">
+        return (<div class="piano-container"><ul className="keyboard">
             {keys}    
-        </ul> );
+        </ul></div> );
 }
 
 

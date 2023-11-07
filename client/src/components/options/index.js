@@ -704,6 +704,7 @@ class Options extends Component{
         let radio;
         let selection;
         let visualizer;
+        let footer;
 
         //this.state.focus refers to whether the musicViewManager (visualInstrumentManager)? is in chord, scale, settings, or null state
         //NOT whether the visualizer is focused on a single chord or scale
@@ -748,6 +749,11 @@ class Options extends Component{
                     getNearbys: fapi_getChordNearbys,
                 };
 
+                footer = {
+                    onUpdate: this.onFooterUpdate,
+                    selectedValue: this.state.focus,
+                };
+
                 //add visual for fretboard,piano
                 let notes = [];
                 if (this.state.chord && Array.isArray(this.state.chord.notes)) {
@@ -758,7 +764,7 @@ class Options extends Component{
                     selectedNotes: notes.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                pane = <ChordScalePane visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection} type="chord" />
+                pane = <ChordScalePane footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection} type="chord" />
 
                 
                 
@@ -811,6 +817,11 @@ class Options extends Component{
                     get: fapi_getModes,
                 };
 
+                footer = {
+                    onUpdate: this.onFooterUpdate,
+                    selectedValue: this.state.focus,
+                };
+
                
 
                 //add visual for fretboard,piano
@@ -822,7 +833,7 @@ class Options extends Component{
                     selectedNotes: notess.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                pane = <ChordScalePane  visualizer={visualizer} modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} type="scale" />
+                pane = <ChordScalePane footer={footer} visualizer={visualizer} modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} type="scale" />
                 break;
             case "settings":
                 search = {
@@ -853,6 +864,11 @@ class Options extends Component{
                     getAll: fapi_getInstruments
                 };
 
+                footer = {
+                    onUpdate: this.onFooterUpdate,
+                    selectedValue: this.state.focus,
+                };
+
                 //add visual for fretboard,piano
                 let notesss = [];
                 if (this.state[this.state.visualizerFocus] && Array.isArray(this.state[this.state.visualizerFocus].notes)) {
@@ -863,10 +879,14 @@ class Options extends Component{
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
 
-                pane = <SettingsPane visualizer={visualizer} instrument={instruments} search={search} tuning={tuning} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" toNavView={this.toSettingsNavView} view={this.state.view.settings} />
+                pane = <SettingsPane footer={footer} visualizer={visualizer} instrument={instruments} search={search} tuning={tuning} radioValue={this.state.radio.settings} onRadioUpdate={this.onRadioUpdate} type="settings" toNavView={this.toSettingsNavView} view={this.state.view.settings} />
                 break;
             case null:
-                pane = <NoFocusPane />;
+                footer = {
+                    onUpdate: this.onFooterUpdate,
+                    selectedValue: this.state.focus,
+                };
+                pane = <NoFocusPane footer={footer} />;
                 break;
             default:
                 throw new Error("state.focus not a valid option");
@@ -875,7 +895,8 @@ class Options extends Component{
             <div className="options">
                     {pane}
 
-                    <Footer onUpdate={this.onFooterUpdate} selectedValue={this.state.focus} />
+                    
+
             </div>
         );
   }
@@ -949,6 +970,7 @@ class ChordScalePane extends Component{
         let listArea;
         let toggle;
         let visualInstrument;
+        let footer;
 
         const limitByOther = this.props.toggle.value === true ? this.props.otherSelection : null;
         const searchGets = this.props.search.text.input && this.props.search.text.get(this.props.search.text.input, limitByOther);
@@ -986,6 +1008,8 @@ class ChordScalePane extends Component{
                         toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={"Match Scale"} />;
                     }
 
+                    footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+
                 } else {
 
                     header = <SelectedObjectHeader toNavView={this.props.viewSwitch.toNav} toSearchView={this.props.viewSwitch.toSearch} /> ;
@@ -1002,6 +1026,8 @@ class ChordScalePane extends Component{
                     const onDeselect = this.props.selection.onDeselect;
                     const label = this.props.selection.primary.name;
                     selectedObject = <SelectedObject onEditRequest={toEdit} onDeselect={onDeselect} label={label}/>;
+
+                    footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
                 }
                 break;
@@ -1026,6 +1052,8 @@ class ChordScalePane extends Component{
                 if (toggleRequired) {
                     toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={"Match Scale"} />;
                 }
+
+                footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
                 break;
 
@@ -1065,6 +1093,8 @@ class ChordScalePane extends Component{
                         toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={"Match Scale"} />;
                     }
 
+                    footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+
                 } else if (this.props.type === "scale") {
 
                     // need to make it a mode list that links to other lists
@@ -1096,6 +1126,8 @@ class ChordScalePane extends Component{
                         toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={"Match Chord"}/>;
                     }
 
+                    footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+
                 }
                 
                 break;
@@ -1122,6 +1154,8 @@ class ChordScalePane extends Component{
                 const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.nav.mode, limitByOther);
                 const itemClick = this.props.search.nav.onItemClick;
                 listArea = <ListArea title={this.props.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
+
+                footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
                 break;   
             case "edit":
@@ -1157,32 +1191,29 @@ class ChordScalePane extends Component{
 
                 }
 
+                footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+
                 break;
             default:
                 throw new TypeError("this.props.view (" + this.props.view +  " ) is not valid");
         }
         console.log(this.props);
         return <>
-            {header}
-            {noteNav}
-            {listArea}
-            {selectedObject}
+            <div class="top-controls">
+                {header}
+                {noteNav}
+                {listArea}
+                {selectedObject}
+            </div>
             {visualInstrument}
-            {radio}
-            {toggle}
+            <div class="bottom-controls">
+                {radio}
+                {toggle}
+                {footer}
+            </div>
 
             
         </>
-
-        /* return <>
-            {header}
-            {visualInstrument}
-            {noteNav}
-            {listArea}
-            {radio}
-            {selectedObject}
-            {toggle}
-        </>  oldvalue, I decided to rearrange */ 
     }
 }
 
@@ -1206,6 +1237,7 @@ class SettingsPane extends Component{
         let header;
         let radio;
         let visualInstrument;
+        let footer;
 
         
 
@@ -1237,6 +1269,8 @@ class SettingsPane extends Component{
 
             }
 
+            footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+
         } else { // "textEnter" and "Tunings"
 
             const isValidTextTuning = this.props.tuning.isValidTextTuning(this.props.tuning.textInput);
@@ -1255,6 +1289,8 @@ class SettingsPane extends Component{
                 visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
             }
 
+            footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+
         }
 
 
@@ -1264,18 +1300,17 @@ class SettingsPane extends Component{
 
 
         return <>
-            {header}
-            {listArea}
+            <div class="top-controls">
+                {header}
+                {listArea}
+            </div>
             {visualInstrument}
-            {radio}
+            <div class="bottom-controls">
+                {radio}
+                {footer}
+            </div>
+            
         </>
-
-       /* return <>
-            {header}
-            {visualInstrument}
-            {listArea}
-            {radio}
-        </> oldValue rearranging*/
     }
 }
 
@@ -1295,9 +1330,15 @@ class NoFocusPane extends Component{
 
     render() {
         const header = <Header engaged={false} leftIcon="logo" />;
+        const footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
         return <>
-            {header}
+            <div class="top-controls">
+                {header}
+            </div>
+            <div class="bottom-controls">
+                {footer}
+            </div>
         </>
     }
 }
