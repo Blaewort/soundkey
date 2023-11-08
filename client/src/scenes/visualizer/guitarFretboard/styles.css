@@ -20,6 +20,7 @@
     -webkit-flex-flow: row wrap;
     justify-content: space-around;
     max-width: 904px;
+    max-width: 1138px;
 }
 
 .fret-wrapper {
@@ -244,6 +245,12 @@ li.fret-wrapper:first-child .marker {
 
 
 }  */
+
+@media screen and (min-width: 1075px) {
+    .fret-wrapper {
+       height: 26px;
+    }
+}
 
 @media screen and (min-width: 580px) { /* My phone in portrait is 414px */
     /* body {
