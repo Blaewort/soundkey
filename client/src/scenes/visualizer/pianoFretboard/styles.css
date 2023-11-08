@@ -149,9 +149,7 @@
 
 }
 
-.key.black .note { /* turn this intoa  media query, for some reason the note marker isnt centered when the width of .key.black is so low */
-     right: 2px; 
-}
+
 
 .key.white .keyboardNote {
     position: absolute;
@@ -209,4 +207,18 @@
 
 .key.white .note{
     top:80%;
+}
+
+
+
+@media screen and (max-width: 420px) {
+    .key.black .note { /* for some reason the note marker isnt centered when the width of .key.black is so low */
+        right: 2px; 
+    }
+}
+
+@media screen and (min-width: 421px) and (max-width: 520px) {
+    .key.black .note { /* for some reason the note marker isnt centered when the width of .key.black is so low. on max-width 521px we can abandon */
+        right: 1px; 
+    }
 }
