@@ -19,6 +19,7 @@
     flex-flow: row wrap;
     -webkit-flex-flow: row wrap;
     justify-content: space-around;
+    max-width: 904px;
 }
 
 .fret-wrapper {
@@ -33,6 +34,7 @@
     text-align: center;
     flex:12;
     position: relative;
+    
 }
 
 .fret-wrapper:first-child .fret::before { /* nut */
@@ -127,6 +129,7 @@
 
 .fret-wrapper:first-child {
    flex: 9;
+   max-width: 34px;
 }
 
 
@@ -234,4 +237,114 @@ li.fret-wrapper:first-child .marker {
 }
 .fret-wrapper:last-child {
     flex: 14;
+
+
+
+
+
+
 }  */
+
+@media screen and (min-width: 580px) { /* My phone in portrait is 414px */
+    /* body {
+        background-color: cyan;
+      }       background-color quick visual debugging */
+
+   li.fret-wrapper:first-child .marker {
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 10px;
+        right: 1px;
+    }
+
+    .marker {
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 11px;
+    }
+}
+
+/* 440px-579px is the normal CSS rules */
+
+@media screen and (min-width: 400px) and (max-width: 439px) { /* My phone in portrait is 414px */
+    /* body {
+        background-color: orange;
+      } */
+
+    .fret-wrapper {
+        height: 20px;
+      }
+
+    li.fret-wrapper:first-child .marker {
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        font-size: 9px;
+    }
+}
+
+@media screen and (min-width: 371px) and (max-width: 399px) {
+    /* body {
+      background-color: lightgreen;
+    } */
+    
+    .fret-wrapper {
+        height: 18px;
+    }
+
+    
+}
+
+@media screen and (max-width: 399px) {
+    .marker {
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        font-size: 8px;
+    }
+}
+
+@media screen and (max-width: 399px) {
+    li.fret-wrapper:first-child .marker {
+        width: 12px;
+        font-size: 12px;
+        font-size: 9px;
+        height: 12px;
+        line-height: 12px;
+  }
+}
+
+
+@media screen and (min-width: 351px) and (max-width: 370px) {
+    /* body {
+      background-color: lightblue;
+    } */
+
+    .fret-wrapper {
+        height: 18px;
+    }
+
+    li.fret-wrapper:first-child .marker {
+        right: 3px;
+  }
+}
+
+/* the fretboard starts to fall apart less than 320px which seems about right for the minimum size */
+@media screen and (max-width: 350px) {
+    /* body {
+      background-color: crimson;
+    } */
+
+    .fret-wrapper {
+        height: 18px;
+    }
+
+    li.fret-wrapper:first-child .marker {
+        right: 4px;
+  }
+
+  
+  
+}
