@@ -272,6 +272,36 @@ li.fret-wrapper:first-child .marker {
     }
 }
 
+/* max-height:318px* */
+@media screen and (min-width: 1075px) and (max-height:318px) { 
+    .guitarFretboard {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 1075px) and (max-height:370px) { 
+
+    .object_selection {
+        height: 34px;
+    }
+
+}
+
+@media screen and (min-width: 440px) and (max-width: 1074px) and (max-height: 294px) {
+    
+    .guitarFretboard {
+        display: none;
+    }
+}
+
+@media screen  and (max-width: 1074px) and (max-height: 340px) {
+    
+    .object_selection {
+        height: 34px;
+    }
+}
+
+
 /* 440px-579px is the normal CSS rules */
 
 @media screen and (min-width: 400px) and (max-width: 439px) { /* My phone in portrait is 414px */
