@@ -323,3 +323,10 @@
    }
 
 }
+
+@media screen  /* and (max-width: 1074px)*/ and (max-height: 375px) {
+    
+    .object_selection {
+        height: 34px;
+    }
+}
