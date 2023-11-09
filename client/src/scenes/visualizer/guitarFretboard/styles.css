@@ -380,7 +380,82 @@ li.fret-wrapper:first-child .marker {
     li.fret-wrapper:first-child .marker {
         right: 4px;
   }
-
-  
-  
 }
+
+
+
+/* the part where I make the guitar invisible when height gets too small (landscape stuff really) */
+.guitarFretboard.with-list.with-radio.with-toggle.with-notenav{
+    /* most strict: has list, radio, toggle, and notenav*/
+    @media screen and (max-height: 627px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 618px) and (min-width: 400px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 580px) and (min-width: 320px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
+.guitarFretboard.with-list.with-toggle {
+    /* has list and toggle */
+
+    @media screen and (max-height: 484px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 460px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 448px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 433px) and (min-width: 320px) and (max-width: 399px) {
+        display: none;
+    }
+
+}
+
+.guitarFretboard.with-list.with-radio {
+    /* has list and radio (settings)) list assumed to be 4+ items*/
+    @media screen and (max-height: 535px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 510px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 498px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 484px) and (min-width: 320px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
+/* There's no situation where a list would have a radio and a notenav with no toggle, so no selector for it*/
+
+.guitarFretboard.with-list.with-radio.with-toggle {
+    /* has list, radio, and toggle */ /* I dont think this combo ever actually happens */
+
+}
+
+.guitarFretboard.with-list.with-notenav.with-toggle {
+    /* has list, notenav, and toggle */ /*  I dont think this ever happens either */
+
+}
+
+.guitarFretboard.with-toggle {
+    /* only toggle at least for guitar is too small to do anything 320px height can view the page easy*/
+
+}
+
+
+

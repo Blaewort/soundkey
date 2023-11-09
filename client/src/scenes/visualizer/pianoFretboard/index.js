@@ -71,7 +71,8 @@ function PianoFretboard(props){
             }
             return <li key={index} className={classStr}>{noteHTML}</li> 
         });
-        return (<div class="piano-container"><ul className="keyboard">
+        const fullClassName = "piano-container ".concat(props.extraClassString);
+        return (<div class={fullClassName}><ul className="keyboard">
             {keys}    
         </ul></div> );
 }
