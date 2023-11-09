@@ -306,7 +306,27 @@
 
 }
 
-@media screen and (min-width: 474px ) and (min-height: 320px) and (max-height: 500px) {
+@media screen and (min-width: 474px ) and (min-height: 336px) and (max-height: 500px) {
+    /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
+   .keyboard {
+    
+      max-height: 166px;
+      max-width: 533px; 
+      padding-left: 25px;
+      padding-right: 25px;
+      padding-top: 25px; 
+   }
+   
+   .key.black {
+    max-height: 85px;
+   }
+   .key.white {
+    max-height: 143px;
+   } 
+
+}
+
+@media screen and (min-width: 474px ) and (min-height: 320px) and (max-height: 335px) {
     /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
    .keyboard {
       max-height: 138px;
@@ -328,5 +348,97 @@
     
     .object_selection {
         height: 34px;
+    }
+}
+
+@media screen and (min-height:0px) and (max-height:319px) { 
+    /* dont even display the instrument */
+    .piano-container {
+        display: none;
+    }
+}
+
+
+/* the part where I make the piano invisible when height gets too small (landscape stuff really) */
+.piano-container.with-list.with-radio.with-toggle.with-notenav{
+    /* most strict: has list, radio, toggle, and notenav*/
+
+    @media screen and (max-height: 748px) and (min-width:766px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 709px) and (min-width: 663px) and (max-width: 765px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 675px) and (min-width:562px) and (max-width: 662px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 646px) and (min-width: 462px) and (max-width: 561px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 615px) and (min-width: 391px) and (max-width: 461px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 590px) and (min-width: 320px) and (max-width: 390px) {
+        display: none;
+    }
+}
+
+.piano-container.with-list.with-toggle {
+    /* has list and toggle (textsearch mode with text input provided by user) */
+
+    @media screen and (max-height: 607px) and (min-width:766px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 572px) and (min-width: 663px) and (max-width: 765px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 539px) and (min-width:562px) and (max-width: 662px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 505px) and (min-width: 462px) and (max-width: 561px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 475px) and (min-width: 391px) and (max-width: 461px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 451px) and (min-width: 320px) and (max-width: 390px) {
+        display: none;
+    }
+}
+
+.piano-container.with-list.with-radio {
+    /* has list and radio (settings and edit)) list assumed to be 4+ items*/
+    @media screen and (max-height: 659px) and (min-width:766px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 627px) and (min-width: 663px) and (max-width: 765px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 591px) and (min-width:562px) and (max-width: 662px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 561px) and (min-width: 462px) and (max-width: 561px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 525px) and (min-width: 391px) and (max-width: 461px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 502px) and (min-width: 320px) and (max-width: 390px) {
+        display: none;
     }
 }

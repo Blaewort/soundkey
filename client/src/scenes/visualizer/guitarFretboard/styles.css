@@ -367,6 +367,13 @@ li.fret-wrapper:first-child .marker {
   }
 }
 
+@media screen and (min-height:0px) and (max-height:319px) { 
+    /* dont even display the instrument */
+    .guitarFretboard {
+        display: none;
+    }
+}
+
 /* the fretboard starts to fall apart less than 320px which seems about right for the minimum size */
 @media screen and (max-width: 350px) {
     /* body {
@@ -401,7 +408,7 @@ li.fret-wrapper:first-child .marker {
 }
 
 .guitarFretboard.with-list.with-toggle {
-    /* has list and toggle */
+    /* has list and toggle (textsearch mode with text input provided by user) */
 
     @media screen and (max-height: 484px) and (min-width: 1075px) {
         display: none;
@@ -422,7 +429,7 @@ li.fret-wrapper:first-child .marker {
 }
 
 .guitarFretboard.with-list.with-radio {
-    /* has list and radio (settings)) list assumed to be 4+ items*/
+    /* has list and radio (settings and edit)) list assumed to be 4+ items*/
     @media screen and (max-height: 535px) and (min-width: 1075px) {
         display: none;
     }
