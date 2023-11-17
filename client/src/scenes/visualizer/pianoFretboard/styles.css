@@ -273,7 +273,7 @@
 
 }
 
-@media screen and (min-width: 702px) {
+@media screen and (min-height: 336px) and (min-width: 702px) {
     .keyboard .note {
         width: 18px;
         line-height: 18px;
@@ -309,7 +309,7 @@
 
 
 
-@media screen and (min-width: 474px ) and (min-height: 318px) and (max-height: 335px) {
+@media screen and  (min-width: 404px )  and (min-height: 318px) and (max-height: 335px) {
     .keyboard {
         padding-left: 25px;
         padding-right: 25px;
@@ -317,7 +317,7 @@
      }
 }
 
-@media screen and (min-width: 474px ) and (min-height: 336px) and (max-height: 500px) {
+@media screen and (min-width: 461px ) and (min-height: 336px) and (max-height: 500px) {
    .keyboard {
     
       max-height: 166px;
@@ -337,14 +337,45 @@
 
 }
 
-@media screen and (min-width: 474px ) and (min-height: 300px) and (max-height: 317px) {
+@media screen and (min-width: 404px ) and (min-height: 280px) and (max-height: 285px) {
+    /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
+   .keyboard {
+      max-height: 120px;
+      max-width: 423px;
+   }
+   
+   .key.black {
+    max-height: 60px;
+   }
+   .key.white {
+    max-height: 99px;
+   } 
+
+}
+
+@media screen and (min-width: 404px ) and (min-height: 280px) and (max-height: 317px) {
+    /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
+   .keyboard {
+      padding-left: 25px;
+      padding-right: 25px;
+      padding-top: 25px;
+   }
+   
+   .key.black {
+
+   }
+   .key.white {
+
+   } 
+
+}
+
+@media screen and (min-width: 404px ) and (min-height: 286px) and (max-height: 317px) {
     /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
    .keyboard {
       max-height: 138px;
       max-width: 460px;
-      padding-left: 25px;
-      padding-right: 25px;
-      padding-top: 25px;
+      
 
       max-height: 127px;
       max-width: 423px;
@@ -362,7 +393,7 @@
 
 }
 
-@media screen and (min-width: 474px ) and (min-height: 318px) and (max-height: 335px) {
+@media screen and (min-width: 404px ) and (min-height: 318px) and (max-height: 335px) {
     .key.black {
         max-height: 71px;
        }
@@ -381,7 +412,7 @@
      }
 }
 
-@media screen and (min-width: 474px ) and (min-height: 300px) and (max-height: 335px) {
+@media screen and (min-width: 404px ) and (min-height: 280px) and (max-height: 335px) {
     /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
    .keyboard {
       padding-left: 25px;
@@ -392,14 +423,14 @@
 
 }
 
-@media screen  /* and (max-width: 1074px)*/ and (max-height: 375px) {
+@media screen  /* and (max-width: 1074px)*/ and (max-height: 383px) {
     
     .object_selection {
         height: 34px;
     }
 }
 
-@media screen and (min-height:0px) and (max-height:299px) { 
+@media screen and (min-height:0px) and (max-height:279px) { 
     /* dont even display the instrument */
     .piano-container {
         display: none;

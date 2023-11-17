@@ -278,11 +278,15 @@ li.fret-wrapper:first-child .marker {
     }
 }
 
+
+
+
 /* max-height:299x* */
-@media screen and (min-width: 1075px) and (max-height:299px) { 
+@media screen and (min-width: 1075px) and (max-height:279px) { 
     .guitarFretboard {
         display: none;
     }
+    
 }
 
 @media screen and (min-width: 1075px) and (max-height:370px) { 
@@ -293,7 +297,9 @@ li.fret-wrapper:first-child .marker {
 
 }
 
-@media screen and (min-width: 440px) and (max-width: 1074px) and (max-height: 294px) {
+
+
+@media screen and (min-width: 440px) and (max-width: 1074px) and (max-height: 279px) {
     
     .guitarFretboard {
         display: none;
@@ -373,7 +379,7 @@ li.fret-wrapper:first-child .marker {
   }
 }
 
-@media screen and (min-height:0px) and (max-height:299px) { 
+@media screen and (min-height:0px) and (max-height:279px) { 
     /* dont even display the instrument */
     .guitarFretboard {
         display: none;
@@ -398,6 +404,7 @@ li.fret-wrapper:first-child .marker {
 
 
 /* the part where I make the guitar invisible when height gets too small (landscape stuff really) */
+
 .guitarFretboard.with-list.with-radio.with-toggle.with-notenav{
     /* most strict: has list, radio, toggle, and notenav*/
     @media screen and (max-height: 627px) and (min-width: 1075px) {
