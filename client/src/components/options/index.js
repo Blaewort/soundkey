@@ -32,6 +32,78 @@ import { fapi_getModes,
     fapi_getScalesFromUserString
 }  from '../../services/api/index';
 
+
+
+/* if this code doesnt work correctly, it means the media queries when we start running out of height wont work properly, and this would be the biggest issue in landscape mode
+    on smaller/mobile devices */
+function getLandScapeClassName({base, focus, view, navSearchGets, textSearchGets, selection, radio, instrument}) {
+    if (typeof myVar === "string") {throw new TypeError("'base' must be of type 'string'");}
+
+    let classString = base.concat(" ");
+    if (listIsVisible(view, focus, navSearchGets, textSearchGets, radio, selection, instrument)) {classString = classString.concat("with-list "); }
+    if (radioIsVisible(view, focus)) {classString = classString.concat("with-radio ");}
+    if (notenavIsVisible(view, focus)) {classString = classString.concat("with-notenav ")}
+    if (toggleIsVisible(view, focus, selection)) {classString = classString.concat("with-toggle ")}
+
+    return classString;
+}
+
+function toggleIsVisible(view, focus, selection) { /* return true, false */
+    if (focus === "settings") {return false;} /* never a toggle in settings */
+
+    //if view is 'selected' but we have no selection.primary (acts like a textsearch which has a toggle, so true)
+    //if selection.secondary and we are in navsearch, give player the toggle
+    // if selection.secondary and we are in textsearch, give player the toggle
+    return ( (view[focus] === "selected" && !selection.primary) || (view[focus] === "navsearch" && selection.secondary) || (view[focus] === "search" && selection.secondary));
+}
+
+function notenavIsVisible(view, focus) {
+    if (focus === "settings") {return false;} 
+
+    return (view[focus] === "navsearch" || view[focus] === "navsearchmode");
+}
+
+function radioIsVisible(view, focus) {
+    // if view is 'navsearch'
+    // if view is 'edit'
+    // if focus is 'settings'
+    return (focus === "settings" || view[focus] === "navsearch" || view[focus] === "edit" )
+}
+
+function listIsVisible(view, focus, navSearchGets, textSearchGets, radio, selection, instrument) {
+    
+    if (focus === "settings") {
+        if (view[focus] === "textEnter") {
+            if (radioIsSetToTunings()) {return false;} //only tunings has a textenter option
+            return true; /* because we dont currently update textEnter back to Navsearch theres a case where it could be textEnter but on another radio setting and thus navsearch */
+        }
+        if (view[focus] === "navsearch") {return true;} //navsearch in settings always has a list and is the only other currently available view.settings option
+    }
+
+    // focus is 'chord' or 'scale'
+
+    if (view[focus] === "selected" && !selection.primary && textSearchGets) {return true;}
+    if (view[focus] === "search" && textSearchGets) {return true;}
+
+
+    if (view[focus] === "navsearch" || view[focus] === "navsearchmode" || view[focus] === "edit") {
+        return navSearchGets;
+    }
+
+    return false;
+
+
+    function radioIsSetToTunings() {
+        if (radio.settings === "Tunings") {return true;}
+        if (radio.settings === null && instrument.name === "Guitar") {return true;}
+        /* when we add support for bass, need to duplicate that last check and change instrument.name to "Bass Guitar" */
+        return false;
+    }
+}
+
+
+
+
 class Options extends Component{
 
     constructor(props) {
@@ -705,9 +777,8 @@ class Options extends Component{
         let selection;
         let visualizer;
         let footer;
-        
-        let limitByOther;
 
+        let landscapeClassName = "options ";
         //this.state.focus refers to whether the musicViewManager (visualInstrumentManager)? is in chord, scale, settings, or null state
         //NOT whether the visualizer is focused on a single chord or scale
         switch(this.state.focus) {
@@ -726,6 +797,7 @@ class Options extends Component{
                     nav: {
                         chordList: this.state.list.chord.nav,
                         onItemClick: this.onNavSearchChordItemClick,
+                        gets: true, //just for now using this to signify that the user has a list. later it will be something connected to a database call
                     },
                     noteSelect: {
                         handleClickOutside: this.handleCustomClickOutsideNoteNav,
@@ -757,9 +829,20 @@ class Options extends Component{
                 };
 
                 search.limitByOther = toggle.value === true ? selection.secondary : null;
-                search.gets = search.text.input && search.text.get(search.text.input, search.limitByOther);
+                search.gets = (search.text.input !== null && search.text.input !== "") && search.text.get(search.text.input, search.limitByOther);
                 toggle.isRequired = selection.secondary;
 
+                landscapeClassName = getLandScapeClassName({
+                    base: "options",
+                    focus: this.state.focus,
+                    view: this.state.view,
+                    textSearchGets: search.gets,
+                    selection: selection,
+                    radio: this.state.radio,
+                    navSearchGets: search.nav.gets,
+                    instrument: this.state.instrument
+                });
+                     
                 //add visual for fretboard,piano
                 let notes = [];
                 if (this.state.chord && Array.isArray(this.state.chord.notes)) {
@@ -793,7 +876,8 @@ class Options extends Component{
                         //scaleList: this.state.list.scale.nav, //why doesnt scale need this but chord does
                         onScaleItemClick: this.onNavSearchScaleItemClick,
                         onModeItemClick: this.onNavSearchModeItemClick,
-                        mode: this.state.view.scaleNavSearchMode
+                        mode: this.state.view.scaleNavSearchMode,
+                        gets: true, //just for now using this to signify that the user has a list. later it will be something connected to a database call
                     },
                     noteSelect: {
                         handleClickOutside: this.handleCustomClickOutsideNoteNav,
@@ -829,10 +913,19 @@ class Options extends Component{
                 };
 
                 search.limitByOther = toggle.value === true ? selection.secondary : null;
-                search.gets = search.text.input && search.text.get(search.text.input, search.limitByOther);
+                search.gets = (search.text.input !== null && search.text.input !== "") && search.text.get(search.text.input, search.limitByOther);
                 toggle.isRequired = selection.secondary;
 
-               
+                landscapeClassName = getLandScapeClassName({
+                    base: "options",
+                    focus: this.state.focus,
+                    view: this.state.view,
+                    textSearchGets: search.gets,
+                    selection: selection,
+                    radio: this.state.radio,
+                    navSearchGets: search.nav.gets,
+                    instrument: this.state.instrument
+                });
 
                 //add visual for fretboard,piano
                 let notess = [];
@@ -879,6 +972,18 @@ class Options extends Component{
                     selectedValue: this.state.focus,
                 };
 
+
+                landscapeClassName = getLandScapeClassName({
+                    base: "options",
+                    focus: this.state.focus,
+                    view: this.state.view,
+                    list: true, //always a list in settings
+                    toggle: false, //no toggle in settings
+                    radio: this.state.radio,
+                    instrument: this.state.instrument
+                });
+
+
                 //add visual for fretboard,piano
                 let notesss = [];
                 if (this.state[this.state.visualizerFocus] && Array.isArray(this.state[this.state.visualizerFocus].notes)) {
@@ -902,7 +1007,7 @@ class Options extends Component{
                 throw new Error("state.focus not a valid option");
         }
         return (
-            <div className="options">
+            <div className={landscapeClassName}>
                     {pane}
 
                     
@@ -982,15 +1087,6 @@ class ChordScalePane extends Component{
         let visualInstrument;
         let footer;
 
-
-        let landscapeInstrumentClass;
-
-
-
-    
-
-  
-
         switch(this.props.view) {
 
             case "selected":
@@ -1001,10 +1097,6 @@ class ChordScalePane extends Component{
                     const onTextChange = this.props.search.text.onChange;
                     const toNavView = this.props.viewSwitch.toNav;
                     header = <SearchHeader textValue={headerText} onChange={onTextChange} placeholder={placeholder} toNavView={toNavView} />;
-
-                    landscapeInstrumentClass = "";
-                    if (this.props.search.gets) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); }
-                    if (this.props.toggle.isRequired) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-toggle ")}
 
                     if (this.props.visualizer.instrument.name === "Guitar") {
                         visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
@@ -1026,14 +1118,11 @@ class ChordScalePane extends Component{
                 } else {
 
                     header = <SelectedObjectHeader toNavView={this.props.viewSwitch.toNav} toSearchView={this.props.viewSwitch.toSearch} /> ;
-
-                    landscapeInstrumentClass = "";
-
                     
                     if (this.props.visualizer.instrument.name === "Guitar") {
-                        visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                        visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
                     } else if(this.props.visualizer.instrument.name === "Piano") {
-                        visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass} octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                        visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
                    
 
@@ -1053,14 +1142,10 @@ class ChordScalePane extends Component{
                 const toNavView = this.props.viewSwitch.toNav;
                 header = <SearchHeader textValue={headerText} onChange={onChange} placeholder={placeholder} toNavView={toNavView} />;
 
-                landscapeInstrumentClass = "";
-                if (this.props.search.gets) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); }
-                if (this.props.toggle.isRequired) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-toggle ")}
-
                 if (this.props.visualizer.instrument.name === "Guitar") {
-                    visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
                 } else if(this.props.visualizer.instrument.name === "Piano") {
-                    visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass} octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                 }
 
                 if (this.props.search.gets) {
@@ -1085,17 +1170,10 @@ class ChordScalePane extends Component{
                     //this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther);
                     header = <NavSearchHeader toSearchView={this.props.viewSwitch.toSearch} focus={this.props.type}/>
 
-                    landscapeInstrumentClass = "";
-                    /* if (this.props.search.gets) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); } */
-                    landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list ")
-                    if (this.props.toggle.isRequired) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-toggle ")}
-                    landscapeInstrumentClass = landscapeInstrumentClass.concat("with-notenav ");
-                    landscapeInstrumentClass = landscapeInstrumentClass.concat("with-radio ");
-
                     if (this.props.visualizer.instrument.name === "Guitar") {
-                        visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                        visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
                     } else if(this.props.visualizer.instrument.name === "Piano") {
-                        visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass}octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                        visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
 
                     const noteNavValue = this.props.search.noteSelect.note.value;
@@ -1134,17 +1212,10 @@ class ChordScalePane extends Component{
                     const customListIsOpen = this.props.search.noteSelect.customListIsOpen;
                     noteNav = <NoteNav value={noteNavValue} label={noteNavLabel} handleClickOutside={outsideClick} onNoteUpdate={onNoteUpdate} handleCustomSelectClick={customSelectClick} customListIsOpen={customListIsOpen} name={this.props.type} />;
                     
-                    landscapeInstrumentClass = "";
-                    /* if (this.props.search.gets) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); } */
-                    landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list ");
-                    if (this.props.toggle.isRequired) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-toggle ")}
-                    landscapeInstrumentClass = landscapeInstrumentClass.concat("with-notenav ");
-                    landscapeInstrumentClass = landscapeInstrumentClass.concat("with-radio ");
-                    
                     if (this.props.visualizer.instrument.name === "Guitar") {
-                        visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                        visualInstrument = <GuitarFretboard  tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
                     } else if(this.props.visualizer.instrument.name === "Piano") {
-                        visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass} octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                        visualInstrument = <PianoFretboard  octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                     }
 
                     const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, this.props.search.limitByOther);
@@ -1178,16 +1249,10 @@ class ChordScalePane extends Component{
                 const customListIsOpen = this.props.search.noteSelect.customListIsOpen;
                 noteNav = <NoteNav value={noteNavValue} label={noteNavLabel} handleClickOutside={outsideClick} onNoteUpdate={onNoteUpdate} handleCustomSelectClick={customSelectClick} customListIsOpen={customListIsOpen} name={this.props.type} />;
                 
-                landscapeInstrumentClass = "";
-                if (this.props.search.gets) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); }
-                if (this.props.toggle.isRequired) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-toggle ")}
-                landscapeInstrumentClass = landscapeInstrumentClass.concat("with-notenav ");
-                /* landscapeInstrumentClass = landscapeInstrumentClass.concat("with-radio "); there's no radio here??? */ 
-                
                 if (this.props.visualizer.instrument.name === "Guitar") {
-                    visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    visualInstrument = <GuitarFretboard  tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
                 } else if(this.props.visualizer.instrument.name === "Piano") {
-                    visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass} octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    visualInstrument = <PianoFretboard  octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                 }
 
                 const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.nav.mode, this.props.search.limitByOther);
@@ -1204,15 +1269,10 @@ class ChordScalePane extends Component{
 
                 header = <EditHeader />
 
-                landscapeInstrumentClass = "";
-                landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); /* currently always a list with ediot */
-                /* if (this.props.toggle.isRequired) {landscapeInstrumentClass = landscapeInstrumentClass.concat("with-toggle ")} idk why but no toggle on edit */
-                landscapeInstrumentClass = landscapeInstrumentClass.concat("with-radio ");
-
                 if (this.props.visualizer.instrument.name === "Guitar") {
-                    visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
                 } else if(this.props.visualizer.instrument.name === "Piano") {
-                    visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass} octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                    visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
                 }
 
                 if (this.props.type === "chord") {
@@ -1282,10 +1342,6 @@ class SettingsPane extends Component{
         let radio;
         let visualInstrument;
         let footer;
-        let landscapeInstrumentClass = "";
-        landscapeInstrumentClass = landscapeInstrumentClass.concat("with-list "); /* there's always a listarea in settings */
-        landscapeInstrumentClass = landscapeInstrumentClass.concat("with-radio "); /* always a radio in settings */
-
         
 
         //                                           //so switches from "Tunings" with "textEnter" to "Instruments" will still act as "navsearch"
@@ -1297,9 +1353,9 @@ class SettingsPane extends Component{
             
 
             if (this.props.visualizer.instrument.name === "Guitar") {
-                visualInstrument = <GuitarFretboard extraClassString={landscapeInstrumentClass} tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
+                visualInstrument = <GuitarFretboard tuningNotes={this.props.visualizer.instrument.tuning} selectedNotes={this.props.visualizer.selectedNotes} />;
             } else if(this.props.visualizer.instrument.name === "Piano") {
-                visualInstrument = <PianoFretboard extraClassString={landscapeInstrumentClass} octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
+                visualInstrument = <PianoFretboard octaves={this.props.visualizer.instrument.pianoOctaves} selectedNotes={this.props.visualizer.selectedNotes} />;
             }
 
             radio = <SettingsRadio instrument={this.props.instrument.name} selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;

@@ -405,7 +405,7 @@ li.fret-wrapper:first-child .marker {
 
 /* the part where I make the guitar invisible when height gets too small (landscape stuff really) */
 
-.guitarFretboard.with-list.with-radio.with-toggle.with-notenav{
+.options.with-list.with-radio.with-toggle.with-notenav .guitarFretboard{
     /* most strict: has list, radio, toggle, and notenav*/
     @media screen and (max-height: 627px) and (min-width: 1075px) {
         display: none;
@@ -420,7 +420,24 @@ li.fret-wrapper:first-child .marker {
     }
 }
 
-.guitarFretboard.with-list.with-toggle {
+/* whenever we are navsearching but the secondary selection is absent so there's nothing to toggle */
+.options.with-list.with-radio.with-notenav .guitarFretboard{
+    @media screen and (max-height: 582px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 559px) and (min-width: 400px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 536px) and (min-width: 300px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
+
+
+.options.with-list.with-toggle .guitarFretboard {
     /* has list and toggle (textsearch mode with text input provided by user) */
 
     @media screen and (max-height: 484px) and (min-width: 1075px) {
@@ -441,7 +458,7 @@ li.fret-wrapper:first-child .marker {
 
 }
 
-.guitarFretboard.with-list.with-radio {
+.options.with-list.with-radio .guitarFretboard {
     /* has list and radio (settings and edit)) list assumed to be 4+ items*/
     @media screen and (max-height: 535px) and (min-width: 1075px) {
         display: none;
@@ -456,6 +473,27 @@ li.fret-wrapper:first-child .marker {
     }
 
     @media screen and (max-height: 484px) and (min-width: 300px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
+.options.with-radio .guitarFretboard {
+    /* This is looking at settings with guitar selected and the radio is set to Tunings
+        or if we are in edit and there is no list yet */
+
+    @media screen and (max-height: 369px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 355px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 335px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 325px) and (min-width: 300px) and (max-width: 399px) {
         display: none;
     }
 }
@@ -477,5 +515,8 @@ li.fret-wrapper:first-child .marker {
 
 }
 
-
+/* I'll have to add options.with-notenav.with-radio and options.with-notenav.with-radio-with-toggle  for when we dont actively have a list avaiable
+ in 'navsearch' chord/scale view (right now all the settings navlists are hardcoded so they are always on) (searchGets havent yet been got) 
+ -Also the 'edit' chord/scale view which, while it doesnt have a list, would have only have radio if no selection, that gets lumped in (and that is fine) with options.with-radio for guitar tuning text input
+ (if I add another toggle, however, if there is a secondary selection then it will have a toggle as well be radio.toggle and I would need to add that     */
 

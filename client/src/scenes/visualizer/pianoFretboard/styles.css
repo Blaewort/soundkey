@@ -439,7 +439,7 @@
 
 
 /* the part where I make the piano invisible when height gets too small (landscape stuff really) */
-.piano-container.with-list.with-radio.with-toggle.with-notenav{
+.options.with-list.with-radio.with-toggle.with-notenav .piano-container{
     /* most strict: has list, radio, toggle, and notenav*/
 
     @media screen and (max-height: 748px) and (min-width:766px) {
@@ -467,7 +467,36 @@
     }
 }
 
-.piano-container.with-list.with-toggle {
+/* whenever we are navsearching but the secondary selection is absent so there's nothing to toggle */
+.options.with-list.with-radio.with-notenav .piano-container{
+    @media screen and (max-height: 711px) and (min-width:766px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 667px) and (min-width: 663px) and (max-width: 765px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 633px) and (min-width:562px) and (max-width: 662px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 604px) and (min-width: 462px) and (max-width: 561px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 573px) and (min-width: 391px) and (max-width: 461px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 548px) and (min-width: 300px) and (max-width: 390px) {
+        display: none;
+    }
+}
+
+
+
+.options.with-list.with-toggle .piano-container {
     /* has list and toggle (textsearch mode with text input provided by user) */
 
     @media screen and (max-height: 607px) and (min-width:766px) {
@@ -495,7 +524,7 @@
     }
 }
 
-.piano-container.with-list.with-radio {
+.options.with-list.with-radio .piano-container {
     /* has list and radio (settings and edit)) list assumed to be 4+ items*/
     @media screen and (max-height: 659px) and (min-width:766px) {
         display: none;
@@ -521,3 +550,8 @@
         display: none;
     }
 }
+
+/* I'll have to add options.with-notenav.with-radio and options.with-notenav.with-radio-with-toggle  for when we dont actively have a list avaiable
+ in 'navsearch' chord/scale view (right now all the settings navlists are hardcoded so they are always on) (searchGets havent yet been got) 
+ -Also the 'edit' chord/scale view which, while it doesnt have a list, would have only have radio if no selection, that gets lumped in and that is fine
+ (if I add another toggle, however, if there is a secondary selection then it will have a toggle as well be radio.toggle and I would need to add that     */
