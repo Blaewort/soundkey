@@ -265,9 +265,7 @@ function fapi_isValidTextTuning(tuningString, instrument) {
     if (!tuningString) {return false;}
     if (typeof tuningString !== "string") {return false;}
 
-
-    const tuningNoteStringArray = tuningString.match(/[A-Ga-g][b|#]?/g);
-
+    const tuningNoteStringArray = tuningString.match(/[A-G][b|#]?/g);
     return tuningNoteStringArray && tuningNoteStringArray.length === 6;
 
 }

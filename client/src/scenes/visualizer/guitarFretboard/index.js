@@ -48,7 +48,7 @@ function GuitarFretboard(props) {
     let strings = [];
     //need to go backwards otherwise EADGBE goes top to bottom EBGDAE in the DOM
 
-    const tuningNoteStringArray = tuningNotes.match(/[A-G][b|#]?/g); /* only supports #, not b right now */ /* need a function to normalize, or have a second NOTES_ARRAY to check */
+    const tuningNoteStringArray = tuningNotes.match(/[A-G][b|#]?/g); /* supports singular # and b but converts to # */ 
     for(var i = tuningNoteStringArray.length - 1; i > -1; i--) {
         strings.push(<String key={i} stringNote={tuningNoteStringArray[i]} selectedNotes={selectedNotes}/>);
     }
