@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
-import Sidebar from '../../components/sidebar/index';
-import Content from '../../components/content/index';
-import GuitarFretboard from './guitarFretboard/index';
 import {useParams} from 'react-router-dom';
-import { fetchChord } from '../../services/api/index';
-import { Chord } from 'chord-expressions';
+import GuitarFretboard from './guitarFretboard/index';
 import PianoFretboard from './pianoFretboard/index';
 
 
@@ -19,9 +15,9 @@ function VisualInstrument({selectedNotes, instrument}) {
     }
     
     return (
-        <Content>
-                {visualInstrument}
-        </Content>
+        <>
+            {visualInstrument}
+        </>
     );
   }
   
