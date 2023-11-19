@@ -261,10 +261,14 @@ function getGuitarTunings(stringCount) {
     ];
 }
 
-function fapi_isValidTextTuning(str, instrument) {
+function fapi_isValidTextTuning(tuningString, instrument) {
+    if (!tuningString) {return false;}
+    if (typeof tuningString !== "string") {return false;}
 
-    //not a real solution
-    return !str ? false : str.length >= 10;
+
+    const tuningNoteStringArray = tuningString.match(/[A-Ga-g][b|#]?/g);
+
+    return tuningNoteStringArray && tuningNoteStringArray.length === 6;
 
 }
 

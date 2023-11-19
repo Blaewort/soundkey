@@ -15,14 +15,42 @@ const NOTES_ARRAY = [
     "G#"
 ];
 
+const FLATS_ARRAY = [
+  "A",
+  "Bb",
+  "B",
+  "C",
+  "Db",
+  "D",
+  "Eb",
+  "E",
+  "F",
+  "Gb",
+  "G",
+  "Ab"
+];
+
+function getNoteStringValue(noteString) {
+    //check if it's in NOTES_ARRAY. If so, return that number
+    const sharpsIndex = NOTES_ARRAY.indexOf(noteString); 
+    if (sharpsIndex >= 0) {return sharpsIndex;}
+
+    const flatsIndex = FLATS_ARRAY.indexOf(noteString); 
+    if (flatsIndex >= 0) {return flatsIndex;}
+    
+    return -1;
+}
+
 //There's no checking that anything we receive is valid, no error handling
 
 function GuitarFretboard(props) {
     const {tuningNotes, selectedNotes } = props;
     let strings = [];
     //need to go backwards otherwise EADGBE goes top to bottom EBGDAE in the DOM
-    for(var i = tuningNotes.length - 1; i > -1; i--) {
-        strings.push(<String key={i} stringNote={tuningNotes[i]} selectedNotes={selectedNotes}/>);
+
+    const tuningNoteStringArray = tuningNotes.match(/[A-G][b|#]?/g); /* only supports #, not b right now */ /* need a function to normalize, or have a second NOTES_ARRAY to check */
+    for(var i = tuningNoteStringArray.length - 1; i > -1; i--) {
+        strings.push(<String key={i} stringNote={tuningNoteStringArray[i]} selectedNotes={selectedNotes}/>);
     }
     return <div class="guitarFretboard">{strings}</div>;
 }
@@ -30,7 +58,7 @@ function GuitarFretboard(props) {
 function String(props) {
     const {stringNote, selectedNotes } = props;
     var notes = [];
-    const index = NOTES_ARRAY.indexOf(stringNote);
+    const index = getNoteStringValue(stringNote);
     for(let i = 0; i < 13; i++) {
       notes.push(NOTES_ARRAY[(index + i) % 12 ]);
     }
