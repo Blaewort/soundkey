@@ -51,10 +51,10 @@ function getLandScapeClassName({base, focus, view, navSearchGets, textSearchGets
 function toggleIsVisible(view, focus, selection) { /* return true, false */
     if (focus === "settings") {return false;} /* never a toggle in settings */
 
-    //if view is 'selected' but we have no selection.primary (acts like a textsearch which has a toggle, so true)
+    //if view is 'selected' but we have no selection.primary (acts like a textsearch which has a toggle IF there is a selection.secondary, so true)
     //if selection.secondary and we are in navsearch, give player the toggle
     // if selection.secondary and we are in textsearch, give player the toggle
-    return ( (view[focus] === "selected" && !selection.primary) || (view[focus] === "navsearch" && selection.secondary) || (view[focus] === "search" && selection.secondary));
+    return ( (view[focus] === "selected" && !selection.primary && selection.secondary) || (view[focus] === "navsearch" && selection.secondary) || (view[focus] === "search" && selection.secondary));
 }
 
 function notenavIsVisible(view, focus) {
