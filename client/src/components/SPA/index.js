@@ -59,7 +59,7 @@ function listIsVisible(view, focus, navSearchGets, textSearchGets, radio, select
 
 
 
-class Options extends Component{
+class SPA extends Component{
 
     constructor(props) {
         super(props);
@@ -964,4 +964,4 @@ class Options extends Component{
   }
 }
   
-export default Options;
+export default SPA;
