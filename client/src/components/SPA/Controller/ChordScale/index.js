@@ -304,35 +304,42 @@ class ChordScaleController extends Component{
 }
 
 
-ChordScaleController.toggleIsVisible = function toggleIsVisible(view, focus, selection) {
-    //if view is 'selected' but we have no selection.primary (acts like a textsearch which has a toggle IF there is a selection.secondary, so true)
-    //if selection.secondary and we are in navsearch, give player the toggle
-    // if selection.secondary and we are in textsearch, give player the toggle
+ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection) {
 
-    const selectedViewWithSecondaryButNoPrimarySelection = (view[focus] === "selected" && !selection.primary && selection.secondary);
-    const navsearchViewWithSecondarySelection = (view[focus] === "navsearch" && selection.secondary);
-    const textSearchViewWithSecondarySelection = (view[focus] === "search" && selection.secondary);
-
-    return ( selectedViewWithSecondaryButNoPrimarySelection || navsearchViewWithSecondarySelection || textSearchViewWithSecondarySelection);
+    switch(view) {
+        case "selected":
+            return (!selection.primary && selection.secondary);
+        case "search":
+        case "navsearch":
+          return selection.secondary;
+        default:
+          return false;
+      } 
+      
 }
 
-ChordScaleController.notenavIsVisible = function notenavIsVisible(view, focus) {
-    return (view[focus] === "navsearch" || view[focus] === "navsearchmode");
+ChordScaleController.notenavIsVisible = function notenavIsVisible(view) {
+    return (view === "navsearch" || view === "navsearchmode");
 }
 
-ChordScaleController.radioIsVisible = function radioIsVisible(view, focus) {
-    return (view[focus] === "navsearch" || view[focus] === "edit" );
+ChordScaleController.radioIsVisible = function radioIsVisible(view) {
+    return (view === "navsearch" || view === "edit" );
 }
 
-ChordScaleController.listIsVisible = function listIsVisible(view, focus, navSearchGets, textSearchGets, selection) {
-    if (view[focus] === "selected" && !selection.primary && textSearchGets) {return true;}
-    if (view[focus] === "search" && textSearchGets) {return true;}
+ChordScaleController.listIsVisible = function listIsVisible(view, navSearchGets, textSearchGets, selection) {
 
-    if (view[focus] === "navsearch" || view[focus] === "navsearchmode" || view[focus] === "edit") {
-        return navSearchGets;
+    switch(view) {
+        case "selected":
+            return (!selection.primary && textSearchGets); // because it's acting like a search
+        case "search":
+            return textSearchGets;
+        case "navsearch":
+        case "navsearchmode":
+        case "edit":
+            return navSearchGets;
+        default:
+            return false;
     }
-
-    return false;
 }
 
 

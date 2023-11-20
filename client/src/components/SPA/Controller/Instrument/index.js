@@ -117,13 +117,13 @@ InstrumentController.radioIsVisible = function radioIsVisible() {
     return true;
 }
 
-InstrumentController.listIsVisible = function listIsVisible(view, focus, radio, instrument) {
+InstrumentController.listIsVisible = function listIsVisible(view, radio, instrument) {
 
-    if (view[focus] === "textEnter") {
+    if (view === "textEnter") {
         if (radioIsSetToTunings()) {return false;} //only tunings has a textenter option
         return true; /* because we dont currently update textEnter back to Navsearch theres a case where it could be textEnter but on another radio setting and thus navsearch */
     }
-    if (view[focus] === "navsearch") {return true;} //navsearch in settings always has a list and is the only other currently available view.settings option
+    if (view === "navsearch") {return true;} //navsearch in settings always has a list and is the only other currently available view.settings option
 
 
     function radioIsSetToTunings() {

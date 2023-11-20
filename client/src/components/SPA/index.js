@@ -39,22 +39,22 @@ function getLandScapeClassName({base, focus, view, navSearchGets, textSearchGets
 
 function toggleIsVisible(view, focus, selection) {
     if (focus === "settings") { return InstrumentController.toggleIsVisible(); }
-    return ChordScaleController.toggleIsVisible(view, focus, selection);
+    return ChordScaleController.toggleIsVisible(view[focus], selection);
 }
 
 function notenavIsVisible(view, focus) {
     if (focus === "settings") {return InstrumentController.notenavIsVisible();}
-    return ChordScaleController.notenavIsVisible(view, focus);
+    return ChordScaleController.notenavIsVisible(view[focus]);
 }
 
 function radioIsVisible(view, focus) {
     if (focus === "settings") { return InstrumentController.radioIsVisible(); }
-    return ChordScaleController.radioIsVisible(view, focus);
+    return ChordScaleController.radioIsVisible(view[focus]);
 }
 
 function listIsVisible(view, focus, navSearchGets, textSearchGets, radio, selection, instrument) {
-    if (focus === "settings") { return InstrumentController.listIsVisible(view, focus, radio, instrument); }
-    return ChordScaleController.listIsVisible(view, focus, navSearchGets, textSearchGets, selection)
+    if (focus === "settings") { return InstrumentController.listIsVisible(view[focus], radio, instrument); }
+    return ChordScaleController.listIsVisible(view[focus], navSearchGets, textSearchGets, selection)
 }
 
 
