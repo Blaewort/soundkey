@@ -34,12 +34,16 @@ class InstrumentController extends Component{
             const list = this.props.tuning.getTunings("Guitar");
             listArea = <ListArea handleItemClick={itemClick} title={"Tunings"} list={list}></ListArea>;
 
-        } else { // "Instruments"
+        } else if (this.props.radioValue === "Instruments") { // "Instruments"
 
             const itemClick = this.props.search.nav.onInstrumentItemClick;
             const list = this.props.instrument.getAll();
             listArea = <ListArea handleItemClick={itemClick} title={"Instruments"} list={list}></ListArea>;
 
+        } else if (this.props.radioValue === "Tonewood") {
+            const itemClick = this.props.search.nav.onTonewoodItemClick;
+            const list = this.props.instrument.getAllTonewood();
+            listArea = <ListArea handleItemClick={itemClick} title={"Tonewood"} list={list}></ListArea>;
         }
 
         footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
@@ -92,7 +96,7 @@ class InstrumentController extends Component{
         let contents;
         
         //so switches from "Tunings" with "textEnter" to "Instruments" will still act as "navsearch"
-        if (this.props.view === "navsearch" || (this.props.view === "textEnter" && this.props.radioValue==="Instruments")) {
+        if (this.props.view === "navsearch" || (this.props.view === "textEnter" && !radioIsSetToTunings(this.props.radioValue, this.props.visualizer.instrument))) {
             contents = this.getNavSearchContents()
         } else { contents = this.getTuningTextEnterContents() } /* view="textEnter" and radioValue="Tunings"*/
 
@@ -119,19 +123,25 @@ InstrumentController.radioIsVisible = function radioIsVisible() {
 
 InstrumentController.listIsVisible = function listIsVisible(view, radio, instrument) {
 
-    if (view === "textEnter") {
-        if (radioIsSetToTunings()) {return false;} //only tunings has a textenter option
-        return true; /* because we dont currently update textEnter back to Navsearch theres a case where it could be textEnter but on another radio setting and thus navsearch */
-    }
-    if (view === "navsearch") {return true;} //navsearch in settings always has a list and is the only other currently available view.settings option
-
-
-    function radioIsSetToTunings() {
-        if (radio.settings === "Tunings") {return true;}
-        if (radio.settings === null && instrument.name === "Guitar") {return true;}
-        /* when we add support for bass, need to duplicate that last check and change instrument.name to "Bass Guitar" */
-        return false;
+    switch(view) {
+        case "textEnter":
+            return !radioIsSetToTunings(radio, instrument);
+            // since we dont currently update textEnter back to Navsearch, there is a situation where view is 'textEnter' but radio isnt on tunings, aka the only option with textEnter
+        case "navsearch":
+            return true;
+            // navsearch in settings always has a list and is the only other currently available view.settings option
+        default:
+            return false;
     }
 }
+
+function radioIsSetToTunings(radio, instrument) {
+    if (radio === "Tunings") {return true;}
+    if (radio === null && instrument.name === "Guitar") {return true;}
+    /* when we add support for bass, need to duplicate that last check and change instrument.name to "Bass Guitar" */
+    return false;
+}
+
+
 
 export default InstrumentController;

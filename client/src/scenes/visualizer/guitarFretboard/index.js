@@ -52,7 +52,9 @@ function GuitarFretboard(props) {
     for(var i = tuningNoteStringArray.length - 1; i > -1; i--) {
         strings.push(<String key={i} stringNote={tuningNoteStringArray[i]} selectedNotes={selectedNotes}/>);
     }
-    return <div class="guitarFretboard">{strings}</div>;
+    let extra = "";
+    if (props.tonewood === "Maple") {extra = " maple";}
+    return <div class={"guitarFretboard".concat(extra)}>{strings}</div>;
 }
 
 function String(props) {

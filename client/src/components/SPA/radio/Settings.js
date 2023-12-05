@@ -19,6 +19,10 @@ import Radio from './index'
                 value: "Tunings"
             },
             {
+                html: <i className="fa fa-road"></i>,
+                value: "Tonewood"
+            },
+            {
                 html: <i className="fas fa-theater-masks"></i>,
                 value: "Instruments"
             },

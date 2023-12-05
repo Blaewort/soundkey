@@ -332,6 +332,17 @@ function fapi_getScalesFromUserString(str, scaleToLimitBy) {
 
 }
 
+function fapi_getAllTonewood() {
+    return [
+        {
+            label: "Rosewood"
+        },
+        {
+            label: "Maple"
+        }
+    ];
+}
+
 
 export {  
     fapi_getModes, 
@@ -343,5 +354,6 @@ export {
     fapi_getInstruments,
     fapi_isValidTextTuning,
     fapi_getChordsFromUserString,
-    fapi_getScalesFromUserString
+    fapi_getScalesFromUserString,
+    fapi_getAllTonewood
 }

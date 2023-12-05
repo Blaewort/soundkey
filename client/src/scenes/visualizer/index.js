@@ -9,7 +9,7 @@ function VisualInstrument({selectedNotes, instrument}) {
     let visualInstrument;
 
     if(instrument.name === "Guitar"){
-        visualInstrument =  <GuitarFretboard tuningNotes={instrument.tuning} selectedNotes={ selectedNotes}/>;
+        visualInstrument =  <GuitarFretboard tonewood={instrument.tonewood} tuningNotes={instrument.tuning} selectedNotes={ selectedNotes}/>;
     } else if(instrument.name === "Piano"){
         visualInstrument = <PianoFretboard octaves={instrument.pianoOctaves} selectedNotes={ selectedNotes }/>;
     }

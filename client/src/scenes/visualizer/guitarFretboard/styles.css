@@ -245,6 +245,37 @@ li.fret-wrapper:first-child .marker {
 
 }  */
 
+/* Guitar maple tonewood support */
+.guitarFretboard.maple .fret-wrapper {
+    background-color: #ecca98;
+}
+
+.guitarFretboard.maple .marker {
+    background-color: rgb(105 140 169);
+}
+
+.guitarFretboard.maple .fret-wrapper:first-child .fret::before { 
+    background-color: rgb(235 234 234);
+}
+
+.guitarFretboard.maple .string:nth-child(2) li.fret-wrapper:last-child::before, 
+.guitarFretboard.maple .string:nth-child(4) li.fret-wrapper:last-child::before, 
+.guitarFretboard.maple .string:nth-child(3) li.fret-wrapper:nth-child(10)::before, 
+.guitarFretboard.maple .string:nth-child(3) li.fret-wrapper:nth-child(8)::before, 
+.guitarFretboard.maple .string:nth-child(3) li.fret-wrapper:nth-child(6)::before {
+    background-color: #353131;
+}
+
+.guitarFretboard.maple .fret-wrapper:first-child .marker {
+    background-color: rgb(193 122 122);
+}
+
+
+
+
+
+
+
 @media screen and (min-width: 1075px) {
     .fret-wrapper {
        height: 26px;

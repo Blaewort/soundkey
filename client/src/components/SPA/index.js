@@ -19,7 +19,8 @@ import { fapi_getModes,
     fapi_getInstruments,
     fapi_isValidTextTuning,
     fapi_getChordsFromUserString,
-    fapi_getScalesFromUserString
+    fapi_getScalesFromUserString,
+    fapi_getAllTonewood,
 }  from '../../services/api/index';
 
 
@@ -53,7 +54,7 @@ function radioIsVisible(view, focus) {
 }
 
 function listIsVisible(view, focus, navSearchGets, textSearchGets, radio, selection, instrument) {
-    if (focus === "settings") { return InstrumentController.listIsVisible(view[focus], radio, instrument); }
+    if (focus === "settings") { return InstrumentController.listIsVisible(view[focus], radio.settings, instrument); }
     return ChordScaleController.listIsVisible(view[focus], navSearchGets, textSearchGets, selection)
 }
 
@@ -136,6 +137,7 @@ class SPA extends Component{
                 name: "Guitar",
                 tuning: "EADGBE",
                 pianoOctaves: 2,
+                tonewood: "Rosewood"
             },
         };
 
@@ -177,6 +179,7 @@ class SPA extends Component{
 
         this.onTuningNavSearchItemClick = this.onTuningNavSearchItemClick.bind(this);
         this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
+        this.onTonewoodNavSearchItemClick = this.onTonewoodNavSearchItemClick.bind(this);
 
         this.onTextEnterKeyUp = this.onTextEnterKeyUp.bind(this);
 
@@ -683,6 +686,19 @@ class SPA extends Component{
         });
     }
 
+    onTonewoodNavSearchItemClick(e, item) {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                instrument: {
+                    ...state.instrument,
+                    tonewood: item.label
+                },
+                focus: state.visualizerFocus, //want to snap back to whatever we were viewing. time in settings is done
+            };
+        });
+    }
+
     // when user presses enter in tuning text input, update tuning if it's valid
     onTextEnterKeyUp(e, component) {
         if (e.keyCode === 13) {
@@ -896,6 +912,7 @@ class SPA extends Component{
                     },
                     nav: {
                         onInstrumentItemClick: this.onInstrumentNavSearchItemClick,
+                        onTonewoodItemClick: this.onTonewoodNavSearchItemClick,
                         onTuningItemClick: this.onTuningNavSearchItemClick,
                         selectTextTuning: this.selectTextTuningButtonClick,
                     },
@@ -914,7 +931,8 @@ class SPA extends Component{
               
                 let instruments = {
                     name: this.state.instrument.name,
-                    getAll: fapi_getInstruments
+                    getAll: fapi_getInstruments,
+                    getAllTonewood: fapi_getAllTonewood,
                 };
 
                 footer = {
