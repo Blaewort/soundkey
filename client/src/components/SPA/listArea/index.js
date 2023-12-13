@@ -66,7 +66,7 @@ class ListArea extends Component {
         //I add a list element to the very beginning of listItems and give it a class that is invisible
         listItems.unshift (<li key="Choose..." onClick={this.props.modal.open} className="listModalButton"><i class="fa fa-bars" aria-hidden="true"></i>  View List</li>);
 
-    
+        const modalClassName = this.props.modal.on ? "listModal engaged" : "listModal";
 
         return (
             <div className="list_area">
@@ -78,7 +78,8 @@ class ListArea extends Component {
                         {listItems}
                     </div>
                 </ul>
-                <ul class="listModal">
+                <ul class={modalClassName}>
+                    <button className="modalButton" onClick={this.props.modal.onExitClick}><i class="fa fa-times" aria-hidden="true"></i></button>
                     <div className="modal_option_container">
                         {listModalItems}
                     </div>

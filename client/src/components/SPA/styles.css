@@ -29,6 +29,16 @@ body,html {
     margin-right: 8px;
 }
 
+.modalButton {
+    position: absolute;
+    background-color: transparent;
+    top: 12px;
+    right: 18px;
+    border: none;
+    font-size: 20px;
+    color: #a7b1a6;
+}
+
 
 
 
@@ -50,6 +60,35 @@ body,html {
     .options.with-list.with-radio .list_area ul li:first-child {
         display: block;
     }
+
+    .listModal.engaged {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        /*margin-left: -161px; *//* assumes width of 322px */
+        /*margin-top: -161px;*/
+        width: 310px;
+        background-color: #597272a3;
+        align-items: center; 
+        justify-content: center;
+        height: 90dvh;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translateY(-50%) translateX(-50%);
+        transform: translateY(-50%) translateX(-50%);
+        box-sizing: border-box;
+    }
+
+    .listModal.engaged .modal_option_container {
+        width: 280px;
+        max-height: 70%;
+        overflow: auto;
+    }
+
+    .options.with-list.with-radio .list_area .listModal.engaged li {
+        display: block;
+    }
+
 }
 
 .options.with-list.with-radio .list_area ul .option_container {
@@ -242,3 +281,10 @@ body,html {
         max-height: 32px;
     }
 }
+
+
+
+
+
+
+
