@@ -69,3 +69,14 @@
       background-color: #717696;
       border-radius:3px;
   }
+
+
+  /* listModal */
+  .listModalButton {
+    display: none;
+  }
+
+  .listModal {
+    display: none;
+  }
+

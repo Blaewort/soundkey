@@ -32,18 +32,18 @@ class InstrumentController extends Component{
 
             const itemClick = this.props.search.nav.onTuningItemClick;
             const list = this.props.tuning.getTunings("Guitar");
-            listArea = <ListArea handleItemClick={itemClick} title={"Tunings"} list={list}></ListArea>;
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Tunings"} list={list}></ListArea>;
 
         } else if (this.props.radioValue === "Instruments") { // "Instruments"
 
             const itemClick = this.props.search.nav.onInstrumentItemClick;
             const list = this.props.instrument.getAll();
-            listArea = <ListArea handleItemClick={itemClick} title={"Instruments"} list={list}></ListArea>;
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Instruments"} list={list}></ListArea>;
 
         } else if (this.props.radioValue === "Tonewood") {
             const itemClick = this.props.search.nav.onTonewoodItemClick;
             const list = this.props.instrument.getAllTonewood();
-            listArea = <ListArea handleItemClick={itemClick} title={"Tonewood"} list={list}></ListArea>;
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Tonewood"} list={list}></ListArea>;
         }
 
         footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;

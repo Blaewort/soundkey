@@ -74,7 +74,7 @@ class ChordScaleController extends Component{
 
         if (this.props.search.gets) {
             const listItemClick = this.props.search.text.onItemClick;
-            listArea = <ListArea handleItemClick={listItemClick} list={this.props.search.gets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.gets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
         }
 
         if (this.props.toggle.isRequired) {
@@ -165,12 +165,12 @@ class ChordScaleController extends Component{
         if (this.props.type === "chord") {
             const list = this.props.search.navChordList;
             const listItemClick =this.props.search.nav.onItemClick;
-            listArea = <ListArea title={this.props.radio.nav || "Triad"}  handleItemClick={listItemClick} list={list} />;
+            listArea = <ListArea modal={this.props.search.listModal} title={this.props.radio.nav || "Triad"}  handleItemClick={listItemClick} list={list} />;
         } else if (this.props.type === "scale") {
             // need to make it a mode list that links to other lists
             const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, this.props.search.limitByOther);
             const itemClick = this.props.search.nav.onScaleItemClick;
-            listArea = <ListArea title={"Scale Groups"} handleItemClick={itemClick} list={list} />;
+            listArea = <ListArea modal={this.props.search.listModal} title={"Scale Groups"} handleItemClick={itemClick} list={list} />;
         }
 
         return <>
@@ -211,7 +211,7 @@ class ChordScaleController extends Component{
 
         const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.nav.mode, this.props.search.limitByOther);
         const itemClick = this.props.search.nav.onItemClick;
-        listArea = <ListArea title={this.props.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
+        listArea = <ListArea modal={this.props.search.listModal} title={this.props.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
 
         footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
@@ -247,14 +247,14 @@ class ChordScaleController extends Component{
             const title = this.props.radio.edit;
             const itemClick = this.props.search.nav.onItemClick;
             const list = this.props.selection.getNearbys(this.props.selection.primary,this.props.radio.edit);
-            listArea = <ListArea title={ title || "Extensions"} handleItemClick={itemClick} list={list} />;
+            listArea = <ListArea modal={this.props.search.listModal} title={ title || "Extensions"} handleItemClick={itemClick} list={list} />;
 
         }else if (this.props.type === "scale") {
 
             const title = this.props.radio.edit;
             const itemClick = this.props.search.nav.onModeItemClick;
             const list = this.props.selection.getNearbys(this.props.selection.primary, this.props.radio.edit);
-            listArea = <ListArea title={ title || "Alterations"} handleItemClick={itemClick} list={list} />;
+            listArea = <ListArea modal={this.props.search.listModal} title={ title || "Alterations"} handleItemClick={itemClick} list={list} />;
 
         }
 

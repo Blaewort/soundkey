@@ -139,6 +139,11 @@ class SPA extends Component{
                 pianoOctaves: 2,
                 tonewood: "Rosewood"
             },
+            listModal: {
+                chord: false,
+                scale: false,
+                settings: false,
+            }
         };
 
         this.onFooterUpdate = this.onFooterUpdate.bind(this);
@@ -180,6 +185,9 @@ class SPA extends Component{
         this.onTuningNavSearchItemClick = this.onTuningNavSearchItemClick.bind(this);
         this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
         this.onTonewoodNavSearchItemClick = this.onTonewoodNavSearchItemClick.bind(this);
+
+        this.onListModalExitClick = this.onListModalExitClick.bind(this);
+        this.openListModal = this.openListModal.bind(this);
 
         this.onTextEnterKeyUp = this.onTextEnterKeyUp.bind(this);
 
@@ -699,6 +707,36 @@ class SPA extends Component{
         });
     }
 
+    onListModalExitClick() {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                search: {
+                    ...state.search,
+                    listModal: {
+                        ...state.search.listModal,
+                        [state.search.listModal[state.focus]]: false
+                    }
+                }
+            }
+        });
+    }
+
+    openListModal() {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                search: {
+                    ...state.search,
+                    listModal: {
+                        ...state.search.listModal,
+                        [state.search.listModal[state.focus]]: true
+                    }
+                }
+            }
+        });
+    }
+
     // when user presses enter in tuning text input, update tuning if it's valid
     onTextEnterKeyUp(e, component) {
         if (e.keyCode === 13) {
@@ -776,6 +814,11 @@ class SPA extends Component{
                         handleCustomClick: this.handleCustomNoteNavSelectClick,
                         note: this.state.noteSelect.chord,
                         customListIsOpen: this.state.noteSelect.chord.customListIsOpen,
+                    },
+                    listModal: {
+                        on: this.state.listModal.chord,
+                        open: this.openListModal,
+                        onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
                     }
                 };
                 viewSwitch = {
@@ -851,6 +894,11 @@ class SPA extends Component{
                         handleCustomClick: this.handleCustomNoteNavSelectClick,
                         note: this.state.noteSelect.scale,
                         customListIsOpen: this.state.noteSelect.scale.customListIsOpen,
+                    },
+                    listModal: {
+                        on: this.state.listModal.scale,
+                        open: this.openListModal,
+                        onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
                     }
                 };
                 viewSwitch = {
@@ -916,6 +964,11 @@ class SPA extends Component{
                         onTuningItemClick: this.onTuningNavSearchItemClick,
                         selectTextTuning: this.selectTextTuningButtonClick,
                     },
+                    listModal: {
+                        on: this.state.listModal.settings,
+                        open: this.openListModal,
+                        onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
+                    }
                 };
 
                 let tuning = {
