@@ -29,14 +29,24 @@ body,html {
     margin-right: 8px;
 }
 
+
+
+
+
+
+/* modal button */
 .modalButton {
     position: absolute;
     background-color: transparent;
-    top: 12px;
-    right: 18px;
+    top: 8px;
+    right: 12px;
     border: none;
     font-size: 20px;
     color: #a7b1a6;
+}
+
+button.modalButton:hover {
+    color: #8d9999;
 }
 
 
@@ -77,17 +87,66 @@ body,html {
         -ms-transform: translateY(-50%) translateX(-50%);
         transform: translateY(-50%) translateX(-50%);
         box-sizing: border-box;
-    }
-
-    .listModal.engaged .modal_option_container {
-        width: 280px;
-        max-height: 70%;
-        overflow: auto;
+        border-radius: 3px;
     }
 
     .options.with-list.with-radio .list_area .listModal.engaged li {
         display: block;
     }
+
+    .listModal.engaged li {
+        background-color: #394854;
+    }
+
+    .listModal.engaged li:hover {
+        background-color: #45575f;
+    }
+
+    .listModal.engaged span {
+        position: absolute;
+        top: 12px;
+        color: #a9babb;
+    }
+
+    
+
+    .listModal.engaged .modal_option_container {
+        width: 280px;
+        max-height: 75%;
+        overflow: auto;
+        margin-bottom: -5%;
+        /* Firefox */
+        scrollbar-color: #718d96 #394a54;
+        scrollbar-width: thin;
+    }
+
+      /* chrome et al custom scroll */
+    .listModal.engaged .modal_option_container::-webkit-scrollbar {
+        width: 15px;
+        height: 15px;
+        margin-right: 20px;
+    } 
+
+    .listModal.engaged .modal_option_container::-webkit-scrollbar-track-piece  {
+        background-color: #394a54;
+        border-radius:3px;
+    }
+
+    .listModal.engaged .modal_option_container::-webkit-scrollbar-thumb:vertical {
+        height: 30px;
+        background-color: #718d96;
+        border-radius:3px;
+    }  
+
+    /* this was a :has selector solution until I realized firefox didnt support it */
+    .list_area.modal_engaged .list_title  {
+        opacity:0;
+    }
+
+    .list_area.modal_engaged .list  {
+        opacity: 0;
+    }
+
 
 }
 
@@ -287,4 +346,13 @@ body,html {
 
 
 
+
+
+
+
+
+
+
+
+/* testing */
 

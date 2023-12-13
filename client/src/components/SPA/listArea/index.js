@@ -68,17 +68,19 @@ class ListArea extends Component {
 
         const modalClassName = this.props.modal.on ? "listModal engaged" : "listModal";
 
+        /* if firefox starts supporting the :has css selector we can not have the top line conditional and just use :has to select based on children class */
         return (
-            <div className="list_area">
-                <span>
+            <div className={this.props.modal.on ? "list_area modal_engaged" :"list_area"}>
+                <span className="list_title">
                     {this.props.title || TEMP_TITLE}
                 </span>
-                <ul>
+                <ul className="list">
                     <div className="option_container">
                         {listItems}
                     </div>
                 </ul>
                 <ul class={modalClassName}>
+                    <span>{this.props.title || TEMP_TITLE}</span>
                     <button className="modalButton" onClick={this.props.modal.onExitClick}><i class="fa fa-times" aria-hidden="true"></i></button>
                     <div className="modal_option_container">
                         {listModalItems}
