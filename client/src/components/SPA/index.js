@@ -123,6 +123,11 @@ class SPA extends Component{
                     nav: null,
                     edit: null,
                 },
+                modal: {
+                    chord: false,
+                    scale: false,
+                    settings: false,
+                }
                 //TODO: Add settings, scale
             },
             focus: "chord", // "chord", "scale", "settings", null ---this is with regard to all the controls
@@ -139,11 +144,6 @@ class SPA extends Component{
                 pianoOctaves: 2,
                 tonewood: "Rosewood"
             },
-            listModal: {
-                chord: false,
-                scale: false,
-                settings: false,
-            }
         };
 
         this.onFooterUpdate = this.onFooterUpdate.bind(this);
@@ -711,11 +711,11 @@ class SPA extends Component{
         this.setState((state, props) => {
             return {
                 ...state,
-                search: {
-                    ...state.search,
-                    listModal: {
-                        ...state.search.listModal,
-                        [state.search.listModal[state.focus]]: false
+                list: {
+                    ...state.list,
+                    modal: {
+                        ...state.list.modal,
+                        [state.focus]: false
                     }
                 }
             }
@@ -726,11 +726,11 @@ class SPA extends Component{
         this.setState((state, props) => {
             return {
                 ...state,
-                search: {
-                    ...state.search,
-                    listModal: {
-                        ...state.search.listModal,
-                        [state.search.listModal[state.focus]]: true
+                list: {
+                    ...state.list,
+                    modal: {
+                        ...state.list.modal,
+                        [state.focus]: true
                     }
                 }
             }
@@ -816,7 +816,7 @@ class SPA extends Component{
                         customListIsOpen: this.state.noteSelect.chord.customListIsOpen,
                     },
                     listModal: {
-                        on: this.state.listModal.chord,
+                        on: this.state.list.modal.chord,
                         open: this.openListModal,
                         onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
                     }
@@ -896,7 +896,7 @@ class SPA extends Component{
                         customListIsOpen: this.state.noteSelect.scale.customListIsOpen,
                     },
                     listModal: {
-                        on: this.state.listModal.scale,
+                        on: this.state.list.modal.scale,
                         open: this.openListModal,
                         onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
                     }
@@ -965,7 +965,7 @@ class SPA extends Component{
                         selectTextTuning: this.selectTextTuningButtonClick,
                     },
                     listModal: {
-                        on: this.state.listModal.settings,
+                        on: this.state.list.modal.settings,
                         open: this.openListModal,
                         onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
                     }
