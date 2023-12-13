@@ -51,6 +51,8 @@ class ListArea extends Component {
         console.log("list");
         console.log(list);
 
+        //TODO: this is a modal list should seperate list from list with modal capabilities in low-height 
+
         //how do I know if there is only room for one item (low-height resolution) so I can make one item or the first item click to open the modal???
         
 
@@ -62,8 +64,7 @@ class ListArea extends Component {
         const listModalItems = [...listItems];
 
         //I add a list element to the very beginning of listItems and give it a class that is invisible
-        //TODO: make 'Choose ____' dyamic Scale/Chord/Tuning, etc
-        listItems.unshift (<li key="Choose..." onClick={this.props.modal.open} className="listModalButton">Choose...</li>);
+        listItems.unshift (<li key="Choose..." onClick={this.props.modal.open} className="listModalButton"><i class="fa fa-bars" aria-hidden="true"></i>  View List</li>);
 
     
 

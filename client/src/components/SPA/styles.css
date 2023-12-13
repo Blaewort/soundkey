@@ -28,3 +28,217 @@ body,html {
     margin-left: 8px;
     margin-right: 8px;
 }
+
+
+
+
+
+
+
+/* Gonna put the media queries for making all things smaller here */
+@media screen and (max-height: 322px) {
+    .options.with-list.with-toggle .list_area ul .option_container {
+        max-height: 92px;
+    }
+}
+
+@media screen and (max-height: 342px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-radio .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-radio .list_area ul li:first-child {
+        display: block;
+    }
+}
+
+.options.with-list.with-radio .list_area ul .option_container {
+
+    @media screen and (max-height: 342px) { 
+        max-height: 30px;
+    }
+
+    @media screen and (min-height: 343px) and (max-height: 373px) { 
+        max-height: 92px;
+    }
+
+   
+    
+}
+
+
+@media screen and (max-height: 426px) { 
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul .option_container {
+        max-height: 32px;
+    }
+
+    
+    /* max-height from min-height:0px is where listmodal turns on and other things turn off */
+}
+
+
+
+
+
+.options.with-list.with-radio.with-toggle.with-notenav .list_area ul .option_container {
+
+    @media screen and (max-height: 469px) { 
+        max-height: 92px; 
+    }
+
+
+    
+}
+
+@media screen and (max-height: 363px) { 
+    /* need to downsize miscellenies */
+    .options.with-list.with-radio.with-toggle.with-notenav .visual_mod_bar .option label {
+        display: none;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .visual_header {
+        height: 30px;
+        margin-bottom: 2px;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .radio {
+        padding-top: 5px;
+        padding-bottom: 4px;
+        margin-bottom: 2px;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .radio_option {
+        height:32px;
+        line-height:32px;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .note_navigator {
+       margin-bottom: 2px;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .toggle_container {
+        margin-bottom: 2px;
+     }
+
+}
+
+@media screen and (max-height: 316px) { 
+    /* now try to get radio and toggle  */
+
+    .options.with-list.with-radio.with-toggle.with-notenav .radtog-container {
+        display: flex;
+     }
+
+     .options.with-list.with-radio.with-toggle.with-notenav .toggle_container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-top: 14px;
+        padding-bottom: 13px;
+        margin-bottom: 1px;
+     }
+
+     .options.with-list.with-radio.with-toggle.with-notenav .toggle_container .label {
+        padding-bottom: 4px;
+        align-self: end;
+        width: 120px;
+        margin: initial;
+     }
+
+     .options.with-list.with-radio.with-toggle.with-notenav .switch_container {
+        align-self: end;
+        padding-right: 40px;
+     }
+
+
+     .options.with-list.with-radio.with-toggle.with-notenav .visual_header {
+        margin-bottom: 1px;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .radio {
+        margin-bottom: 1px;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .note_navigator {
+        margin-bottom: 1px;
+     }
+     
+}
+
+
+
+
+
+
+@media screen and (max-height: 423px) {
+
+
+
+    .options.with-list.with-radio.with-notenav .visual_mod_bar .option label {
+        display: none;
+    }
+
+    .options.with-list.with-radio.with-notenav .visual_header {
+        height: 30px;
+        margin-bottom: 2px;
+    }
+
+    .options.with-list.with-radio.with-notenav .radio {
+        padding-top: 5px;
+        padding-bottom: 4px;
+        margin-bottom: 2px;
+    }
+
+    .options.with-list.with-radio.with-notenav .radio_option {
+        height:32px;
+        line-height:32px;
+    }
+
+    .options.with-list.with-radio.with-notenav .note_navigator {
+       margin-bottom: 2px;
+    }
+
+    .options.with-list.with-radio.with-notenav .toggle_container {
+        margin-bottom: 2px;
+     }
+
+
+}
+
+@media screen and (max-height: 379px) { 
+
+     .options.with-list.with-radio.with-notenav .visual_header {
+        margin-bottom: 1px;
+    }
+
+    .options.with-list.with-radio.with-notenav .radio {
+        margin-bottom: 1px;
+    }
+
+    .options.with-list.with-radio.with-notenav .note_navigator {
+        margin-bottom: 1px;
+     }
+}
+
+
+@media screen and (max-height: 342px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-radio.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-radio.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
+
+    .options.with-list.with-radio .list_area ul .option_container {
+        max-height: 32px;
+    }
+}

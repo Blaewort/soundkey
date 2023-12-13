@@ -254,10 +254,16 @@ function getGuitarTunings(stringCount) {
     return [
         {   
             label: "EADGBE"
-        }, 
+        },
         {
             label: "DADGAD"
-        }     
+        },
+        {
+            label: "DADGBE"
+        },
+        {
+            label: "DADGBD"
+        }
     ];
 }
 

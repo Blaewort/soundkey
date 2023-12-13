@@ -181,8 +181,10 @@ class ChordScaleController extends Component{
             </div>
             {visualInstrument}
             <div class="bottom-controls">
-                {radio}
-                {toggle}
+                <div className="radtog-container">
+                    {radio}
+                    {toggle}
+                </div>
                 {footer}
             </div>
         </>
