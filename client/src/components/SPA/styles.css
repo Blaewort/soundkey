@@ -51,13 +51,70 @@ button.modalButton:hover {
 
 
 .listModal.engaged {
+    display: none;
+    position: absolute;
     z-index: 1000000000;
+    top: 50%;
+    width: 310px;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+    background-color: #597272a3;
+    align-items: center; 
+    justify-content: center;
+    height: 90dvh;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+    box-sizing: border-box;
+    border-radius: 3px;
 }
 
+.listModal .modal_option_container {
+    width: 280px;
+    max-height: 75%;
+    overflow: auto;
+    margin-bottom: -5%;
+    /* Firefox */
+    scrollbar-color: #718d96 #394a54;
+    scrollbar-width: thin;
+}
 
+  /* chrome et al custom scroll */
+.listModal .modal_option_container::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+    margin-right: 20px;
+} 
 
+.listModal .modal_option_container::-webkit-scrollbar-track-piece  {
+    background-color: #394a54;
+    border-radius:3px;
+}
 
+.listModal .modal_option_container::-webkit-scrollbar-thumb:vertical {
+    height: 30px;
+    background-color: #718d96;
+    border-radius:3px;
+} 
+
+.list_area .listModal li {
+    background-color: #394854;
+}
+
+.list_area .listModal li:hover {
+    background-color: #45575f;
+}
+
+.list_area .listModal span {
+    position: absolute;
+    top: 12px;
+    color: #a9babb;
+}
+
+.list_area.modal_engaged {
+    background-color: #3a3d50;
+    background-color: #42465c;
+}
 
 /* Gonna put the media queries for making all things smaller here */
 @media screen and (max-height: 322px) {
@@ -75,91 +132,22 @@ button.modalButton:hover {
         display: block;
     }
 
-    .listModal.engaged {
+    .options.with-list.with-radio .listModal.engaged {
         display: flex;
-        position: absolute;
-        top: 50%;
-        /*margin-left: -161px; *//* assumes width of 322px */
-        /*margin-top: -161px;*/
-        width: 310px;
-        background-color: #597272a3;
-        align-items: center; 
-        justify-content: center;
-        height: 90dvh;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translateY(-50%) translateX(-50%);
-        transform: translateY(-50%) translateX(-50%);
-        box-sizing: border-box;
-        border-radius: 3px;
     }
 
     .options.with-list.with-radio .list_area .listModal.engaged li {
         display: block;
     }
 
-    .listModal.engaged li {
-        background-color: #394854;
-    }
-
-    .listModal.engaged li:hover {
-        background-color: #45575f;
-    }
-
-    .listModal.engaged span {
-        position: absolute;
-        top: 12px;
-        color: #a9babb;
-    }
-
-    
-
-    .listModal.engaged .modal_option_container {
-        width: 280px;
-        max-height: 75%;
-        overflow: auto;
-        margin-bottom: -5%;
-        /* Firefox */
-        scrollbar-color: #718d96 #394a54;
-        scrollbar-width: thin;
-    }
-
-      /* chrome et al custom scroll */
-    .listModal.engaged .modal_option_container::-webkit-scrollbar {
-        width: 15px;
-        height: 15px;
-        margin-right: 20px;
-    } 
-
-    .listModal.engaged .modal_option_container::-webkit-scrollbar-track-piece  {
-        background-color: #394a54;
-        border-radius:3px;
-    }
-
-    .listModal.engaged .modal_option_container::-webkit-scrollbar-thumb:vertical {
-        height: 30px;
-        background-color: #718d96;
-        border-radius:3px;
-    }  
-
-
     /* this was a :has selector solution until I realized firefox didnt support it */
-    .list_area.modal_engaged .list_title  {
+    .options.with-list.with-radio .list_area.modal_engaged .list_title  {
         opacity:0;
     }
 
-    .list_area.modal_engaged .list  {
+    .options.with-list.with-radio .list_area.modal_engaged .list  {
         opacity: 0;
     }
-
-    .list_area.modal_engaged {
-        background-color: #3a3d50;
-        background-color: #42465c;
-    }
-
-    
-
-
 }
 
 .options.with-list.with-radio .list_area ul .option_container {
@@ -352,6 +340,60 @@ button.modalButton:hover {
 
     .options.with-list.with-radio .list_area ul .option_container {
         max-height: 32px;
+    }
+}
+
+@media screen and (max-height: 426px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .listModal.engaged {
+        display: flex;
+    }
+    
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area .listModal.engaged li {
+        display: block;
+    }
+
+    /* this was a :has selector solution until I realized firefox didnt support it */
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged .list_title  {
+        opacity:0;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged .list  {
+        opacity: 0;
+    }
+}
+
+@media screen and (max-height: 342px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-radio.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-radio.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
+
+    .options.with-list.with-radio.with-notenav .listModal.engaged {
+        display: flex;
+    }
+    
+    .options.with-list.with-radio.with-notenav .list_area .listModal.engaged li {
+        display: block;
+    }
+
+    /* this was a :has selector solution until I realized firefox didnt support it */
+    .options.with-list.with-radio.with-notenav .list_area.modal_engaged .list_title  {
+        opacity:0;
+    }
+
+    .options.with-list.with-radio.with-notenav .list_area.modal_engaged .list  {
+        opacity: 0;
     }
 }
 

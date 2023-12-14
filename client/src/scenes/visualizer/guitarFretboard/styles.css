@@ -508,6 +508,25 @@ li.fret-wrapper:first-child .marker {
     }
 }
 
+.options.with-list .guitarFretboard {
+    /* these max-heights are just well under some other css instruction that is overriding somehow exactly what we want*/
+    @media screen and (max-height: 450px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 300px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 300px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 300px) and (min-width: 300px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
 .options.with-radio .guitarFretboard {
     /* This is looking at settings with guitar selected and the radio is set to Tunings
         or if we are in edit and there is no list yet */
