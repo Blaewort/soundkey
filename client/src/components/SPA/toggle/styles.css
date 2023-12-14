@@ -2,12 +2,24 @@
     flex: 1;
 }
 
+
+
+
+@media screen and (min-width: 320px) {
+    .toggle_container > * {
+      /*flex-basis: 106px;*/
+    }
+}
+
+
+
 .toggle_container .switch_container {
     flex: 2;
+    margin-left: 6px;
+    display: inline-block;
 }
 
 .toggle_container {
-    display: flex;
     justify-content: space-between;
         background-color: #4f5471;
 
@@ -16,22 +28,33 @@
         height:18px;
 }
 .toggle_container {
-    /* margin-top: 8px; */
     margin-bottom: 4px;
-    display: flex;
+    /* display: flex;  */
     padding-bottom: 6px;
 }
 
 .toggle_container .label {
     width: 70px;
+    width:102px;
     text-align: center;
     margin: 0 auto;
 
-    text-align: center;
+    
     display: block;
     color: #bdc0d4;
     border-radius: 4px 4px 4px 4px;
     font-size: 0.825em;
+    text-align: center;
+    text-align:right;
+
+    display: inline-block;
+
+    height: 20px;
+    height: 23px;
+    position: relative;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 
 }
 

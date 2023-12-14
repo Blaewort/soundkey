@@ -124,8 +124,8 @@ class SPA extends Component{
                     edit: null,
                 },
                 modal: {
-                    chord: false,
-                    scale: false,
+                    chord: false, //I'd like the low-heigh modals to be on by default on website entry. Even though you can't
+                    scale: false, //    use some of the controls with modal on, the defaults are user friendly 
                     settings: false,
                 }
                 //TODO: Add settings, scale
