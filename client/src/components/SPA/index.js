@@ -202,12 +202,31 @@ class SPA extends Component{
         this.setState((state, props) => {
           const sameValue = (state.focus === newValue);
           const visFocusIsChordOrScale = (newValue === "chord" || newValue === "scale");
+
+        //if (sameValue && visFocusIsChordOrScale) {//keep focus value and set view to "selected"}
+        //if (sameValue && !visFocusIsChordOrScale) {// set focus to null}
+        //if !sameValue {// set focus to newValue}
+
+        let newFocus;
+
+        if (sameValue) {
+            // if sameValue && visFocusIsChordOrScale, keep focus value, otherwise !visFocusIsChordOrScale so set to null
+            newFocus =  visFocusIsChordOrScale ? state.focus : null;
+        } else {
+            // not sameValue, so we need to update
+            newFocus = newValue;
+        }
+
+
           return {
               ...state, //copy it
-            //Deselect and unengage if same, if not make clicked option the selection and set to engaged
-            focus: sameValue ? null : newValue,
+            focus: newFocus,
             //if 'chord' or 'scale' let it update, otherwise keep the old value, visfocus can only be chord or scale
-            visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus
+            visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus,
+            view: {
+                ...state.view,
+                [state.focus]: (sameValue && visFocusIsChordOrScale) ? "selected" : state.view[state.focus],
+            }
           }
         });
     }
