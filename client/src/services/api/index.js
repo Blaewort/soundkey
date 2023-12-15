@@ -36,6 +36,8 @@ async function postData(url = '', data = {}) {
 
 
 async function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
+    console.log("root");
+    console.log(root);
     type = type === null ? "Heptatonic": type;
 
     //noteValue would be 0-12 and we'd grab all chords with root note 0-12
@@ -207,22 +209,21 @@ function getRemoveToneChordsForChord(chord, scaleToLimitBy) {
 
 function getAlteredScalesForScale(scale, chordToLimitBy) {
     // this would give us scaless where foundScale.noteCount === scale.noteCount but only (scale.noteCount-1) amount of notes match between the two scales
-    return [{label: "-An Alteration-",
-    name: "B Lydian"}];
+    return [{label: "-An Alteration 1-", name: "A Lydian"},
+            {label: "-An Alteration 2-", name: "A Lydian"},
+            {label: "-An Alteration 3-", name: "A Lydian"}];
 }
 
 function getAddedToneScalesForScales(scale, chordToLimitBy) {
     // this would give usscales where foundScale.noteCount === (scale.noteCount + 1) and all notes in scale are found in foundSCale
-    return [{label: "-A + Tone-",
-    name: "B Lydian"}];
+    return [{label: "-A + Tone-", name: "B Lydian"}];
 
 }
 
 function getRemoveToneScaleForScale(scale, chordToLimitBy) {
     // this would give us scales where foundScale.noteCount === (scale.noteCount - 1) and all notes in foundScale are found in scale
-    return [{label: "-A - Tone-",
-    name: "B Lydian"}];
-
+    return [{label: "-A - Tone 1-", name: "C Lydian"},
+            {label: "-A - Tone 2-", name: "B Lydian"}];
 }
 
 

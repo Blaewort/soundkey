@@ -398,17 +398,59 @@ button.modalButton:hover {
 }
 
 
+@media screen and (max-height: 335px) { 
+    .options.with-list.with-notenav .list_area ul .option_container {
+        max-height: 92px;
+    }
+}
+
+@media screen and (max-height: 302px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
+
+    .options.with-list.with-notenav .list_area ul .option_container {
+        max-height: 32px;
+    }
+}
 
 
 
 
 
+@media screen and (max-height: 302px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
+
+    .options.with-list.with-notenav .listModal.engaged {
+        display: flex;
+    }
+    
+    .options.with-list.with-notenav .list_area .listModal.engaged li {
+        display: block;
+    }
+
+    /* this was a :has selector solution until I realized firefox didnt support it */
+    .options.with-list.with-notenav .list_area.modal_engaged .list_title  {
+        opacity:0;
+    }
+
+    .options.with-list.with-notenav .list_area.modal_engaged .list  {
+        opacity: 0;
+    }
+}
 
 
 
 
 
-
-
-/* testing */
 

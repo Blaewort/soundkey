@@ -211,9 +211,9 @@ class ChordScaleController extends Component{
         
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
 
-        const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.nav.mode, this.props.search.limitByOther);
+        const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.search.nav.mode, this.props.search.limitByOther);
         const itemClick = this.props.search.nav.onItemClick;
-        listArea = <ListArea modal={this.props.search.listModal} title={this.props.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
+        listArea = <ListArea modal={this.props.search.listModal} title={this.props.search.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
 
         footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 

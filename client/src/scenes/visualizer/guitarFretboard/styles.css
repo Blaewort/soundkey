@@ -548,6 +548,25 @@ li.fret-wrapper:first-child .marker {
     }
 }
 
+.options.with-list.with-notenav .guitarFretboard {
+    /* mode submenu */
+    @media screen and (max-height: 494px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 470px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 458px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 447px) and (min-width: 300px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
 /* There's no situation where a list would have a radio and a notenav with no toggle, so no selector for it*/
 
 .guitarFretboard.with-list.with-radio.with-toggle {
@@ -563,6 +582,10 @@ li.fret-wrapper:first-child .marker {
 .guitarFretboard.with-toggle {
     /* only toggle at least for guitar is too small to do anything 320px height can view the page easy*/
 
+}
+
+.guitarFretboard.with-list.with-notenav {
+    /* mode submenu */
 }
 
 /* I'll have to add options.with-notenav.with-radio and options.with-notenav.with-radio-with-toggle  for when we dont actively have a list avaiable
