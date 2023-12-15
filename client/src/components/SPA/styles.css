@@ -176,6 +176,10 @@ button.modalButton:hover {
         max-height: 32px;
     }
 
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged {
+        background-color: #42465c;
+    }
+
     
     /* max-height from min-height:0px is where listmodal turns on and other things turn off */
 }
@@ -340,6 +344,9 @@ button.modalButton:hover {
     .options.with-list.with-radio .list_area ul .option_container {
         max-height: 32px;
     }
+    .options.with-list.with-radio .list_area.modal_engaged {
+        background-color: #42465c;
+    }
 }
 
 @media screen and (max-height: 426px) { 
@@ -415,6 +422,10 @@ button.modalButton:hover {
     .options.with-list.with-notenav .list_area ul .option_container {
         max-height: 32px;
     }
+    .options.with-list.with-notenav .list_area.modal_engaged {
+        background-color: #42465c;
+    }
+    
 }
 
 
