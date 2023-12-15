@@ -4,6 +4,13 @@
     padding-right: 8px;
 }
 
+.guitarFretboard.left-handed {
+    transform: rotate(180deg) scaleY(-1);
+}
+.guitarFretboard.left-handed .marker {
+    transform: rotate(180deg) scaleY(-1);
+}
+
 .string {
     padding: 0;
     margin: 0 auto;

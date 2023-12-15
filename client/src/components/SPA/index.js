@@ -21,6 +21,7 @@ import { fapi_getModes,
     fapi_getChordsFromUserString,
     fapi_getScalesFromUserString,
     fapi_getAllTonewood,
+    fapi_getOrientations,
 }  from '../../services/api/index';
 
 
@@ -142,7 +143,8 @@ class SPA extends Component{
                 name: "Guitar",
                 tuning: "EADGBE",
                 pianoOctaves: 2,
-                tonewood: "Rosewood"
+                tonewood: "Rosewood",
+                orientation: "Right-Handed"
             },
         };
 
@@ -185,6 +187,7 @@ class SPA extends Component{
         this.onTuningNavSearchItemClick = this.onTuningNavSearchItemClick.bind(this);
         this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
         this.onTonewoodNavSearchItemClick = this.onTonewoodNavSearchItemClick.bind(this);
+        this.onOrientationItemClick = this.onOrientationItemClick.bind(this);
 
         this.onListModalExitClick = this.onListModalExitClick.bind(this);
         this.openListModal = this.openListModal.bind(this);
@@ -707,6 +710,19 @@ class SPA extends Component{
         });
     }
 
+    onOrientationItemClick(e, item) {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                instrument: {
+                    ...state.instrument,
+                    orientation: item.label
+                },
+                focus: state.visualizerFocus, //want to snap back to whatever we were viewing. time in settings is done
+            };
+        });
+    }
+
     onListModalExitClick() {
         this.setState((state, props) => {
             return {
@@ -961,6 +977,7 @@ class SPA extends Component{
                     nav: {
                         onInstrumentItemClick: this.onInstrumentNavSearchItemClick,
                         onTonewoodItemClick: this.onTonewoodNavSearchItemClick,
+                        onOrientationItemClick: this.onOrientationItemClick,
                         onTuningItemClick: this.onTuningNavSearchItemClick,
                         selectTextTuning: this.selectTextTuningButtonClick,
                     },
@@ -986,6 +1003,7 @@ class SPA extends Component{
                     name: this.state.instrument.name,
                     getAll: fapi_getInstruments,
                     getAllTonewood: fapi_getAllTonewood,
+                    getOrientations: fapi_getOrientations,
                 };
 
                 footer = {

@@ -350,6 +350,17 @@ function fapi_getAllTonewood() {
     ];
 }
 
+function fapi_getOrientations() {
+    return [
+        {
+            label: "Right-Handed"
+        },
+        {
+            label: "Left-Handed"
+        }
+    ];
+}
+
 
 export {  
     fapi_getModes, 
@@ -362,5 +373,6 @@ export {
     fapi_isValidTextTuning,
     fapi_getChordsFromUserString,
     fapi_getScalesFromUserString,
-    fapi_getAllTonewood
+    fapi_getAllTonewood,
+    fapi_getOrientations,
 }

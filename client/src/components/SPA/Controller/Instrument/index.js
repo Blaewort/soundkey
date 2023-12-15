@@ -46,6 +46,12 @@ class InstrumentController extends Component{
             listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Tonewood"} list={list}></ListArea>;
         }
 
+        else if (this.props.radioValue === "Orientation") {
+            const itemClick = this.props.search.nav.onOrientationItemClick;
+            const list = this.props.instrument.getOrientations();
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Orientation"} list={list}></ListArea>;
+        }
+
         footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
 

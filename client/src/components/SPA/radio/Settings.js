@@ -23,6 +23,10 @@ import Radio from './index'
                 value: "Tonewood"
             },
             {
+                html: <i class="fa fa-adjust" aria-hidden="true"></i>,
+                value: "Orientation"
+            },
+            {
                 html: <i className="fas fa-theater-masks"></i>,
                 value: "Instruments"
             },
