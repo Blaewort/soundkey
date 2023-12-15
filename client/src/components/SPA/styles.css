@@ -110,11 +110,10 @@ button.modalButton:hover {
     top: 12px;
     color: #a9babb;
 }
-
-.list_area.modal_engaged {
-    background-color: #3a3d50;
+/* needs to be in media queries but maybe a daker color to emphasize the open modal window */
+/*.list_area.modal_engaged {
     background-color: #42465c;
-}
+}*/
 
 /* Gonna put the media queries for making all things smaller here */
 @media screen and (max-height: 322px) {
