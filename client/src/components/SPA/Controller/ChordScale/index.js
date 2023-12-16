@@ -224,6 +224,7 @@ class ChordScaleController extends Component{
         let listArea;
         let visualInstrument;
         let footer;
+        let toggle;
 
         header = <NavSearchHeader toSearchView={this.props.viewSwitch.toSearch} focus={this.props.type}/>;
 
@@ -241,6 +242,11 @@ class ChordScaleController extends Component{
         const itemClick = this.props.search.nav.onModeItemClick;
         listArea = <ListArea modal={this.props.search.listModal} title={this.props.search.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
 
+        if (this.props.toggle.isRequired) {
+            const title = this.props.type === "chord" ? "Match Scale" : "Match Chord";
+            toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={title} />;
+        }
+
         let pages = 0;
         if (this.props.type === "scale") {
             /* if focus is scale, view is "selected" and there is no primary selection, make footer  */
@@ -257,6 +263,7 @@ class ChordScaleController extends Component{
             </div>
             {visualInstrument}
             <div class="bottom-controls">
+                {toggle}
                 {footer}
             </div>
         </>
@@ -349,6 +356,7 @@ ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection)
             return (!selection.primary && selection.secondary);
         case "search":
         case "navsearch":
+        case "navsearchmode":
           return selection.secondary;
         default:
           return false;

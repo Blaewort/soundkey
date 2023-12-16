@@ -578,6 +578,33 @@
     }
 }
 
+.options.with-list.with-notenav.with-toggle .piano-container {
+    /* mode submenu*/
+    @media screen and (max-height: 652px) and (min-width:766px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 595px) and (min-width: 663px) and (max-width: 765px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 565px) and (min-width:562px) and (max-width: 662px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 531px) and (min-width: 462px) and (max-width: 561px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 502px) and (min-width: 391px) and (max-width: 461px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 486px) and (min-width: 300px) and (max-width: 390px) {
+        display: none;
+    }
+}
+
 /* I'll have to add options.with-notenav.with-radio and options.with-notenav.with-radio-with-toggle  for when we dont actively have a list avaiable
  in 'navsearch' chord/scale view (right now all the settings navlists are hardcoded so they are always on) (searchGets havent yet been got) 
  -Also the 'edit' chord/scale view which, while it doesnt have a list, would have only have radio if no selection, that gets lumped in and that is fine

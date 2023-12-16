@@ -574,6 +574,25 @@ li.fret-wrapper:first-child .marker {
     }
 }
 
+.options.with-list.with-notenav.with-toggle .guitarFretboard {
+    /* mode submenu */
+    @media screen and (max-height: 530px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 505px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 493px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 482px) and (min-width: 300px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
 /* I'll have to add options.with-notenav.with-radio and options.with-notenav.with-radio-with-toggle  for when we dont actively have a list avaiable
  in 'navsearch' chord/scale view (right now all the settings navlists are hardcoded so they are always on) (searchGets havent yet been got) 
  -Also the 'edit' chord/scale view which, while it doesnt have a list, would have only have radio if no selection, that gets lumped in (and that is fine) with options.with-radio for guitar tuning text input
