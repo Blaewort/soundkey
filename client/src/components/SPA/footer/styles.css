@@ -67,3 +67,23 @@ transition: background-color 0.125s ease;
 .visual_mod_bar:first-child {
    flex: 2;
 }
+
+/* the footer page counters -start- */
+.visual_mod_bar button  {
+   position: relative;
+}
+
+.visual_mod_bar .fa.fa-circle  {
+   position: absolute;
+   font-size: 4px;
+   color: #adddff;
+}
+
+.visual_mod_bar .fa.fa-circle:first-child  {
+   left: 30px;
+}
+
+.visual_mod_bar .fa.fa-circle:nth-child(2) {
+   left: 40px;
+}
+/* the footer page counters -end- */

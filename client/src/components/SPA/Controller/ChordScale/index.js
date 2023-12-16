@@ -61,7 +61,7 @@ class ChordScaleController extends Component{
     getTextSearchViewContents() {
         const headerText = this.props.search.text.input;
         const onTextChange = this.props.search.text.onChange;
-        const toNavView = this.props.viewSwitch.toNav;
+        //const toNavView = this.props.viewSwitch.toNav;
 
         let header;
         let listArea;
@@ -69,6 +69,14 @@ class ChordScaleController extends Component{
         let toggle;
         let footer;
 
+
+        let toNavView;
+        if (this.props.type === "chord") {
+            toNavView = this.props.viewSwitch.toNav;
+        } else if (this.props.type === "scale") {
+            toNavView = this.props.viewSwitch.toModeNav;
+        }
+        
         header = <SearchHeader textValue={headerText} onChange={onTextChange} placeholder={this.getPlaceholder()} toNavView={toNavView} />;
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
 
@@ -82,7 +90,16 @@ class ChordScaleController extends Component{
             toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={title} />;
         }
 
-        footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+        
+        let pages = 0;
+        if (this.props.type === "scale") {
+            /* if focus is scale and there is no primary selection, make footer pages  */
+            if (!this.props.selection.primary) {pages = 0;}
+            if (this.props.selection.primary) {pages = 1;}
+        } else if (this.props.type === "chord") {
+            if (this.props.selection.primary) {pages = 1;}
+        }
+        footer = <Footer pageCount={pages} onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
         return <>
             <div class="top-controls">
@@ -103,7 +120,15 @@ class ChordScaleController extends Component{
         let visualInstrument;
         let footer;
 
-        header = <SelectedObjectHeader toNavView={this.props.viewSwitch.toNav} toSearchView={this.props.viewSwitch.toSearch} /> ;
+        let toNavView;
+        if (this.props.type === "chord") {
+            toNavView = this.props.viewSwitch.toNav;
+        } else if (this.props.type === "scale") {
+            toNavView = this.props.viewSwitch.toModeNav;
+        }
+
+        header = <SelectedObjectHeader toNavView={toNavView} toSearchView={this.props.viewSwitch.toSearch} /> ;
+
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;  
 
         const toEdit = this.props.viewSwitch.toEdit;
@@ -137,7 +162,7 @@ class ChordScaleController extends Component{
         let footer;
 
         //this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther);
-        header = <NavSearchHeader toSearchView={this.props.viewSwitch.toSearch} focus={this.props.type}/>
+        header = <NavSearchHeader toSearchView={this.props.viewSwitch.toSearch} focus={this.props.type} view={this.props.view}/>
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
 
         const noteNavValue = this.props.search.noteSelect.note.value;
@@ -159,7 +184,8 @@ class ChordScaleController extends Component{
             toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={title} />;
         }
 
-        footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+        let pages = 1;
+        footer = <Footer pageCount={pages} onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
 
         if (this.props.type === "chord") {
@@ -215,7 +241,13 @@ class ChordScaleController extends Component{
         const itemClick = this.props.search.nav.onModeItemClick;
         listArea = <ListArea modal={this.props.search.listModal} title={this.props.search.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
 
-        footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+        let pages = 0;
+        if (this.props.type === "scale") {
+            /* if focus is scale, view is "selected" and there is no primary selection, make footer  */
+            if (!this.props.selection.primary) {pages = 2;}
+            if (this.props.selection.primary) {pages = 2;}
+        }
+        footer = <Footer pageCount={pages} onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
         return <>
             <div class="top-controls">
@@ -260,7 +292,11 @@ class ChordScaleController extends Component{
 
         }
 
-        footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
+        let pages = 0;
+        if (this.props.type === "scale" || this.props.type === "chord") {
+            pages = 1;
+        } 
+        footer = <Footer pageCount={pages} onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
         return <>
             <div class="top-controls">

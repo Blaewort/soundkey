@@ -11,8 +11,16 @@ function NavSearchHeader(props){
       rightIcon = props.tuning ? "keyboard" : null;
     }
 
+    let onRightIconClick = props.toSearchView;
+    if (props.focus === "scale" && props.view && props.view === "navsearch") { 
+      /* only navsearchmode gets search button on scale focus */
+      rightIcon = null;
+      onRightIconClick = props.focus === "scale" ? null : onRightIconClick
+    }
+    
+
     return (
-    <Header onRightIconClick={props.toSearchView} rightIcon={rightIcon} engaged={true} userText={false} />
+    <Header onRightIconClick={onRightIconClick} rightIcon={rightIcon} engaged={true} userText={false} />
     )
 }
 

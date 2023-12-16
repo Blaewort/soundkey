@@ -155,6 +155,7 @@ class SPA extends Component{
         this.toChordSearchView = this.toChordSearchView.bind(this);
         this.toChordNavSearchView = this.toChordNavSearchView.bind(this);
         this.toScaleNavSearchView = this.toScaleNavSearchView.bind(this);
+        
         this.toChordEditView = this.toChordEditView.bind(this);
         this.toScaleEditView = this.toScaleEditView.bind(this);
 
@@ -207,16 +208,56 @@ class SPA extends Component{
         //if (sameValue && !visFocusIsChordOrScale) {// set focus to null}
         //if !sameValue {// set focus to newValue}
 
+        //todo: refactor divergent returns
+        
         let newFocus;
 
         if (sameValue) {
             // if sameValue && visFocusIsChordOrScale, keep focus value, otherwise !visFocusIsChordOrScale so set to null
             newFocus =  visFocusIsChordOrScale ? state.focus : null;
+
+            /*if (state.focus === "scale" && (!state.primary && state.view.scale === "selected"))  {
+                return {
+                    ...state, //copy it
+                  focus: newFocus,
+                  //if 'chord' or 'scale' let it update, otherwise keep the old value, visfocus can only be chord or scale
+                  visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus,
+                  view: {
+                      ...state.view,
+                      [state.focus]: (sameValue && visFocusIsChordOrScale) ? "navsearch" : state.view[state.focus],
+                  }
+                }
+            }*/
+
+            if (state.focus === "scale" && (!state.primary && state.view.scale === "search"))  {
+                return {
+                    ...state, //copy it
+                  focus: newFocus,
+                  //if 'chord' or 'scale' let it update, otherwise keep the old value, visfocus can only be chord or scale
+                  visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus,
+                  view: {
+                      ...state.view,
+                      [state.focus]: (sameValue && visFocusIsChordOrScale) ? "selected" : state.view[state.focus],
+                  }
+                }
+            }
+
+            if (state.focus === "scale" && (state.view.scale === "search" || state.view.scale === "navsearchmode")) {
+                return {
+                    ...state, //copy it
+                  focus: newFocus,
+                  //if 'chord' or 'scale' let it update, otherwise keep the old value, visfocus can only be chord or scale
+                  visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus,
+                  view: {
+                      ...state.view,
+                      [state.focus]: (sameValue && visFocusIsChordOrScale) ? "navsearch" : state.view[state.focus],
+                  }
+                }
+            }
         } else {
             // not sameValue, so we need to update
             newFocus = newValue;
         }
-
 
           return {
               ...state, //copy it
@@ -229,6 +270,11 @@ class SPA extends Component{
             }
           }
         });
+
+
+
+
+      
     }
 
     onChordDeselect() {
@@ -335,7 +381,6 @@ class SPA extends Component{
     }
 
     toModeNavSearchView(mode) {
-        // TODO
         this.setState((state, props) => {
             return {
                 ...state,
@@ -939,6 +984,7 @@ class SPA extends Component{
                 viewSwitch = {
                     toEdit: this.toScaleEditView,
                     toNav: this.toScaleNavSearchView,
+                    toModeNav: this.toModeNavSearchView,
                     toSearch: this.toScaleSearchView,
                 };
 

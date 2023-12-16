@@ -11,13 +11,26 @@ function Footer(props){
       const itemClass = "option";
       const baseClassName = engaged ? containerClass + " engaged" : containerClass;
 
+      const pageDot = <i class="fa fa-circle" aria-hidden="true"></i>;
+      let pageDots = Number.isInteger(props.pageCount) ? props.pageCount : 0;
+      if (pageDots === 0) {
+        pageDots = [];
+      }
+      else {
+
+        const pages = pageDots;
+        pageDots = [];
+        for (let i = 0; i < pages; i++) {
+            pageDots.push(pageDot);
+        }
+      }
       const options = [
         {
-            html: <><button type="button"><i className="fas fa-chess-rook"></i></button><label>Chords</label></>,
+            html: <><button type="button">{(props.selectedValue === "chord") ? pageDots: null}<i className="fas fa-chess-rook"></i></button><label>Chords</label></>,
             value: "chord"
         },
         {
-            html: <><button type="button"><i className="fas fa-chess-bishop"></i></button><label>Scales</label></>,
+            html: <><button type="button">{(props.selectedValue === "scale") ? pageDots: null}<i className="fas fa-chess-bishop"></i></button><label>Scales</label></>,
             value: "scale"
         },
         {
