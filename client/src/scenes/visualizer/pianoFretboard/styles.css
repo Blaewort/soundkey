@@ -367,8 +367,15 @@
    /* .keyboard .note {right: 2px;} */
 
    .keyboard.threeOctave .key.black .note {
-    left:-3px;
+    left:-1px;
     top:70%;
+   }
+
+   .keyboard.threeOctave .note {
+    width: 14px;
+    line-height: 14px;
+    height: 14px;
+    font-size: 10px;
    }
 
 }
@@ -386,6 +393,15 @@
    .key.white {
     max-height: 99px;
    } 
+   .keyboard.threeOctave .note {
+    width: 14px;
+    line-height: 14px;
+    height: 14px;
+    font-size: 10px;
+   }
+   .keyboard.threeOctave .key.black .note {
+    left:-2px;
+   }
 
 }
 
@@ -423,6 +439,16 @@
    } 
    /* .keyboard .note {right: 2px;} */
 
+   .keyboard.threeOctave .note {
+    width: 14px;
+    line-height: 14px;
+    height: 14px;
+    font-size: 10px;
+   }
+   .keyboard.threeOctave .key.black .note {
+    left:-2px;
+   }
+
 }
 
 @media screen and (min-width: 404px ) and (min-height: 318px) and (max-height: 335px) {
@@ -442,6 +468,16 @@
         padding-right: 25px;
         padding-top: 25px; 
      }
+
+     .keyboard.threeOctave .note {
+        width: 14px;
+        line-height: 14px;
+        height: 14px;
+        font-size: 10px;
+       }
+       .keyboard.threeOctave .key.black .note {
+        left:-1px;
+       }
 }
 
 @media screen and (min-width: 404px ) and (min-height: 280px) and (max-height: 335px) {

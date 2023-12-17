@@ -34,7 +34,8 @@ import Radio from './index'
 
         const optionsNonTunable = [
             {
-                html: <i class="fas fa-divide"></i>,
+                html: <i class="fas fa-sort"></i>,
+                /* alternate: <i class="fas fa-divide"></i> */
                 /* alternate: <i class="fas fa-arrows-alt-h"></i> */
                 value: "Octaves"
             },
