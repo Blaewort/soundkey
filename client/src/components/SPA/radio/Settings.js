@@ -46,6 +46,9 @@ import Radio from './index'
             case "Guitar":
                 options = optionsTunable;
                 break;
+                case "Bass":
+                    options = optionsTunable;
+                    break;
             case "Piano":
                 options = optionsNonTunable;
                 break;

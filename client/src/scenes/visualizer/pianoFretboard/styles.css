@@ -91,30 +91,6 @@
     border-top-right-radius: 3px;
 }
 
-/*.note {
-    opacity: 0;
-    display: inline;
-}
-
-.keyboardNote.visible {
-    opacity: 100%;
-} removed in fixing CSS clash between guitar and piano*/ 
-
-/*.keyboard .note { 
-    opacity: 0;
-    display: inline;
-
-    line-height: initial;
-    border-radius: 50%;
-    width: 24px;
-    background-color: rgb(209, 129, 14);
-    height: 22px;
-    line-height: 22px;
-    text-shadow: 0px 1px 2px rgb(68, 68, 68);
-    box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.75);
-    color:white;
-} for some reason I had to edit this to get the markers on piano working */ 
-
 .keyboard .note {
     opacity: 0;
     display:block;
@@ -195,17 +171,36 @@
     margin:0 0 0 -7.4%;
 }
 
-.key.white.twoOctave {
+
+
+.keyboard.threeOctave .key.white {
+    /* width: 6.7%; the left-right black keyboard case margins weren't equal */
+    width: calc(100% / 21);
+}
+
+.keyboard.twoOctave .key.black {
+    width: 3.6%;
+}
+.keyboard.twoOctave .key.white.left {
+    margin:0 0 0 -3.7%;
+}
+.keyboard.twoOctave .key.white .keyboardNote {
+    margin-left: 25%;
+}
+
+
+
+.keyboard.twoOctave .key.white {
     /* width: 6.7%; the left-right black keyboard case margins weren't equal */
     width: calc(100% / 14);
 }
-.key.black.twoOctave {
+.keyboard.twoOctave .key.black {
     width: 3.6%;
 }
-.key.white.twoOctave.left {
+.keyboard.twoOctave .key.white.left {
     margin:0 0 0 -3.7%;
 }
-.key.white.twoOctave .keyboardNote {
+.keyboard.twoOctave .key.white .keyboardNote {
     margin-left: 25%;
 }
 
@@ -300,15 +295,9 @@
 
 }
 
+
+
 /* height stuff */
-@media screen and (max-height: 430px) {
-    /* due to decreasing height, we are running out of space for the piano. must diminish the size of the piano */
-   
-
-}
-
-
-
 @media screen and  (min-width: 404px )  and (min-height: 318px) and (max-height: 335px) {
     .keyboard {
         padding-left: 25px;
@@ -360,14 +349,6 @@
       padding-right: 25px;
       padding-top: 25px;
    }
-   
-   .key.black {
-
-   }
-   .key.white {
-
-   } 
-
 }
 
 @media screen and (min-width: 404px ) and (min-height: 286px) and (max-height: 317px) {
@@ -423,6 +404,14 @@
 
 }
 
+
+
+
+
+
+
+
+
 @media screen  /* and (max-width: 1074px)*/ and (max-height: 383px) {
     
     .object_selection {
@@ -436,6 +425,15 @@
         display: none;
     }
 }
+
+
+
+
+
+
+
+
+
 
 
 /* the part where I make the piano invisible when height gets too small (landscape stuff really) */

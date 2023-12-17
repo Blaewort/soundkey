@@ -282,6 +282,134 @@ li.fret-wrapper:first-child .marker {
 
 
 
+/* bass guitar support start */
+@media screen and (min-width: 1075px) {
+    .guitarFretboard.bass .fret-wrapper {
+       height: 39px;
+    }
+}
+
+@media screen and (min-width: 440px) and (max-width: 1074px) {
+    .guitarFretboard.bass .fret-wrapper {
+        height: 33px;
+    }
+}
+
+@media screen and (min-width: 400px) and (max-width: 439px) {
+    .guitarFretboard.bass .fret-wrapper {
+        height: 30px;
+    }
+}
+
+@media screen and (min-width: 371px) and (max-width: 399px) {
+    .guitarFretboard.bass .fret-wrapper {
+        height: 27px;
+    }
+}
+
+@media screen and (max-height:317px) and (min-width: 1075px) {
+    .guitarFretboard.bass .fret-wrapper {
+       height: 33px;
+    }
+}
+
+@media screen and (min-width: 351px) and (max-width: 370px) {
+    .guitarFretboard.bass .fret-wrapper {
+        height: 27px;
+    }
+
+    .guitarFretboard.bass li.fret-wrapper:first-child .marker {
+        right: 3px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+    .guitarFretboard.bass .fret-wrapper {
+        height: 27px;
+    }
+
+    .guitarFretboard.bass li.fret-wrapper:first-child .marker {
+        right: 4px;
+  }
+}
+
+
+/* strings */
+.guitarFretboard.bass .fret-wrapper:nth-child(n+2) .fret::before {
+    content: "";
+    border-top: solid #958963 1px;
+    border-top: solid #55534f 2px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    z-index: 120;
+    box-shadow: inset 0px 1px 0px 0px #626163;
+}
+
+.guitarFretboard.bass.maple .fret-wrapper:nth-child(n+2) .fret::before {
+    box-shadow: inset 0px 1px 0px 0px #6f6d71;
+}
+
+.guitarFretboard.bass.maple .string:last-child .fret-wrapper:nth-child(n+2) .fret::before {
+    border-top: solid #8f8777 3px;
+}
+
+.guitarFretboard.bass.maple .string .fret-wrapper:nth-child(n+2) .fret::before {
+    border-top: solid #8f8777 2px;
+}
+
+
+.guitarFretboard.bass .string:last-child .fret-wrapper:nth-child(n+2) .fret::before {
+    border-top: solid #55534f 3px;
+}
+
+.guitarFretboard.bass .string li.fret-wrapper::before {
+    /* unset the guitar inlays */
+    display:none;
+}
+
+
+.guitarFretboard.bass  .string:nth-child(1) li.fret-wrapper:last-child::before,
+.guitarFretboard.bass  .string:nth-child(3) li.fret-wrapper:last-child::before,
+.guitarFretboard.bass  .string:nth-child(2) li.fret-wrapper:nth-child(10)::before,
+.guitarFretboard.bass  .string:nth-child(2) li.fret-wrapper:nth-child(8)::before,
+.guitarFretboard.bass  .string:nth-child(2) li.fret-wrapper:nth-child(6)::before { /* dot inlays */
+    height: 10px;
+    width: 10px;
+    border: 14px;
+    background-color: white;
+    background-color: #ddd3d3;
+    content: "";
+    right: calc(50% - 4px);
+    margin: 0 auto;
+    z-index: 5000;
+    top: 85%;
+    position: absolute;
+    border-radius: 14px;
+    display: initial;
+}
+
+/* Bass maple tonewood support */
+
+.guitarFretboard.bass.maple .string:nth-child(1) li.fret-wrapper:last-child::before, 
+.guitarFretboard.bass.maple .string:nth-child(3) li.fret-wrapper:last-child::before, 
+.guitarFretboard.bass.maple .string:nth-child(2) li.fret-wrapper:nth-child(10)::before, 
+.guitarFretboard.bass.maple .string:nth-child(2) li.fret-wrapper:nth-child(8)::before, 
+.guitarFretboard.bass.maple .string:nth-child(2) li.fret-wrapper:nth-child(6)::before {
+    background-color: #353131;
+}
+/* Bass maple tonewood support */
+
+
+
+
+/* bass guitar support end */
+
+
+
+
+
 
 @media screen and (min-width: 1075px) {
     .fret-wrapper {
@@ -404,10 +532,6 @@ li.fret-wrapper:first-child .marker {
 
 
 @media screen and (min-width: 351px) and (max-width: 370px) {
-    /* body {
-      background-color: lightblue;
-    } */
-
     .fret-wrapper {
         height: 18px;
     }
@@ -426,10 +550,6 @@ li.fret-wrapper:first-child .marker {
 
 /* the fretboard starts to fall apart less than 320px which seems about right for the minimum size */
 @media screen and (max-width: 350px) {
-    /* body {
-      background-color: crimson;
-    } */
-
     .fret-wrapper {
         height: 18px;
     }

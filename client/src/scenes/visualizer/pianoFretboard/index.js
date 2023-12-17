@@ -60,18 +60,28 @@ function PianoFretboard(props){
 
         console.log(allNotesFromC);
 
+        //TODO: pickup here
+        // only if pianooctave is 3 (and later, more)
+        //when we hit a black note, store that whole dom element in a variable. 
+        // Then, upon the next white note, place the black note inside the noteHTML div as first child
+        // Then, set that black note variable to null
         let keys = allNotesFromC.map(function(note,index,arr){
             const noteColor = note.length === 1 ? "white" : "black";
             const noteHTML = <div className={selectedNotes.findIndex(element => element === note) > -1 ? "note visible" : "note" }>{note}</div>;
             let classStr = "";
              if(index !== 0 && noteColor === "white" && (arr[index-1].length === 1 ? "white" : "black") === "black"){
-                classStr = "key white left " + octaveClass;
+                classStr = "key white left ";
             } else {
-                classStr = "key " + noteColor + " " + octaveClass;
+                classStr = "key " + noteColor;
             }
             return <li key={index} className={classStr}>{noteHTML}</li> 
         });
-        return (<div class="piano-container"><ul className="keyboard">
+
+        //now iterate through each key. when you hit a black note, store it in a variable. Then upon the next white note, 
+
+
+
+        return (<div class="piano-container"><ul className={"keyboard ".concat(octaveClass)}>
             {keys}    
         </ul></div> );
 }

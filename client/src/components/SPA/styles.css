@@ -110,10 +110,20 @@ button.modalButton:hover {
     top: 12px;
     color: #a9babb;
 }
+
+
+
+
+
+
 /* needs to be in media queries but maybe a daker color to emphasize the open modal window */
 /*.list_area.modal_engaged {
     background-color: #42465c;
 }*/
+
+
+
+
 
 /* Gonna put the media queries for making all things smaller here */
 @media screen and (max-height: 322px) {
@@ -162,6 +172,13 @@ button.modalButton:hover {
    
     
 }
+
+
+
+
+
+
+
 
 
 @media screen and (max-height: 426px) { 
@@ -277,7 +294,51 @@ button.modalButton:hover {
 }
 
 
+@media screen and (max-height: 426px) { 
+    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:not(:first-child) {
+        display: none;
+    }
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:first-child {
+        display: block;
+    }
 
+    .options.with-list.with-radio.with-toggle.with-notenav .listModal.engaged {
+        display: flex;
+    }
+    
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area .listModal.engaged li {
+        display: block;
+    }
+
+    /* this was a :has selector solution until I realized firefox didnt support it */
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged .list_title  {
+        opacity:0;
+    }
+
+    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged .list  {
+        opacity: 0;
+    }
+}
+
+
+
+
+
+@media screen and (max-height: 379px) { 
+
+    .options.with-list.with-radio.with-notenav .visual_header {
+       margin-bottom: 1px;
+   }
+
+   .options.with-list.with-radio.with-notenav .radio {
+       margin-bottom: 1px;
+   }
+
+   .options.with-list.with-radio.with-notenav .note_navigator {
+       margin-bottom: 1px;
+    }
+}
 
 
 
@@ -316,21 +377,6 @@ button.modalButton:hover {
 
 }
 
-@media screen and (max-height: 379px) { 
-
-     .options.with-list.with-radio.with-notenav .visual_header {
-        margin-bottom: 1px;
-    }
-
-    .options.with-list.with-radio.with-notenav .radio {
-        margin-bottom: 1px;
-    }
-
-    .options.with-list.with-radio.with-notenav .note_navigator {
-        margin-bottom: 1px;
-     }
-}
-
 
 @media screen and (max-height: 342px) { 
     /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
@@ -346,33 +392,6 @@ button.modalButton:hover {
     }
     .options.with-list.with-radio .list_area.modal_engaged {
         background-color: #42465c;
-    }
-}
-
-@media screen and (max-height: 426px) { 
-    /* this is where  .options.with-list.with-radio list modal turns on and the other thing turns off*/
-    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:not(:first-child) {
-        display: none;
-    }
-    .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:first-child {
-        display: block;
-    }
-
-    .options.with-list.with-radio.with-toggle.with-notenav .listModal.engaged {
-        display: flex;
-    }
-    
-    .options.with-list.with-radio.with-toggle.with-notenav .list_area .listModal.engaged li {
-        display: block;
-    }
-
-    /* this was a :has selector solution until I realized firefox didnt support it */
-    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged .list_title  {
-        opacity:0;
-    }
-
-    .options.with-list.with-radio.with-toggle.with-notenav .list_area.modal_engaged .list  {
-        opacity: 0;
     }
 }
 

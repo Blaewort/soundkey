@@ -31,7 +31,7 @@ class InstrumentController extends Component{
         if (this.props.radioValue === "Tunings" || !this.props.radioValue) {
 
             const itemClick = this.props.search.nav.onTuningItemClick;
-            const list = this.props.tuning.getTunings("Guitar");
+            const list = this.props.tuning.getTunings(this.props.visualizer.instrument.name);
             listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Tunings"} list={list}></ListArea>;
 
         } else if (this.props.radioValue === "Instruments") { // "Instruments"
@@ -80,7 +80,8 @@ class InstrumentController extends Component{
         const onKeyUp = this.props.search.text.onEnterKeyUp;
         const onChange = this.props.tuning.onTextChange;
         const toNavView = this.props.toNavView;
-        header = <TextEnterHeader textValue={textInput} onTextEnterKeyUp={onKeyUp} rightIconClick={rightIconClick} isValidText={isValidTextTuning} onChange={onChange} placeholder={"EADGBE etc"} toNavView={toNavView} />;
+        const placeholder = this.props.instrument.name === "Guitar" ? "EADGBE etc" : "EADG etc";
+        header = <TextEnterHeader textValue={textInput} onTextEnterKeyUp={onKeyUp} rightIconClick={rightIconClick} isValidText={isValidTextTuning} onChange={onChange} placeholder={placeholder} toNavView={toNavView} />;
         
         radio = <SettingsRadio instrument={this.props.instrument.name} selectedValue={this.props.radioValue} onUpdate={this.props.onRadioUpdate}/>;
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;

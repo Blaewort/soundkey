@@ -30,6 +30,21 @@ const FLATS_ARRAY = [
   "Ab"
 ];
 
+function getDefaultTuning(isBass) {
+  return isBass ? "EADG" : "EADGBE";
+ }
+
+ function isValidTextTuning(tuningString, isBass) {
+  const tuningNoteStringArray = tuningString.match(/[A-G][b|#]?/g);
+
+    if (isBass) {
+        return tuningNoteStringArray.length === 4;
+    } else {
+      // is guitar
+      return tuningNoteStringArray.length === 6;
+    }
+ }
+
 function getNoteStringValue(noteString) {
     //check if it's in NOTES_ARRAY. If so, return that number
     const sharpsIndex = NOTES_ARRAY.indexOf(noteString); 
@@ -44,9 +59,11 @@ function getNoteStringValue(noteString) {
 //There's no checking that anything we receive is valid, no error handling
 
 function GuitarFretboard(props) {
-    const {tuningNotes, selectedNotes } = props;
+    let {tuningNotes, selectedNotes, isBass } = props;
     let strings = [];
     //need to go backwards otherwise EADGBE goes top to bottom EBGDAE in the DOM
+
+    if (!isValidTextTuning(tuningNotes, isBass)) {tuningNotes = getDefaultTuning(isBass);}
 
     const tuningNoteStringArray = tuningNotes.match(/[A-G][b|#]?/g); /* supports singular # and b but converts to # */ 
     for(var i = tuningNoteStringArray.length - 1; i > -1; i--) {
@@ -54,7 +71,8 @@ function GuitarFretboard(props) {
     }
     let extra = "";
     if (props.tonewood === "Maple") {extra = extra.concat(" maple");}
-    if (props.orientation === "Left-Handed") {extra = extra.concat(" left-handed")}
+    if (props.orientation === "Left-Handed") {extra = extra.concat(" left-handed");}
+    if (props.isBass) {extra = extra.concat(" bass");}
     return <div class={"guitarFretboard".concat(extra)}>{strings}</div>;
 }
 

@@ -233,6 +233,9 @@ function fapi_getTunings(instrument, stringCount) {
         case "Guitar":
             return getGuitarTunings(stringCount);
             break;
+        case "Bass":
+            return getBassTunings(stringCount);
+            break;
         default:
             throw new TypeError("wrong instrument for a tuning you figure");
     }
@@ -243,6 +246,9 @@ function fapi_getInstruments() {
         {   
             label: "Guitar"
         }, 
+        {   
+            label: "Bass"
+        },
         {
             label: "Piano"
         }
@@ -265,6 +271,19 @@ function getGuitarTunings(stringCount) {
         {
             label: "DADGBD"
         }
+    ];
+}
+
+function getBassTunings(stringCount) {
+    stringCount = stringCount === null ? 4 : stringCount;
+
+    return [
+        {   
+            label: "EADG"
+        },
+        {
+            label: "DADG"
+        },
     ];
 }
 
