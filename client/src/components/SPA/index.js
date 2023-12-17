@@ -827,7 +827,7 @@ class SPA extends Component{
             this.setState((state, props) => {
 
                 // but if it's not valid, set the state to the same
-                if (!fapi_isValidTextTuning(component.value)) {
+                if (!fapi_isValidTextTuning(component.value, state.instrument.name)) {
                     console.log("bad tuning");
                     return state;
                 }
@@ -843,7 +843,7 @@ class SPA extends Component{
                         ...state.textInput,
                         settings: ""
                     },
-                    focus: null
+                    focus: state.visualizerFocus
                 };
             });
         }  

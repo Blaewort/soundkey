@@ -288,11 +288,19 @@ function getBassTunings(stringCount) {
 }
 
 function fapi_isValidTextTuning(tuningString, instrument) {
+    console.log("instrument");
+    console.log(instrument);
     if (!tuningString) {return false;}
     if (typeof tuningString !== "string") {return false;}
 
     const tuningNoteStringArray = tuningString.match(/[A-G][b|#]?/g);
-    return tuningNoteStringArray && tuningNoteStringArray.length === 6;
+
+    if (instrument === "Guitar") {
+        return tuningNoteStringArray && tuningNoteStringArray.length === 6;
+    }
+    else if (instrument === "Bass") {
+        return tuningNoteStringArray && tuningNoteStringArray.length === 4;
+    }
 
 }
 
