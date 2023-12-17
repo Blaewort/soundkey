@@ -61,7 +61,7 @@ button.modalButton:hover {
     align-items: center; 
     justify-content: center;
     height: 90dvh;
-    height: 85dvh;
+    height: 80dvh;
     top: 50%;
     left: 50%;
     -ms-transform: translateY(-50%) translateX(-50%);
