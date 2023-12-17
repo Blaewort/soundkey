@@ -23,18 +23,23 @@ import Radio from './index'
                 value: "Tonewood"
             },
             {
-                html: <i class="fa fa-adjust" aria-hidden="true"></i>,
+                html: <i class="far fa-hand-paper"></i>,
                 value: "Orientation"
             },
             {
-                html: <i className="fas fa-theater-masks"></i>,
+                html: <i class="fas fa-guitar"></i>,
                 value: "Instruments"
             },
         ];
 
         const optionsNonTunable = [
             {
-                html: <i className="fas fa-theater-masks"></i>,
+                html: <i class="fas fa-divide"></i>,
+                /* alternate: <i class="fas fa-arrows-alt-h"></i> */
+                value: "Octaves"
+            },
+            {
+                html: <i class="fas fa-ruler-horizontal"></i>,
                 value: "Instruments"
             },
         ];
@@ -57,10 +62,16 @@ import Radio from './index'
         }
 
 
-        //const selectedValue = "Tunings";
+        //ensures we can have defaults where user supplies no selectedValue 
+        let selectedValue;
+        if (this.props.instrument === "Guitar" || this.props.instrument === "Bass") {
+            selectedValue = this.props.selectedValue || "Tunings";
+        } else if (this.props.instrument === "Piano") {
+            selectedValue = this.props.selectedValue || "Octaves";
+        }
 
         return (
-            <Radio name={"Settings"} title={title} onUpdate={this.props.onUpdate}  options={options} selectedValue={this.props.selectedValue || "Tunings"} />
+            <Radio name={"Settings"} title={title} onUpdate={this.props.onUpdate}  options={options} selectedValue={selectedValue} />
         );
     }
 }

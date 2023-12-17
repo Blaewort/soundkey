@@ -22,6 +22,7 @@ import { fapi_getModes,
     fapi_getScalesFromUserString,
     fapi_getAllTonewood,
     fapi_getOrientations,
+    fapi_getAllPianoOctaves,
 }  from '../../services/api/index';
 
 
@@ -189,7 +190,8 @@ class SPA extends Component{
         this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
         this.onTonewoodNavSearchItemClick = this.onTonewoodNavSearchItemClick.bind(this);
         this.onOrientationItemClick = this.onOrientationItemClick.bind(this);
-
+        this.onOctaveItemClick = this.onOctaveItemClick.bind(this);
+        
         this.onListModalExitClick = this.onListModalExitClick.bind(this);
         this.openListModal = this.openListModal.bind(this);
 
@@ -774,6 +776,19 @@ class SPA extends Component{
         });
     }
 
+    onOctaveItemClick(e, item) {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                instrument: {
+                    ...state.instrument,
+                    pianoOctaves: Number(item.label)
+                },
+                focus: state.visualizerFocus, //want to snap back to whatever we were viewing. time in settings is done
+            };
+        });
+    }
+
     onOrientationItemClick(e, item) {
         this.setState((state, props) => {
             return {
@@ -1045,6 +1060,7 @@ class SPA extends Component{
                         onOrientationItemClick: this.onOrientationItemClick,
                         onTuningItemClick: this.onTuningNavSearchItemClick,
                         selectTextTuning: this.selectTextTuningButtonClick,
+                        onOctaveItemClick: this.onOctaveItemClick,
                     },
                     listModal: {
                         on: this.state.list.modal.settings,
@@ -1069,6 +1085,7 @@ class SPA extends Component{
                     getAll: fapi_getInstruments,
                     getAllTonewood: fapi_getAllTonewood,
                     getOrientations: fapi_getOrientations,
+                    getAllPianoOctaves: fapi_getAllPianoOctaves,
                 };
 
                 footer = {

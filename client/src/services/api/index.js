@@ -377,6 +377,17 @@ function fapi_getAllTonewood() {
     ];
 }
 
+function fapi_getAllPianoOctaves() {
+    return [
+        {
+            label: "2"
+        },
+        {
+            label: "3"
+        }
+    ];
+}
+
 function fapi_getOrientations() {
     return [
         {
@@ -402,4 +413,5 @@ export {
     fapi_getScalesFromUserString,
     fapi_getAllTonewood,
     fapi_getOrientations,
+    fapi_getAllPianoOctaves,
 }

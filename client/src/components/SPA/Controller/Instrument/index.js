@@ -30,6 +30,7 @@ class InstrumentController extends Component{
 
         if (this.props.radioValue === "Tunings" || !this.props.radioValue) {
 
+            /* TODO can we get all this down to things like this.props.search.nav.onClick["Tunings" (as var)] and this.props.get["Tunings"(same var)] */
             const itemClick = this.props.search.nav.onTuningItemClick;
             const list = this.props.tuning.getTunings(this.props.visualizer.instrument.name);
             listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Tunings"} list={list}></ListArea>;
@@ -50,6 +51,11 @@ class InstrumentController extends Component{
             const itemClick = this.props.search.nav.onOrientationItemClick;
             const list = this.props.instrument.getOrientations();
             listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Orientation"} list={list}></ListArea>;
+        }
+        else if (this.props.radioValue === "Octaves") {
+            const itemClick = this.props.search.nav.onOctaveItemClick;
+            const list = this.props.instrument.getAllPianoOctaves();
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={itemClick} title={"Octaves"} list={list}></ListArea>;
         }
 
         footer = <Footer onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
