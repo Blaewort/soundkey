@@ -153,6 +153,8 @@ class ChordScaleController extends Component{
     getNavSearchViewContents() {
         if (this.props.type !== "chord" && this.props.type !== "scale") {throw new Error("navsearch must be chord or scale")};
 
+        //Todo: this method is a mess
+
         let header;
         let noteNav;
         let listArea;
@@ -189,7 +191,7 @@ class ChordScaleController extends Component{
 
 
         if (this.props.type === "chord") {
-            const list = this.props.search.navChordList;
+            const list = this.props.search.nav.chordList;
             const listItemClick =this.props.search.nav.onItemClick;
             listArea = <ListArea modal={this.props.search.listModal} title={this.props.radio.nav || "Triad"}  handleItemClick={listItemClick} list={list} />;
         } else if (this.props.type === "scale") {

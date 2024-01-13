@@ -329,14 +329,18 @@ class SPA extends Component{
             try {
                 chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
             }
+
             catch(err){
                 console.log(err);
                 console.log("badddddd");
                 return;
             }
+
             chords = JSON.parse(chords);
             console.log(chords);
+
             if(Array.isArray(chords)){
+
                 chords = chords.map(chord => {
                     console.log(chord);
                     return {   
@@ -344,11 +348,25 @@ class SPA extends Component{
                         "object": chord
                     };
                 });
+
                 this.setState((state, props) => {
                     //TODO? Do we want to honor prior list state (if any) or keep user snapped to the current chord selection?
                     // We currently honor prior list state as it's easier
  
                     // adding static property defaultValue to radios
+
+                    const tempnewList = {
+                        ...state.list,
+                        chord: {
+                            ...state.list.chord,
+                            nav: chords,
+                        }
+                    };
+
+                    console.log("tempnewList");
+                    console.log(tempnewList);
+
+                    //okay so the list is set correctly. Is the list not being referenced correctly?
  
                     return {
                         ...state,
@@ -366,7 +384,8 @@ class SPA extends Component{
                         }
                     }
                 });
-       }}
+            }
+        }
        return fetchChords(this.state);
     }
 
