@@ -88,14 +88,22 @@ async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
  
 function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
     if(scaleToLimitBy && scaleToLimitBy.notes){
         scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
+        
     }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
     return postData(urlRoot + '/getChords/',
         {
-            notes: scaleToLimitBy,
-            root: Note.fromValue(noteValue).name,
-            category: category
+            notes: scaleToLimitBy, 
+            root: root, //this constraint works for A but nothing else. why?
+            category: category //the radio value the UI is set to
         }
     ).then(
         response => {

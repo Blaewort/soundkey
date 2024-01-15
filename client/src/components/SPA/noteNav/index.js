@@ -39,6 +39,14 @@ function selectedFocus(selection,a,b) {
 class NoteNav extends Component {
     constructor(props) {
         super(props);
+        
+
+        //this.options = this.props.options ? [...this.props.options] : OPTIONS;
+
+
+
+        this.selectionAppearsInList = this.selectionAppearsInList.bind(this);
+        this.enforceSelection = this.enforceSelection.bind(this)
 
         this.sharp = this.buttonChange.bind(this, 1);
         this.flat = this.buttonChange.bind(this, -1);
@@ -46,8 +54,55 @@ class NoteNav extends Component {
         this.handleClickOutside = this.handleClickOutside.bind(this);
         this.handleCustomSelectClick = this.handleCustomSelectClick.bind(this);
         this.handleCustomOptionClick = this.handleCustomOptionClick.bind(this);
-      }
- 
+
+        
+    }
+
+    selectionAppearsInList() {
+        //this.props.value is an int
+
+        //take this.props.value
+    }
+
+    enforceSelection() {
+        //this. stuff needs updating TODO
+        //this solution is assuming this.options is always 
+        //find the closest matching note to ours and select it
+        let newValue;
+        let newLabel;
+
+        // want to start looking 1 index behind in the array
+        const indexStart = this.props.value > 0 ? this.props.value - 1 : this.options.length - 1;
+        const indexEnd = indexStart > 0 ? indexStart - 1 : this.options.length - 1;
+        let index = indexStart;
+        
+        for (;;) {
+            const atFinalItem = indexEnd === index;
+
+             if (this.props.matchNotes.includes(this.options[index].label)) {
+                //found a match
+                newValue = this.options[index].value;
+                newLabel = this.options[index].label;
+                break;
+            }
+         
+            // update index
+            if ((index + 1) === this.options.length) {
+                index = 0;
+            } else {
+                index++; 
+            }
+
+            if (atFinalItem) { break; }
+        }
+
+        // call a function that sets top level state
+        this.props.onNoteUpdate({
+            value: newValue, //string
+            label: newLabel, //string
+        }, this.props.name);
+    }
+
 
     handleCustomSelectClick(event) {
         //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
@@ -61,6 +116,10 @@ class NoteNav extends Component {
 
     componentDidMount() {
         document.addEventListener("mousedown", this.handleClickOutside);
+
+       /* if(this.props.enforceMatch && !this.selectionAppearsInList()) {
+            this.enforceSelection();
+        } */
     }
 
     componentWillUnmount() {
@@ -69,6 +128,12 @@ class NoteNav extends Component {
 
     buttonChange(degree){
         const valueLabels = ["A","A#","B","C","C#","D","D#","E","F","F#","G","G#"];
+
+        //TODO: should check if toggle.[chord/scale] === true and toggle.isRequired === true
+        //      in that case, should move by degrees in the list of notes we are meant to match
+        //      i.e. take the match list (say match E Lydian's E,F#,G#,A#,B,C#,D#), 
+        //      find the current selection position in THAT list and then move by whatever degree
+
 
         //TODO: to save renders we might need to put this logic in the stateful controller component (props async)
 
@@ -93,12 +158,19 @@ class NoteNav extends Component {
     }
 
     render() {
-        const opts = this.props.options ? [...this.props.options] : OPTIONS;
+        const opts = this.props.options && this.props.enforceMatch ? [...this.props.options] : OPTIONS;
+        //const opts = this.options;
+
+        console.log("this.osptions");
+        console.log(this.options);
 
         // sort order for user
         const options = opts.sort((a,b) => {
             return parseInt(a.value) - parseInt(b.value); 
         });
+
+        console.log("osptions");
+        console.log(options);
         
 
         const selectOptions = options.map(option => {

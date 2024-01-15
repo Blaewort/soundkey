@@ -163,6 +163,10 @@ class ChordScaleController extends Component{
         let toggle;
         let footer;
 
+        //const secondarySelectionNotes = this.props.selection.secondary ? this.props.selection.secondary.notes : null;
+
+        const toggleIsVisibleAndEngaged = this.props.toggle.isRequired && this.props.toggle.value;
+
         //this.props.getChords(this.props.noteSelect.value, this.props.radio.nav, limitByOther);
         header = <NavSearchHeader toSearchView={this.props.viewSwitch.toSearch} focus={this.props.type} view={this.props.view}/>
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
@@ -173,7 +177,10 @@ class ChordScaleController extends Component{
         const onNoteUpdate = this.props.search.noteSelect.onUpdate;
         const customSelectClick = this.props.search.noteSelect.handleCustomClick;
         const customListIsOpen = this.props.search.noteSelect.customListIsOpen;
-        noteNav = <NoteNav value={noteNavValue} label={noteNavLabel} handleClickOutside={outsideClick} onNoteUpdate={onNoteUpdate} handleCustomSelectClick={customSelectClick} customListIsOpen={customListIsOpen} name={this.props.type} />;
+        //const options = this.props.type === "scale" && toggleIsVisibleAndEngaged ? secondarySelectionNotes : null; 
+        const options = this.props.selection.secondary && this.props.type === "chord" ? this.props.selection.secondary.notes : null ; //only on chord does it make sense to constrain noteselect by secondary selection notes
+        const matchNotes = this.props.selection.secondary ? this.props.selection.secondary.notes : null;
+        noteNav = <NoteNav options={options} matchNotes={matchNotes} enforceMatch={toggleIsVisibleAndEngaged} value={noteNavValue} label={noteNavLabel} handleClickOutside={outsideClick} onNoteUpdate={onNoteUpdate} handleCustomSelectClick={customSelectClick} customListIsOpen={customListIsOpen} name={this.props.type} />;
         
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
 

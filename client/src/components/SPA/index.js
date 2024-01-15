@@ -93,13 +93,13 @@ class SPA extends Component{
             },
             noteSelect: { 
                 chord: {
-                    value: "0",
-                    label: "A",
+                    value: "7",
+                    label: "E",
                     customListIsOpen: false,
                 },
                 scale: {
-                    value: "0",
-                    label: "A",
+                    value: "7",
+                    label: "E",
                     customListIsOpen: false,
                 }
             },
@@ -196,6 +196,8 @@ class SPA extends Component{
         this.openListModal = this.openListModal.bind(this);
 
         this.onTextEnterKeyUp = this.onTextEnterKeyUp.bind(this);
+
+        
 
         
         
@@ -322,6 +324,7 @@ class SPA extends Component{
     }
 
     toChordNavSearchView(state) {
+        //when directed to chord nav search view, we fetch chords for the search view based on search view user settings and update the state, thereby re-rendering
         const fetchChords = async (state) => {
             const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
  
