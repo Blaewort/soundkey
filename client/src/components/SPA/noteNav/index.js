@@ -97,7 +97,7 @@ class NoteNav extends Component {
     }
 
     enforceSelection() {
-        if (this.props.name !== "chord") {return;} //only makes sense in chord
+        if (this.props.name !== "scale") {return;} //only makes sense in chord
         if (this.selectionAppearsInMatchList()) {return;} //nothing to enforce if selection is already in match list
 
         //find the closest matching note to ours and select it
@@ -199,7 +199,6 @@ class NoteNav extends Component {
     }
 
     render() {
-        const currentValue = this.props.value;
 
         console.log("this.props.value");
                 console.log(this.props.value);
@@ -218,7 +217,7 @@ class NoteNav extends Component {
         
 
         const selectOptions = options.map(option => {
-            if (currentValue === option.value) {
+            if (this.props.value === option.value) {
                 return <option key={option.value} value={option.value} defaultValue>{option.label}</option>
             } else {
                 return <option key={option.value} value={option.value}>{option.label}</option>
@@ -228,10 +227,10 @@ class NoteNav extends Component {
         console.log("selectOsptions");
         console.log(selectOptions);
 
-        let customOptions = [...options].sort(selectedFocus.bind(null, currentValue));
+        let customOptions = [...options].sort(selectedFocus.bind(null, this.props.value));
 
         customOptions = customOptions.map(option => {
-            const thisValue = (parseInt(currentValue) === parseInt(option.value));
+            const thisValue = (parseInt(this.props.value) === parseInt(option.value));
             
             if (thisValue) { return null;}; //don't render at all    
 
