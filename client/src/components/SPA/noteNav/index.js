@@ -39,14 +39,13 @@ function selectedFocus(selection,a,b) {
 class NoteNav extends Component {
     constructor(props) {
         super(props);
-        
-
-        //this.options = this.props.options ? [...this.props.options] : OPTIONS;
 
 
 
-        this.selectionAppearsInList = this.selectionAppearsInList.bind(this);
+        this.selectionAppearsInMatchList = this.selectionAppearsInMatchList.bind(this);
         this.enforceSelection = this.enforceSelection.bind(this)
+        this.getSelectionMatchFromMatchList = this.getSelectionMatchFromMatchList.bind(this);
+        this.matchNotesContains = this.matchNotesContains.bind(this);
 
         this.sharp = this.buttonChange.bind(this, 1);
         this.flat = this.buttonChange.bind(this, -1);
@@ -58,47 +57,85 @@ class NoteNav extends Component {
         
     }
 
-    selectionAppearsInList() {
-        //this.props.value is an int
+    selectionAppearsInMatchList() {
+        if (!this.props.matchNotes) {return false;}
+        return this.getSelectionMatchFromMatchList();
 
-        //take this.props.value
+    }
+
+    getSelectionMatchFromMatchList() {
+        if (!this.props.matchNotes) {return;}
+
+
+        //returns matching note or nothing at all
+        for (let i = 0; i < this.props.matchNotes.length; i++) {
+
+            const matchNote = this.props.matchNotes[i];
+
+            if (matchNote.value === parseInt(this.props.value)) {
+                console.log("tinmanny");
+                return matchNote;
+            }
+
+        } 
+    }
+
+
+    matchNotesContains(note) {
+        if (!this.props.matchNotes) {return;}
+
+        for (let i = 0; i < this.props.matchNotes.length; i++) {
+
+            const matchNote = this.props.matchNotes[i];
+
+            if (matchNote.value === parseInt(note.value)) {
+                return matchNote;
+            }
+
+        } 
+
     }
 
     enforceSelection() {
-        //this. stuff needs updating TODO
-        //this solution is assuming this.options is always 
+        if (this.props.name !== "chord") {return;} //only makes sense in chord
+        if (this.selectionAppearsInMatchList()) {return;} //nothing to enforce if selection is already in match list
+
         //find the closest matching note to ours and select it
+        //this. stuff needs updating TODO //also might need to change stuff the way options is working
+        //this solution is assuming this.options is always 
+
         let newValue;
         let newLabel;
 
-        // want to start looking 1 index behind in the array
-        const indexStart = this.props.value > 0 ? this.props.value - 1 : this.options.length - 1;
-        const indexEnd = indexStart > 0 ? indexStart - 1 : this.options.length - 1;
+        // start searching 1 index behind in the array and bridge array end to array beginning
+        const indexStart = this.props.value > 0 ? this.props.value - 1 : OPTIONS.length - 1;
+        const indexEnd = indexStart > 0 ? indexStart - 1 : OPTIONS.length - 1;
         let index = indexStart;
         
         for (;;) {
             const atFinalItem = indexEnd === index;
+            const thisNote = OPTIONS[index];
 
-             if (this.props.matchNotes.includes(this.options[index].label)) {
-                //found a match
-                newValue = this.options[index].value;
-                newLabel = this.options[index].label;
+            const match = this.matchNotesContains(thisNote);
+            if (match) {
+                newValue = match.value;
+                newLabel = match.label;
                 break;
             }
          
             // update index
-            if ((index + 1) === this.options.length) {
+            if ((index + 1) === OPTIONS.length) {
                 index = 0;
             } else {
                 index++; 
             }
 
-            if (atFinalItem) { break; }
+            if (atFinalItem) {break; }
         }
 
         // call a function that sets top level state
         this.props.onNoteUpdate({
-            value: newValue, //string
+            value: newValue.toString(), //string
             label: newLabel, //string
         }, this.props.name);
     }
@@ -114,12 +151,16 @@ class NoteNav extends Component {
         this.props.handleClickOutside(event, this.noteSelectNode, this.props.name);
     }
 
+
     componentDidMount() {
         document.addEventListener("mousedown", this.handleClickOutside);
 
-       /* if(this.props.enforceMatch && !this.selectionAppearsInList()) {
-            this.enforceSelection();
-        } */
+        if (this.props.enforceMatch) { this.enforceSelection(); }
+    }
+
+    
+    componentDidUpdate() {
+        if (this.props.enforceMatch) { this.enforceSelection(); }
     }
 
     componentWillUnmount() {
@@ -158,11 +199,14 @@ class NoteNav extends Component {
     }
 
     render() {
-        const opts = this.props.options && this.props.enforceMatch ? [...this.props.options] : OPTIONS;
-        //const opts = this.options;
+        const currentValue = this.props.value;
 
-        console.log("this.osptions");
-        console.log(this.options);
+        console.log("this.props.value");
+                console.log(this.props.value);
+
+        const opts = this.props.options && this.props.enforceMatch ? [...this.props.options] : OPTIONS;
+
+
 
         // sort order for user
         const options = opts.sort((a,b) => {
@@ -174,20 +218,28 @@ class NoteNav extends Component {
         
 
         const selectOptions = options.map(option => {
-            if (this.props.value === option.value) {
+            if (currentValue === option.value) {
                 return <option key={option.value} value={option.value} defaultValue>{option.label}</option>
             } else {
                 return <option key={option.value} value={option.value}>{option.label}</option>
             }
         });
 
-        let customOptions = [...options].sort(selectedFocus.bind(null, this.props.value));
+        console.log("selectOsptions");
+        console.log(selectOptions);
+
+        let customOptions = [...options].sort(selectedFocus.bind(null, currentValue));
 
         customOptions = customOptions.map(option => {
-            const thisValue = (this.props.value === option.value);
-            if (thisValue) {return null;}; //don't render at all
+            const thisValue = (parseInt(currentValue) === parseInt(option.value));
+            
+            if (thisValue) { return null;}; //don't render at all    
+
             return <div onClick={this.handleCustomOptionClick} className={thisValue ? "same-as-selected" : ""} key={option.value} data-value={option.value}>{option.label}</div>
         });
+
+        console.log("customOsptions");
+        console.log(customOptions);
         
         
 

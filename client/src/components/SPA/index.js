@@ -98,8 +98,8 @@ class SPA extends Component{
                     customListIsOpen: false,
                 },
                 scale: {
-                    value: "7",
-                    label: "E",
+                    value: "8",
+                    label: "F",
                     customListIsOpen: false,
                 }
             },
