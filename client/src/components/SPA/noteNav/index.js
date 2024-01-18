@@ -47,15 +47,97 @@ class NoteNav extends Component {
         this.getSelectionMatchFromMatchList = this.getSelectionMatchFromMatchList.bind(this);
         this.matchNotesContains = this.matchNotesContains.bind(this);
 
-        this.sharp = this.buttonChange.bind(this, 1);
-        this.flat = this.buttonChange.bind(this, -1);
+        this.sharp = this.sharp.bind(this);
+        this.flat = this.flat.bind(this);
         this.buttonChange = this.buttonChange.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
         this.handleCustomSelectClick = this.handleCustomSelectClick.bind(this);
         this.handleCustomOptionClick = this.handleCustomOptionClick.bind(this);
 
+        this.constrainedSharp = this.constrainedSharp.bind(this);
+        this.constrainedFlat = this.constrainedFlat.bind(this);
+        this.constrainedChange = this.constrainedChange.bind(this);
+
+        this.unconstrainedSharp = this.buttonChange.bind(this, 1);
+        this.unconstrainedFlat = this.buttonChange.bind(this, -1);
+
+        
+
+
         
     }
+
+    constrainedSharp() {
+        this.constrainedChange(1);
+    }
+
+    constrainedFlat() {
+        this.constrainedChange(-1);
+    }
+
+    // as in pressing the arrow buttons
+    constrainedChange(degree) {
+        if (degree > 1 || degree < -1 || degree === 0) {throw new Error("degree must be 1 or -1");} 
+        if (!this.props.matchNotes || this.props.matchNotes.length < 1) {throw new Error("There are no matchNotes to constrain");}
+
+        const moveLeft = degree < 0;
+        const moveRight = !moveLeft;
+        
+        const currentNote = {
+            label: this.props.label,
+            value: this.props.value,
+        }
+       
+        const currentIndex = getNoteIndex(currentNote, this.props.matchNotes);
+        let targetNote;
+
+        if (moveLeft) {
+            if (currentIndex === 0) { //first item in array
+                targetNote = this.props.matchNotes[this.props.matchNotes.length - 1];
+            } else {
+                targetNote = this.props.matchNotes[currentIndex - 1];
+            }
+        }else if(moveRight) {
+            if (currentIndex === this.props.matchNotes.length - 1) { //last item in array
+                targetNote = this.props.matchNotes[0];
+            } else {
+                targetNote = this.props.matchNotes[currentIndex + 1]; 
+            }
+        }
+
+        this.props.onNoteUpdate({
+            value: targetNote.value.toString(), //string
+            label: targetNote.label, //string
+        }, this.props.name);
+
+
+
+        function getNoteIndex(note, noteList) {
+            for (let i = 0; i < noteList.length; i++) {
+                const thisNote = noteList[i];
+                if (parseInt(thisNote.value) === parseInt(note.value)) { return i; }
+            }
+            throw new Error("getNoteIndex expects you pass a note object with a value matching an item in provided list");
+        }
+
+    }
+
+    sharp() {
+        if (this.props.enforceMatch && this.props.name === "chord") {
+            return this.constrainedSharp();
+        } else {
+            return this.unconstrainedSharp();
+        }
+    }
+
+    flat() {
+        if (this.props.enforceMatch && this.props.name === "chord") {
+            return this.constrainedFlat();
+        } else {
+            return this.unconstrainedFlat();
+        }
+    }
+
 
     selectionAppearsInMatchList() {
         if (!this.props.matchNotes) {return false;}
@@ -73,7 +155,6 @@ class NoteNav extends Component {
             const matchNote = this.props.matchNotes[i];
 
             if (matchNote.value === parseInt(this.props.value)) {
-                console.log("tinmanny");
                 return matchNote;
             }
 
@@ -97,7 +178,7 @@ class NoteNav extends Component {
     }
 
     enforceSelection() {
-        if (this.props.name !== "scale") {return;} //only makes sense in chord
+        if (this.props.name !== "chord") {return;} //only makes sense in chord
         if (this.selectionAppearsInMatchList()) {return;} //nothing to enforce if selection is already in match list
 
         //find the closest matching note to ours and select it
@@ -199,10 +280,6 @@ class NoteNav extends Component {
     }
 
     render() {
-
-        console.log("this.props.value");
-                console.log(this.props.value);
-
         const opts = this.props.options && this.props.enforceMatch ? [...this.props.options] : OPTIONS;
 
 
@@ -212,10 +289,6 @@ class NoteNav extends Component {
             return parseInt(a.value) - parseInt(b.value); 
         });
 
-        console.log("osptions");
-        console.log(options);
-        
-
         const selectOptions = options.map(option => {
             if (this.props.value === option.value) {
                 return <option key={option.value} value={option.value} defaultValue>{option.label}</option>
@@ -223,9 +296,6 @@ class NoteNav extends Component {
                 return <option key={option.value} value={option.value}>{option.label}</option>
             }
         });
-
-        console.log("selectOsptions");
-        console.log(selectOptions);
 
         let customOptions = [...options].sort(selectedFocus.bind(null, this.props.value));
 
@@ -236,11 +306,6 @@ class NoteNav extends Component {
 
             return <div onClick={this.handleCustomOptionClick} className={thisValue ? "same-as-selected" : ""} key={option.value} data-value={option.value}>{option.label}</div>
         });
-
-        console.log("customOsptions");
-        console.log(customOptions);
-        
-        
 
         return (
             <div className="note_navigator">
