@@ -20,6 +20,12 @@ pool.on('acquire', function (connection) {
     console.log('Connection %d acquired', connection.threadId);
 });
 
+pool.on('connection', function (connection) {
+    console.log('setting SQL mode');
+    console.log(connection.modes);
+    connection.query('SET sql_mode=only_full_group_by');
+});
+
 async function fetchSQL(sql){
     return new Promise((resolve, reject) => {
         pool.query(sql, function (error, results, fields) {
@@ -166,13 +172,17 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
         ` + matchingChordLength + `
     ) ` + category + root + `
     GROUP BY
-    cn.chord_symbol` + newChordLength;
+    cn.chord_symbol` + newChordLength + `,
+    c.chord_name,
+    c.chord_symbol,
+    c.root_note`;
     console.log(sql);
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
         results.push(Chord.chordFromNotation(ele.chord_symbol));
     });
+    console.log("GetChord Results:");
     console.log(results);
     return results;
 }
@@ -220,7 +230,10 @@ async function getScales(obj,root = null,mode = null) {
     ) ` + root + mode +
     `
     GROUP BY
-    sn.scale_name, sn.root_note`;
+    sn.scale_name, sn.root_note`
+    `s.scale_name,`
+    `s.scale_mode,`
+    `s.root_note`;
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
