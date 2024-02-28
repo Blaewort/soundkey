@@ -11,44 +11,46 @@ describe("Database Suite", function() {
         
     });
     it("getChords", async function() {
-        //getChords(obj, category = null , maxNotes = 12)
-        let notesArr = ["C","E","G"];
-        let chords = await getChords(notesArr,null,"Triad");
-        console.log("--------------------------------------------------here chords");
-        console.log(chords);
+
+        // Generate a chord from notation to show tests running correctly
+        let gChord = Chord.chordFromNotation("C"); // Create C Major chord with notes C, E, G
+        expect(gChord.category).toBe("Triad");
+        expect(gChord.hasNote("C")).toBe(true);
+        expect(gChord.rootNote.name).toBe("C");
+        expect(gChord.allNotesFoundInNoteStringList(["C", "E", "G"])).toBe(true);
+        expect(gChord.allNotesFoundInNoteStringList(["C", "E", "G", "A"])).toBe(true);
+        expect(gChord.allNotesFoundInNoteStringList(["C", "E"])).toBe(false);
+        expect(gChord.allNotesFoundInNoteStringList(["C", "E", "A"])).toBe(false);
+
+
+        // database
+        let noteLimitBy = ["E","F#","G#", "A#", "B", "C#", "D#"]; // E Lydian
+        let chords = await getChords(noteLimitBy,"E","Triad");
+        
         chords.forEach(chord => {
             expect(chord.category).toBe("Triad");
-            console.log("---------------------------------------------------------------------NOTE");
-            console.log(chord.notes[0]);
-            expect(chord.notes.find( (note) => note.name === "C")).toBeDefined();
-            expect(chord.notes.find( (note) => note.symbol === "C") || 
-            chord.notes.find( (note) => note.symbol === "E") ||
-            chord.notes.find( (note) => note.symbol === "G"));
+            expect(chord.hasNote("E")).toBe(true); //should have E since we only want chords built on E
+            expect(chord.rootNote.name).toBe("E"); //should be built on E
+            expect(chord.allNotesFoundInNoteStringList(noteLimitBy)).toBe(true); //all notes in each chord should be present in noteLimitBy
         });
 
-        console.log("heyyyyyy66666666666666666666666666y");
-        chords = await getChords(notesArr,null,"Six");
-        chords.forEach(chord => {
-            expect(chord.category).toBe("Six");
-            //expect(chord.notes.includes("C").toBe(true));
-            expect(chord.notes.includes("E"));
-            expect(chord.notes.includes("G"));
-        })
 
-
-        notesArr = ["E","F#","G#", "A#", "B", "C#", "D#"];
-        chords = await getChords(notesArr,"E","Triad");
+        noteLimitBy = ["C","E","G"];
+        chords = await getChords(noteLimitBy,null,"Triad");
         chords.forEach(chord => {
             expect(chord.category).toBe("Triad");
-            expect(
-                chord.notes.includes("E") || 
-                chord.notes.includes("G#") || 
-                chord.notes.includes("G#") || 
-                chord.notes.includes("A#") || 
-                chord.notes.includes("B") ||
-                chord.notes.includes("C#") ||
-                chord.notes.includes("D#") );
-        })
+            expect(chord.allNotesFoundInNoteStringList(noteLimitBy)).toBe(true);
+        });
+
+
+        chords = await getChords(noteLimitBy,null,"Six");
+        chords.forEach(chord => {
+            expect(chord.category).toBe("Six");
+            expect(chord.allNotesFoundInNoteStringList(noteLimitBy)).toBe(true);
+        });
+
+
+        
 
         
 
