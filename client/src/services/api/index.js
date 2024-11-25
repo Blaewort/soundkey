@@ -92,7 +92,7 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
     console.log("made it to fapi_getChords")
 
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
-    if(scaleToLimitBy && scaleToLimitBy.notes){
+    if(scaleToLimitBy?.notes){
         scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
     }
 

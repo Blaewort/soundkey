@@ -71,8 +71,8 @@ function validateNotesInput(obj){
         "G",
         "G#"
     ];
-    console.log("notes");
-    console.log(notes);
+    //console.log("notes");
+    //console.log(notes);
     notes.forEach(note =>{
         if(noteNames.findIndex(name => name === note) === -1){
             console.log("Invalid Note: " + note);
@@ -126,23 +126,54 @@ function validateCategoryInput(category){
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
 async function getChords(obj, root = null, category = null, noteOffset = 0) {
+    console.log("made it here");
     console.log('\n',"GetChords(",obj,",",root,",",category,",",noteOffset,")");
 
     let notes = null;
-    try{
-        notes = formatLookupInput(obj);
-        validateNotesInput(root);
-        validateCategoryInput(category);
-    } catch(err){
-        return err;
+
+    console.log("objd");
+    console.log(obj);
+    console.log("obj^");
+
+    let notExists;
+
+    if (obj !== null) {
+        try{
+            notes = formatLookupInput(obj);
+            validateNotesInput(root);
+            validateCategoryInput(category);
+        } catch(err){
+            return err;
+        }
+
+        //if lacking both root and category, then we can't add AND because it's the first and only item after WHERE
+        const andStr = (root && category) ? `AND ` : ``; //this should anticipate the text search which will have no root or category
+
+        notExists = andStr + `NOT EXISTS (
+            SELECT 1
+            FROM chord_has_note cn2
+            WHERE cn2.chord_symbol = c.chord_symbol
+            AND cn2.note NOT IN ("` + notes.join('","') + `")
+        )`;
+
     }
+
+    else { //obj is null
+        notExists = ``;
+    }
+
+    const topLevelWhereStr = (!category && !root && !obj) ? `` : `WHERE`;
+    
+    console.log("notes-----------");
+    console.log(notes);
+
     console.log("Validation passed");
     
     category = category !== null ? 'c.category = "' + category + '" AND ':  '';
     console.log("---------------------------------------------cate");
     console.log(category);
 
-    root = root !== null ? 'c.root_note = "' + root + '" AND ':  '';
+    root = root !== null ? 'c.root_note = "' + root + '"':  '';
 
     let sql = `SELECT
         c.chord_name,
@@ -154,15 +185,10 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
     INNER JOIN chord_has_note cn
         ON c.chord_symbol = cn.chord_symbol
         AND c.root_note = cn.root_note
-    WHERE
+    ` + topLevelWhereStr + `
         ` + category + root + `
         -- Only select chords that contain notes from the allowed list
-        NOT EXISTS (
-            SELECT 1
-            FROM chord_has_note cn2
-            WHERE cn2.chord_symbol = c.chord_symbol
-            AND cn2.note NOT IN ("` + notes.join('","') + `")
-        )
+        `+ notExists + `
     GROUP BY
         c.chord_name, c.chord_symbol, c.root_note;`;
 

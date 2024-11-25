@@ -163,7 +163,7 @@ class SPA extends Component{
             "handleCustomClickOutsideNoteNav",
             "handleCustomNoteNavSelectClick",
             "onNoteSelectionUpdate",
-            "onRadioUpdate",  //done only for chord update
+            "onRadioUpdate",  //done only for chord update. i think ideal solution
             "onNavSearchModeItemClick",
             "onNavSearchChordItemClick",
             "onNavSearchScaleItemClick",
@@ -515,7 +515,7 @@ class SPA extends Component{
         // Update state first with the updated radio value
         this.setState((state) => {
                 const radioFocus = state.radio[state.focus];
-                if (which !== "settings") {
+                if (which !== "settings") { //chord or scale view
                     return {
                         ...state,
                         radio: {
@@ -559,10 +559,18 @@ class SPA extends Component{
     fetchUpdatedList = async (which) => {
         const state = this.state;
         const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
+
+        const other = state.focus === "chord" ? state.scale : state.chord;//only for chord or scale, never settings, but then again we dont need to DB call for settings atm
+        const objectLimiter = state.toggle[state.focus] ? other : null; 
+
+        console.log("other");
+        console.log(other);
+        console.log("objectLimiter");
+        console.log(objectLimiter);
     
         if (state.focus === "chord") {
             try {
-                const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
+                const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
                 let newList = JSON.parse(response);
 
                 if (Array.isArray(newList)) {
