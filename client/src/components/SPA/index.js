@@ -149,102 +149,48 @@ class SPA extends Component{
             },
         };
 
-        this.onFooterUpdate = this.onFooterUpdate.bind(this);
-        this.onChordDeselect = this.onChordDeselect.bind(this);
-        this.onScaleDeselect = this.onScaleDeselect.bind(this);
-        this.toScaleSearchView = this.toScaleSearchView.bind(this);
-        this.toChordSearchView = this.toChordSearchView.bind(this);
-        this.toChordNavSearchView = this.toChordNavSearchView.bind(this);
-        this.toScaleNavSearchView = this.toScaleNavSearchView.bind(this);
-        
-        this.toChordEditView = this.toChordEditView.bind(this);
-        this.toScaleEditView = this.toScaleEditView.bind(this);
-
-        this.toModeNavSearchView = this.toModeNavSearchView.bind(this);
-
-        this.handleCustomClickOutsideNoteNav = this.handleCustomClickOutsideNoteNav.bind(this);
-        this.handleCustomNoteNavSelectClick = this.handleCustomNoteNavSelectClick.bind(this);
-        this.onNoteSelectionUpdate = this.onNoteSelectionUpdate.bind(this);
-        this.onRadioUpdate = this.onRadioUpdate.bind(this);
-
-        this.onNavSearchModeItemClick = this.onNavSearchModeItemClick.bind(this);
-        this.onNavSearchChordItemClick = this.onNavSearchChordItemClick.bind(this);
-        this.onNavSearchScaleItemClick = this.onNavSearchScaleItemClick.bind(this);
-
-        // these two might be redundant to the above 2
-        this.onSearchChordItemClick = this.onSearchChordItemClick.bind(this);
-        this.onSearchScaleItemClick = this.onSearchScaleItemClick.bind(this);
-
-        this.toTuningTextInputView = this.toTuningTextInputView.bind(this);
-        this.toSettingsNavView = this.toSettingsNavView.bind(this);
-
-        this.onTuningTextChange = this.onTuningTextChange.bind(this);
-
-        this.selectTextTuningButtonClick = this.selectTextTuningButtonClick.bind(this);
-        this.onScaleSearchTextChange = this.onScaleSearchTextChange.bind(this);
-        this.onChordSearchTextChange = this.onChordSearchTextChange.bind(this);
-
-        this.handleToggleClick = this.handleToggleClick.bind(this);
-
-        this.onTuningNavSearchItemClick = this.onTuningNavSearchItemClick.bind(this);
-        this.onInstrumentNavSearchItemClick = this.onInstrumentNavSearchItemClick.bind(this);
-        this.onTonewoodNavSearchItemClick = this.onTonewoodNavSearchItemClick.bind(this);
-        this.onOrientationItemClick = this.onOrientationItemClick.bind(this);
-        this.onOctaveItemClick = this.onOctaveItemClick.bind(this);
-        
-        this.onListModalExitClick = this.onListModalExitClick.bind(this);
-        this.openListModal = this.openListModal.bind(this);
-
-        this.onTextEnterKeyUp = this.onTextEnterKeyUp.bind(this);
-
-        /* const methods = [ //cleaner solution than above
+        const methods = [
             "onFooterUpdate",
             "onChordDeselect",
             "onScaleDeselect",
-            toScaleSearchView,
-            toChordSearchView,
-            toChordNavSearchView,
-            toScaleNavSearchView,
-            toChordEditView,
-            toScaleEditView,
-            toModeNavSearchView,
-            handleCustomClickOutsideNoteNav,
-            handleCustomNoteNavSelectClick,
-            onNoteSelectionUpdate,
-            onRadioUpdate,
-            onNavSearchModeItemClick,
-            onNavSearchChordItemClick,
-            onNavSearchScaleItemClick,
+            "toScaleSearchView",
+            "toChordSearchView",
+            "toChordNavSearchView",
+            "toScaleNavSearchView",
+            "toChordEditView",
+            "toScaleEditView",
+            "toModeNavSearchView",
+            "handleCustomClickOutsideNoteNav",
+            "handleCustomNoteNavSelectClick",
+            "onNoteSelectionUpdate",
+            "onRadioUpdate",
+            "onNavSearchModeItemClick",
+            "onNavSearchChordItemClick",
+            "onNavSearchScaleItemClick",
             // these two might be redundant to the above 2
-            onSearchChordItemClick,
-            onSearchScaleItemClick,
-            toTuningTextInputView,
-            toSettingsNavView,
-            onTuningTextChange,
-            selectTextTuningButtonClick,
-            onScaleSearchTextChange,
-            onChordSearchTextChange,
-            handleToggleClick,
-            onTuningNavSearchItemClick,
-            onInstrumentNavSearchItemClick,
-            onTonewoodNavSearchItemClick,
-            onOrientationItemClick,
-            onOctaveItemClick,
-            onListModalExitClick,
-            openListModal,
-            onTextEnterKeyUp
-        ]
+            "onSearchChordItemClick",
+            "onSearchScaleItemClick",
+            "toTuningTextInputView",
+            "toSettingsNavView",
+            "onTuningTextChange",
+            "selectTextTuningButtonClick",
+            "onScaleSearchTextChange",
+            "onChordSearchTextChange",
+            "handleToggleClick",
+            "onTuningNavSearchItemClick",
+            "onInstrumentNavSearchItemClick",
+            "onTonewoodNavSearchItemClick",
+            "onOrientationItemClick",
+            "onOctaveItemClick",
+            "onListModalExitClick",
+            "openListModal",
+            "onTextEnterKeyUp"
+        ];
 
         methods.forEach((method) => {
             this[method] = this[method].bind(this);
         });
-        
-        */
-
-        
-
-        
-        
+          
     }
 
     onFooterUpdate(newValue) {   
