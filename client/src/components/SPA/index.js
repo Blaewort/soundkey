@@ -942,7 +942,7 @@ class SPA extends Component{
         console.log(this.state);
 
         let toggle;
-        let search;
+        let search; //for commit
         let viewSwitch;
         let radio;
         let selection;
