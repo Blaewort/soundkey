@@ -55,13 +55,21 @@ class ListArea extends Component {
 
         //how do I know if there is only room for one item (low-height resolution) so I can make one item or the first item click to open the modal???
         
+        
+        
 
-        const listItems = list.map((item) => 
-            <li key={item.label} onClick={(e) => this.props.handleItemClick(e,item)}>{item.label}</li>
-        );
+        const listItems = list.map((item) => {
+            // we have a bad data issue at the moment where some names arent working so some chords have duplicate name erroneous, which creates a duplicate key issue
+            // so make a random number and tack it on top to fix it
+            const randomNumber = Math.floor(Math.random() * 10000);
+            const randomString = randomNumber.toString();
+            return <li key={item.label+randomString} onClick={(e) => this.props.handleItemClick(e,item)}>{item.label}</li>
+        });
 
         //make the list modal
         const listModalItems = [...listItems];
+        console.log("listModalItems");
+        console.log(listModalItems);
 
         //I add a list element to the very beginning of listItems and give it a class that is invisible
         listItems.unshift (<li key="Choose..." onClick={this.props.modal.open} className="listModalButton"><i class="fa fa-bars" aria-hidden="true"></i>  View List</li>);
