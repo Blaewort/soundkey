@@ -197,6 +197,50 @@ class SPA extends Component{
 
         this.onTextEnterKeyUp = this.onTextEnterKeyUp.bind(this);
 
+        /* const methods = [ //cleaner solution than above
+            "onFooterUpdate",
+            "onChordDeselect",
+            "onScaleDeselect",
+            toScaleSearchView,
+            toChordSearchView,
+            toChordNavSearchView,
+            toScaleNavSearchView,
+            toChordEditView,
+            toScaleEditView,
+            toModeNavSearchView,
+            handleCustomClickOutsideNoteNav,
+            handleCustomNoteNavSelectClick,
+            onNoteSelectionUpdate,
+            onRadioUpdate,
+            onNavSearchModeItemClick,
+            onNavSearchChordItemClick,
+            onNavSearchScaleItemClick,
+            // these two might be redundant to the above 2
+            onSearchChordItemClick,
+            onSearchScaleItemClick,
+            toTuningTextInputView,
+            toSettingsNavView,
+            onTuningTextChange,
+            selectTextTuningButtonClick,
+            onScaleSearchTextChange,
+            onChordSearchTextChange,
+            handleToggleClick,
+            onTuningNavSearchItemClick,
+            onInstrumentNavSearchItemClick,
+            onTonewoodNavSearchItemClick,
+            onOrientationItemClick,
+            onOctaveItemClick,
+            onListModalExitClick,
+            openListModal,
+            onTextEnterKeyUp
+        ]
+
+        methods.forEach((method) => {
+            this[method] = this[method].bind(this);
+        });
+        
+        */
+
         
 
         

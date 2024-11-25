@@ -127,6 +127,7 @@ function validateCategoryInput(category){
 // USE user can see chords with added tones
 async function getChords(obj, root = null, category = null, noteOffset = 0) {
     console.log('\n',"GetChords(",obj,",",root,",",category,",",noteOffset,")");
+
     let notes = null;
     try{
         notes = formatLookupInput(obj);
@@ -136,48 +137,36 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
         return err;
     }
     console.log("Validation passed");
-    category = category !== null ? 'AND c.category = "' + category + '"':  '';
-    console.log("---------------------------------------------cat");
+    
+    category = category !== null ? 'c.category = "' + category + '" AND ':  '';
+    console.log("---------------------------------------------cate");
     console.log(category);
-    root = root !== null ? 'AND c.root_note = "' + root + '"':  '';
-    let newChordLength = '';
-    let matchingChordLength = '';
-    switch(noteOffset){
-        case -1:
-            newChordLength = 'HAVING Count(cn.note) <= ' + notes.length - 1;
-            break;
-        case 0:
-            break;
-        case 1:
-            matchingChordLength = 'HAVING count(note) >= ' + notes.length + 1;
-            break;
-    };
+
+    root = root !== null ? 'c.root_note = "' + root + '" AND ':  '';
+
     let sql = `SELECT
-    c.chord_name,
-    c.chord_symbol,
-    c.root_note,
-    GROUP_CONCAT(cn.note) as notes
+        c.chord_name,
+        c.chord_symbol,
+        c.root_note,
+        JSON_ARRAYAGG(cn.note) AS notes
     FROM
-    chords c
-    INNER JOIN chord_has_note cn ON c.chord_symbol = cn.chord_symbol
-    and c.root_note = cn.root_note
+        chords c
+    INNER JOIN chord_has_note cn
+        ON c.chord_symbol = cn.chord_symbol
+        AND c.root_note = cn.root_note
     WHERE
-    cn.chord_symbol = ANY (
-        SELECT
-        chord_symbol
-        FROM
-        chord_has_note
-        where
-        note IN ("` + notes.join('","') + `")
-        group by 
-        chord_symbol
-        ` + matchingChordLength + `
-    ) ` + category + root + `
+        ` + category + root + `
+        -- Only select chords that contain notes from the allowed list
+        NOT EXISTS (
+            SELECT 1
+            FROM chord_has_note cn2
+            WHERE cn2.chord_symbol = c.chord_symbol
+            AND cn2.note NOT IN ("` + notes.join('","') + `")
+        )
     GROUP BY
-    cn.chord_symbol` + newChordLength + `,
-    c.chord_name,
-    c.chord_symbol,
-    c.root_note`;
+        c.chord_name, c.chord_symbol, c.root_note;`;
+
+
     console.log(sql);
     let qResults = await fetchSQL(sql);
     let results = [];
