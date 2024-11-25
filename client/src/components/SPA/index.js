@@ -155,7 +155,7 @@ class SPA extends Component{
             "onScaleDeselect",
             "toScaleSearchView",
             "toChordSearchView",
-            "toChordNavSearchView",
+            "toChordNavSearchView", //DONE: init database query, perhaps less than ideal solution
             "toScaleNavSearchView",
             "toChordEditView",
             "toScaleEditView",
@@ -163,7 +163,7 @@ class SPA extends Component{
             "handleCustomClickOutsideNoteNav",
             "handleCustomNoteNavSelectClick",
             "onNoteSelectionUpdate",
-            "onRadioUpdate",
+            "onRadioUpdate",  //done only for chord update
             "onNavSearchModeItemClick",
             "onNavSearchChordItemClick",
             "onNavSearchScaleItemClick",
@@ -313,7 +313,7 @@ class SPA extends Component{
         });
     }
 
-    toChordNavSearchView(state) {
+    toChordNavSearchView() {
         //when directed to chord nav search view, we fetch chords for the search view based on search view user settings and update the state, thereby re-rendering
         const fetchChords = async (state) => {
             const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
@@ -501,47 +501,94 @@ class SPA extends Component{
         });
     }
 
-    // radio stuff
-    onRadioUpdate(updated, name) {
+    async onRadioUpdate(updated, name) {
         let which;
-
+    
         if (name.includes("Type")) {
             which = "nav";
         } else if (name.includes("Edit")) {
             which = "edit";
-        }
-        else if (name === "Settings") {
+        } else if (name === "Settings") {
             which = "settings";
         }
-
-        this.setState((state, props) => {
-            const radioFocus = state.radio[state.focus];
-            const whichObj = radioFocus ? radioFocus[which] : null;
-
-            if (state.focus === "settings") {
-                return {
-                    ...state,
-                    radio: {
-                        ...state.radio,
-                        [state.focus]: updated
-                    }
-                };
-            } else {
-                return {
-                    ...state,
-                    radio: {
-                        ...state.radio,
-                        [state.focus]: {
-                            ...radioFocus,
-                            [which]: updated
+    
+        // Update state first with the updated radio value
+        this.setState((state) => {
+                const radioFocus = state.radio[state.focus];
+                if (which !== "settings") {
+                    return {
+                        ...state,
+                        radio: {
+                            ...state.radio,
+                            [state.focus]: {
+                                ...radioFocus,
+                                [which]: updated,
+                            },
+                        },
+                    };
+                }
+                else if (which === "settings") {
+                    return {
+                        ...state,
+                        radio: {
+                            ...state.radio,
+                            [state.focus]: updated
                         }
-                    }
-                };
+                    };
+                }
+            },
+            async () => {
+                // Fetch the new list only after state is updated
+                const newList = await this.fetchUpdatedList(which);
+                if (newList && which !=="settings") {
+                    this.setState((state) => ({
+                        list: {
+                            ...state.list,
+                            [state.focus]: {
+                                ...state.list[state.focus],
+                                [which]: newList,
+                            },
+                        },
+                    }));
+                }
             }
-            
-
-        });
+        );
     }
+    
+    //fetch updated data
+    fetchUpdatedList = async (which) => {
+        const state = this.state;
+        const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
+    
+        if (state.focus === "chord") {
+            try {
+                const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
+                let newList = JSON.parse(response);
+
+                if (Array.isArray(newList)) {
+                    return newList.map((obj) => ({
+                        label: obj.name,
+                        object: obj,
+                    }));
+                }
+            } catch (err) {
+                console.error("Error fetching new list:", err);
+            }
+        }
+        return null;
+    };
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
     //nav search stuff
     onNavSearchScaleItemClick(e, item) {
