@@ -155,7 +155,7 @@ class SPA extends Component{
             "onScaleDeselect",
             "toScaleSearchView",
             "toChordSearchView",
-            "toChordNavSearchView", //DONE: init database query, perhaps less than ideal solution
+            "toChordNavSearchView", //data done
             "toScaleNavSearchView",
             "toChordEditView",
             "toScaleEditView",
@@ -313,73 +313,30 @@ class SPA extends Component{
         });
     }
 
-    toChordNavSearchView() {
-        //when directed to chord nav search view, we fetch chords for the search view based on search view user settings and update the state, thereby re-rendering
-        const fetchChords = async (state) => {
-            const radioValue = state.radio.chord.nav ? state.radio.chord.nav : ChordTypeRadio.defaultValue;
- 
-            let chords;
-            try {
-                chords = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, state.scale);
-            }
-
-            catch(err){
-                console.log(err);
-                console.log("badddddd");
-                return;
-            }
-
-            chords = JSON.parse(chords);
-            console.log(chords);
-
-            if(Array.isArray(chords)){
-
-                chords = chords.map(chord => {
-                    console.log(chord);
-                    return {   
-                        "label": chord.name,
-                        "object": chord
-                    };
-                });
-
-                this.setState((state, props) => {
-                    //TODO? Do we want to honor prior list state (if any) or keep user snapped to the current chord selection?
-                    // We currently honor prior list state as it's easier
- 
-                    // adding static property defaultValue to radios
-
-                    const tempnewList = {
-                        ...state.list,
-                        chord: {
-                            ...state.list.chord,
-                            nav: chords,
-                        }
-                    };
-
-                    console.log("tempnewList");
-                    console.log(tempnewList);
-
-                    //okay so the list is set correctly. Is the list not being referenced correctly?
- 
-                    return {
-                        ...state,
-                        view: {
-                            ...state.view,
-                            chord: "navsearch",
-                        },
-                        //set list to this.state.list.chord.nav
-                        list: {
-                            ...state.list,
-                            chord: {
-                                ...state.list.chord,
-                                nav: chords,
-                            }
-                        }
+    async toChordNavSearchView() {
+        // Update state of view first
+        this.setState((state, props) => {
+            return {
+                ...state,
+                view: {
+                    ...state.view,
+                    chord: "navsearch",
+                },
+            };
+        },
+        async () => {
+            // THEN Fetch the new list in the nav only after state is updated
+            const chords = await this.fetchUpdatedList();
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    chord: {
+                        ...state.list.chord,
+                        nav: chords,
                     }
-                });
-            }
-        }
-       return fetchChords(this.state);
+                }
+            }));
+        });
     }
 
     toScaleNavSearchView() {
@@ -514,6 +471,7 @@ class SPA extends Component{
     
         // Update state first with the updated radio value
         this.setState((state) => {
+                // FIRST update the radio state
                 const radioFocus = state.radio[state.focus];
                 if (which !== "settings") { //chord or scale view
                     return {
@@ -538,8 +496,8 @@ class SPA extends Component{
                 }
             },
             async () => {
-                // Fetch the new list only after state is updated
-                const newList = await this.fetchUpdatedList(which);
+                // THEN Fetch the new list in the nav only after state is updated
+                const newList = await this.fetchUpdatedList();
                 if (newList && which !=="settings") {
                     this.setState((state) => ({
                         list: {
@@ -555,8 +513,8 @@ class SPA extends Component{
         );
     }
     
-    //fetch updated data
-    fetchUpdatedList = async (which) => {
+    //fetch updated data, maybe can make this an all-purpose function whenever needed
+    fetchUpdatedList = async () => {
         const state = this.state;
         const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
 

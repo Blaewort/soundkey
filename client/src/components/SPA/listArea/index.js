@@ -63,6 +63,7 @@ class ListArea extends Component {
             // so make a random number and tack it on top to fix it
             const randomNumber = Math.floor(Math.random() * 10000);
             const randomString = randomNumber.toString();
+            
             return <li key={item.label+randomString} onClick={(e) => this.props.handleItemClick(e,item)}>{item.label}</li>
         });
 
