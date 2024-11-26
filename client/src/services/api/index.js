@@ -86,7 +86,7 @@ async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
     return await fapi_getScalesFromModeName(noteValue,"dodecatonic", chordToLimitBy);
 }
  
-function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
+function fapi_getChords(noteValue,category = null, scaleToLimitBy, searchString = "") {
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
     console.log("made it to fapi_getChords")
@@ -104,7 +104,8 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy) {
         {
             notes: scaleToLimitBy, 
             root: root, //this constraint works for A but nothing else. why?
-            category: category //the radio value the UI is set to
+            category: category, //the radio value the UI is set to
+            searchString: searchString, //user input text search string
         }
     ).then(
         response => {

@@ -28,6 +28,7 @@ class ChordScaleController extends Component{
         this.state = {searchGets: null};
     }
 
+    // deprecate this?
     async componentDidUpdate(prevProps){
         console.log("componentDidUpdate");
         console.log(this.props.searchInputValue);
@@ -36,6 +37,7 @@ class ChordScaleController extends Component{
         if( this.props.view === "search" &&this.props.searchInputValue !== prevProps.searchInputValue){
             let chord = await this.props.search.text.get(this.props.searchInputValue);
             console.log(chord);
+            console.log("guinevere");
             this.setState((state,props) => {
                 return {searchGets: [{
                     label: chord.name,
@@ -82,7 +84,7 @@ class ChordScaleController extends Component{
 
         if (this.props.search.gets) {
             const listItemClick = this.props.search.text.onItemClick;
-            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.gets} title={this.props.type === "chord" ? "Chords" : "Scales"} />
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text.chordList/*this.props.search.gets*/} title={this.props.type === "chord" ? "Chords" : "Scales"} />
         }
 
         if (this.props.toggle.isRequired) {

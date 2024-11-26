@@ -124,6 +124,7 @@ class SPA extends Component{
                 chord: {
                     nav: null,
                     edit: null,
+                    text: null,
                 },
                 modal: {
                     chord: true, //I'd like the low-heigh modals to be on by default on website entry. Even though you can't
@@ -184,7 +185,7 @@ class SPA extends Component{
             "onOctaveItemClick",
             "onListModalExitClick",
             "openListModal",
-            "onTextEnterKeyUp"
+            "onTextEnterKeyUp",
         ];
 
         methods.forEach((method) => {
@@ -326,7 +327,16 @@ class SPA extends Component{
         },
         async () => {
             // THEN Fetch the new list in the nav only after state is updated
-            const chords = await this.fetchUpdatedList();
+            let chords;
+            try{
+                chords = await this.fetchUpdatedList();
+            }
+
+            catch(err){
+                console.log(err);
+                console.log("bad chord fetch");
+                return;
+            }
             this.setState((state) => ({
                 list: {
                     ...state.list,
@@ -497,7 +507,16 @@ class SPA extends Component{
             },
             async () => {
                 // THEN Fetch the new list in the nav only after state is updated
-                const newList = await this.fetchUpdatedList();
+                let newList;
+                try{
+                    newList = await this.fetchUpdatedList();
+                }
+
+                catch(err){
+                    console.log(err);
+                    console.log("bad chord fetch");
+                    return;
+                }
                 if (newList && which !=="settings") {
                     this.setState((state) => ({
                         list: {
@@ -513,22 +532,30 @@ class SPA extends Component{
         );
     }
     
-    //fetch updated data, maybe can make this an all-purpose function whenever needed
+    //fetch updated chord data, maybe can make this an all-purpose function whenever needed
     fetchUpdatedList = async () => {
         const state = this.state;
         const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
+        const userInputString = state.textInput[state.focus];
 
-        const other = state.focus === "chord" ? state.scale : state.chord;//only for chord or scale, never settings, but then again we dont need to DB call for settings atm
+        // only for chord or scale, never settings, but then again we dont need to DB call for settings atm
+        // if we have a userInputString and we are in the text search view, then take searchString into account
+        const searchString = (userInputString && (state.view[state.focus] === "search")) ? userInputString : ""; 
+
+        //only for chord or scale, never settings, but then again we dont need to DB call for settings atm
+        const other = state.focus === "chord" ? state.scale : state.chord; 
         const objectLimiter = state.toggle[state.focus] ? other : null; 
-
-        console.log("other");
-        console.log(other);
-        console.log("objectLimiter");
-        console.log(objectLimiter);
     
         if (state.focus === "chord") {
             try {
-                const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+                let response;
+                if (searchString) { //there is a non-empty searchstring plus in textsearch view so we dont want to be bound by root note or type, but toggle constraint is okay
+                    response = await fapi_getChords(null, null, objectLimiter, searchString);
+                } else { //not text searching
+                    response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+                }
+
+                //const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
                 let newList = JSON.parse(response);
 
                 if (Array.isArray(newList)) {
@@ -665,7 +692,7 @@ class SPA extends Component{
 
     onChordSearchTextChange(event) {
         const evt = event.nativeEvent.target.value;
-
+        //update textInput state
         this.setState((state, props) => {
             return {
                 ...state,
@@ -674,6 +701,28 @@ class SPA extends Component{
                     chord: evt,
                 },
             };
+        }, //fetch chord list data
+        async () => {
+            let chord = await fapi_getChordsFromUserString(this.state.textInput.chord); //i think using this.state in a callback like this is safe?
+            let newList = [];
+
+            if (chord && chord.name) {
+                newList.push({
+                    label: chord.name,
+                    object: chord
+                });
+            }
+
+            this.setState((state) => ({
+                ...state,
+                list: {
+                    ...state.list,
+                    chord: {
+                        ...state.list.chord,
+                        text: newList,
+                    }
+                },
+            }));
         });
     }
 
@@ -754,8 +803,53 @@ class SPA extends Component{
                     [state.focus]: !state.toggle[state.focus]
                 }
             };
+        },
+        async () => {
+            // if which is Settings, ignore everything and return
+            // if which is chord, do this no matter if nav or edit or text
+            let chords;
+            try{
+                chords = await this.fetchUpdatedList();
+            }
+            catch(err){
+                console.log(err);
+                console.log("bad chord fetch");
+                return;
+            }
+
+            this.setState((state) => {
+                const whichView = state.view[state.focus];
+                
+                let whichList;
+
+                switch(whichView) {
+                    case "navsearch":
+                        whichList = "nav";
+                        break;
+                    case "edit":
+                        whichList = "edit";
+                        return; //edit not supported yet
+                        break;
+                    case "search":
+                        whichList = "text";
+                        return; //text not supported yet
+                        break;
+                    default: 
+                        throw new Error("state.view[state.focus] is not one of: 'navsearch', 'edit', 'search'");
+                }
+            
+                return {
+                    list: {
+                        ...state.list,
+                        chord: {
+                            ...state.list.chord,
+                            [whichList]: chords,
+                        }
+                    }
+                };
+            });
         });
-      }
+    }
 
     onTuningNavSearchItemClick(e, item) {
         this.setState((state, props) => {
@@ -922,6 +1016,7 @@ class SPA extends Component{
                         input: this.state.textInput.chord,
                         onChange: this.onChordSearchTextChange,
                         onItemClick: this.onSearchChordItemClick,
+                        chordList: this.state.list.chord.text,
                     },
                     nav: {
                         chordList: this.state.list.chord.nav,

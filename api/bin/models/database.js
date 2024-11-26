@@ -125,7 +125,7 @@ function validateCategoryInput(category){
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
-async function getChords(obj, root = null, category = null, noteOffset = 0) {
+async function getChords(obj, root = null, category = null, searchString = "", noteOffset = 0) {
     console.log("made it here");
     console.log('\n',"GetChords(",obj,",",root,",",category,",",noteOffset,")");
 
@@ -135,7 +135,7 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
     console.log(obj);
     console.log("obj^");
 
-    let notExists;
+    let noteConstraint;
 
     if (obj !== null) {
         try{
@@ -149,7 +149,7 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
         //if lacking both root and category, then we can't add AND because it's the first and only item after WHERE
         const andStr = (root && category) ? `AND ` : ``; //this should anticipate the text search which will have no root or category
 
-        notExists = andStr + `NOT EXISTS (
+        noteConstraint = andStr + `NOT EXISTS (
             SELECT 1
             FROM chord_has_note cn2
             WHERE cn2.chord_symbol = c.chord_symbol
@@ -159,19 +159,14 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
     }
 
     else { //obj is null
-        notExists = ``;
+        noteConstraint = ``;
     }
 
-    const topLevelWhereStr = (!category && !root && !obj) ? `` : `WHERE`;
-    
-    console.log("notes-----------");
-    console.log(notes);
+    const hasAnyConditions = (!category && !root && !obj) ? `` : `WHERE`;
 
     console.log("Validation passed");
     
     category = category !== null ? 'c.category = "' + category + '" AND ':  '';
-    console.log("---------------------------------------------cate");
-    console.log(category);
 
     root = root !== null ? 'c.root_note = "' + root + '"':  '';
 
@@ -185,10 +180,10 @@ async function getChords(obj, root = null, category = null, noteOffset = 0) {
     INNER JOIN chord_has_note cn
         ON c.chord_symbol = cn.chord_symbol
         AND c.root_note = cn.root_note
-    ` + topLevelWhereStr + `
+    ` + hasAnyConditions + `
         ` + category + root + `
         -- Only select chords that contain notes from the allowed list
-        `+ notExists + `
+        `+ noteConstraint + `
     GROUP BY
         c.chord_name, c.chord_symbol, c.root_note;`;
 
