@@ -28,25 +28,6 @@ class ChordScaleController extends Component{
         this.state = {searchGets: null};
     }
 
-    // deprecate this?
-    async componentDidUpdate(prevProps){
-        console.log("componentDidUpdate");
-        console.log(this.props.searchInputValue);
-        console.log(prevProps.searchInputValue);
-        console.log(this.props.view);
-        if( this.props.view === "search" &&this.props.searchInputValue !== prevProps.searchInputValue){
-            let chord = await this.props.search.text.get(this.props.searchInputValue);
-            console.log(chord);
-            console.log("guinevere");
-            this.setState((state,props) => {
-                return {searchGets: [{
-                    label: chord.name,
-                    object: chord
-                }]};
-            });
-        }
-    }
-
     getPlaceholder() {
         switch(this.props.type) {
             case "chord":
@@ -71,7 +52,6 @@ class ChordScaleController extends Component{
         let toggle;
         let footer;
 
-
         let toNavView;
         if (this.props.type === "chord") {
             toNavView = this.props.viewSwitch.toNav;
@@ -84,7 +64,7 @@ class ChordScaleController extends Component{
 
         if (this.props.search.gets) {
             const listItemClick = this.props.search.text.onItemClick;
-            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text.chordList/*this.props.search.gets*/} title={this.props.type === "chord" ? "Chords" : "Scales"} />
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text.chordList} title={this.props.type === "chord" ? "Chord" : "Scales"} />
         }
 
         if (this.props.toggle.isRequired) {
@@ -359,12 +339,14 @@ class ChordScaleController extends Component{
 }
 
 
-ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection) {
+ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection, focus) {
+    const isChordView = (focus && focus === "chord");
 
     switch(view) {
         case "selected":
             return (!selection.primary && selection.secondary);
         case "search":
+            return selection.secondary && !isChordView;
         case "navsearch":
         case "navsearchmode":
           return selection.secondary;

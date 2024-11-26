@@ -42,7 +42,7 @@ function getLandScapeClassName({base, focus, view, navSearchGets, textSearchGets
 
 function toggleIsVisible(view, focus, selection) {
     if (focus === "settings") { return InstrumentController.toggleIsVisible(); }
-    return ChordScaleController.toggleIsVisible(view[focus], selection);
+    return ChordScaleController.toggleIsVisible(view[focus], selection, focus);
 }
 
 function notenavIsVisible(view, focus) {
@@ -570,18 +570,6 @@ class SPA extends Component{
         }
         return null;
     };
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
     //nav search stuff
     onNavSearchScaleItemClick(e, item) {
