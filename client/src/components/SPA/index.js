@@ -1059,7 +1059,14 @@ class SPA extends Component{
 
                 search.limitByOther = toggle.value === true ? selection.secondary : null;
                 search.gets = (search.text.input !== null && search.text.input !== "") && search.text.get(search.text.input, search.limitByOther);
-                toggle.isRequired = selection.secondary;
+
+                // chord textSearchView doesnt care about the toggle because at least atm it seems more an incumberance on the user
+                // rationale: if they are resorting to typing a chord symbol in, isn't it that they know what chord they want? 
+                // why would they enter say Em7 if not to select an Em7 chord regardless of matching the selected scale?
+                // this situation would be different if we were actually searching the DB for partial text matches, when
+                // what we are actually doing is constructing a chord from chord symbol being typed, so there's either no result or there's one result
+                const isTextSearchView = this.state.view.chord === "search";
+                toggle.isRequired = selection.secondary && !isTextSearchView;
 
                 landscapeClassName = getLandScapeClassName({
                     base: "options",
