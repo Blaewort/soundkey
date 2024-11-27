@@ -163,7 +163,7 @@ class SPA extends Component{
             "toModeNavSearchView",
             "handleCustomClickOutsideNoteNav",
             "handleCustomNoteNavSelectClick",
-            "onNoteSelectionUpdate",
+            "onNoteSelectionUpdate", //done for chords
             "onRadioUpdate",  //done only for chord update. i think ideal solution
             "onNavSearchModeItemClick",
             "onNavSearchChordItemClick",
@@ -329,7 +329,7 @@ class SPA extends Component{
             // THEN Fetch the new list in the nav only after state is updated
             let chords;
             try{
-                chords = await this.fetchUpdatedList();
+                chords = await this.fetchBasicChordList();
             }
 
             catch(err){
@@ -465,6 +465,37 @@ class SPA extends Component{
                     }
                 },
             };
+        },
+        async () => {
+            // fetch only after updated
+            let newList;
+            try{
+                newList = await this.fetchBasicChordList();
+            }
+
+            catch(err){
+                console.log(err);
+                console.log("bad chord fetch");
+                return;
+            }
+
+            let whitherward;
+    
+            if (this.state.view[this.state.focus] === "navsearch") {
+                whitherward = "nav";
+            } else if (this.state.view[this.state.focus] === "edit") {
+                whitherward = "edit";
+            }
+            
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        [whitherward]: newList,
+                    },
+                },
+            }));
         });
     }
 
@@ -509,7 +540,7 @@ class SPA extends Component{
                 // THEN Fetch the new list in the nav only after state is updated
                 let newList;
                 try{
-                    newList = await this.fetchUpdatedList();
+                    newList = await this.fetchBasicChordList();
                 }
 
                 catch(err){
@@ -532,8 +563,11 @@ class SPA extends Component{
         );
     }
     
-    //fetch updated chord data, maybe can make this an all-purpose function whenever needed
-    fetchUpdatedList = async () => {
+    //fetch basic chord list from the database 
+    // (NOT edited chords like Extensions, Alterations, Added Tones, Removed Tones). 
+    // make a new function for that e.g. fetchChordExtensions, fetchChordAlterations, fetchRemovedToneChords, fetchAddedToneChords
+    // or maybe if lucky can make one func called fetchEditedChords
+    fetchBasicChordList = async () => {
         const state = this.state;
         const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
         const userInputString = state.textInput[state.focus];
@@ -797,7 +831,7 @@ class SPA extends Component{
             // if which is chord, do this no matter if nav or edit or text
             let chords;
             try{
-                chords = await this.fetchUpdatedList();
+                chords = await this.fetchBasicChordList();
             }
             catch(err){
                 console.log(err);
