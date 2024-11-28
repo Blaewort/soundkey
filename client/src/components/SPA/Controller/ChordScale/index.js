@@ -28,6 +28,8 @@ class ChordScaleController extends Component{
         this.state = {searchGets: null};
     }
 
+    
+
     getPlaceholder() {
         switch(this.props.type) {
             case "chord":
@@ -277,7 +279,8 @@ class ChordScaleController extends Component{
 
             const title = this.props.radio.edit;
             const itemClick = this.props.search.nav.onItemClick;
-            const list = this.props.selection.getNearbys(this.props.selection.primary,this.props.radio.edit);
+            //const list = this.props.selection.getNearbys(this.props.selection.primary,this.props.radio.edit);
+            const list = this.props.search.edit.chordList;
             listArea = <ListArea modal={this.props.search.listModal} title={ title || "Extensions"} handleItemClick={itemClick} list={list} />;
 
         }else if (this.props.type === "scale") {

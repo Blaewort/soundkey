@@ -9,7 +9,27 @@ console.log("Load API Router");
 router.get('/getChords/', (req,res) => {
   console.log("Get Chords");
   res.send('chords');
-}); 
+});
+
+router.post('/getChords/Alterations',async (req,res) => {
+  console.log("in the /getChords/Alterations route");
+
+  console.log(req.body);
+  console.log("req.body^");
+
+  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+  let root = req.body.root ? req.body.root : null;
+  let category = req.body.category ? req.body.category : null;
+  let notes = req.body.notes;
+  console.log("db.getChords/Alterations(",notes,",",root,",",category,",",maxNotes,")");
+  let chords = await db.getChordAlterations(notes,root,category,maxNotes);
+  res.json(JSON.stringify(chords));
+});
+
+/*router.get('/getChords/Alterations/', (req,res) => {
+  console.log("inside router.get('/getChord/Alterations/')");
+  res.send('chords');
+});*/
 
 router.post('/getChords/fromStrings/' ,(req,res) => {
   console.log(req.body);

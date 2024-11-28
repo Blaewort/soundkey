@@ -307,35 +307,50 @@ async function getModes(root, type = "heptatonic", obj){
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
 // USE user can see chord alterations 1 step away
-async function getChordAlterations(obj, numberOfNotesToAlterBy = 1) {
-    let notes = formatLookupInput(obj);
-    let sql = `SELECT
-    c.chord_name,
-    c.chord_symbol,
-    c.root_note,
-    GROUP_CONCAT(cn.note) as notes
-    FROM
-    chords c
-    INNER JOIN chord_has_note cn ON c.chord_symbol = cn.chord_symbol
-    and c.root_note = cn.root_note
-    WHERE
-    cn.chord_symbol = ANY (
-        SELECT
-        chord_symbol
-        FROM
-        chord_has_note
-        where
-        note IN ("` + notes.join('","') + `")
-        group by 
-        chord_symbol
-        HAVING count(note) >= ` + (notes.length - numberOfNotesToAlterBy) + `
-    )
-    GROUP BY
-    cn.chord_symbol
-    HAVING Count(cn.note) <= ` + maxNotes;
+async function getChordAlterations(baseChord) {
+    console.log("inside getChordAlterations");
+
+    let notes;
+    if (baseChord !== null) {
+        try{
+            notes = formatLookupInput(baseChord);
+            //validateNotesInput(root);
+            //validateCategoryInput(category);
+        } catch(err){
+            return err;
+        }
+    }
+
+    console.log(notes);
+    console.log("getChordAlterations NOTES^");
+
+    //get baseChord note count
+    const noteCount = notes.length;
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol,
+        chn.root_note
+    FROM 
+        chord_has_note chn
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note
+    HAVING 
+        COUNT(*) = `+ noteCount +` 
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`;  -- Number of matching notes in your chord minus 1`;
+
+    console.log(sql);
+    console.log("sql^");
+
     let qResults = await fetchSQL(sql);
     let results = [];
+
+    //console.log(qResults);
+    //console.log("qResults^");
     qResults.forEach(ele => {
+        console.log(ele.chord_symbol);
+        console.log("ele.chordSymbol^");
         results.push(Chord.chordFromNotation(ele.chord_symbol));
     });
     return results;
@@ -442,4 +457,4 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
     return results;
 }
 
-module.exports = { getChords, getScales, getModes}
+module.exports = { getChords, getScales, getModes, getChordAlterations}

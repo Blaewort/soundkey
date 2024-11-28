@@ -12,7 +12,8 @@ import SettingsRadio from './radio/Settings';
 
 import { fapi_getModes, 
     fapi_getScalesFromModeName, 
-    fapi_getChords, 
+    fapi_getChords,
+    fapi_getChordAlterations, 
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,
@@ -75,8 +76,8 @@ class SPA extends Component{
             },
             scale: {
                 root: "E",
-                name: "E Lydian",
-                notes: [
+                /*name: "E Lydian",
+                 notes: [
                     {label: "E", value: 7},
                     {label: "F#", value: 9}, 
                     {label: "G#", value: 11}, 
@@ -84,6 +85,26 @@ class SPA extends Component{
                     {label: "B", value: 2}, 
                     {label: "C#", value: 4}, 
                     {label: "D#", value: 6}
+                ],*/
+                /*name: "E Dorian",
+                notes: [
+                    {label: "E", value: 7},
+                    {label: "F#", value: 9}, 
+                    {label: "G", value: 10}, 
+                    {label: "A", value: 0}, 
+                    {label: "B", value: 2}, 
+                    {label: "C#", value: 4}, 
+                    {label: "D", value: 5}
+                ],*/
+                name: "A Dorian",
+                notes: [
+                    {label: "A", value: 0},
+                    {label: "B", value: 2}, 
+                    {label: "C", value: 3}, 
+                    {label: "D", value: 5}, 
+                    {label: "E", value: 7}, 
+                    {label: "F#", value: 9}, 
+                    {label: "G", value: 10}
                 ]
             },
             toggle: {
@@ -98,8 +119,8 @@ class SPA extends Component{
                     customListIsOpen: false,
                 },
                 scale: {
-                    value: "8",
-                    label: "F",
+                    value: "7",
+                    label: "E",
                     customListIsOpen: false,
                 }
             },
@@ -373,6 +394,18 @@ class SPA extends Component{
         });
     }
 
+    /*toChordEditView() {
+        this.setState((state, props) => {
+            return {
+                ...state,
+                view: {
+                    ...state.view,
+                    chord: "edit"
+                }
+            }
+        });
+    }*/
+
     toChordEditView() {
         this.setState((state, props) => {
             return {
@@ -382,6 +415,30 @@ class SPA extends Component{
                     chord: "edit"
                 }
             }
+        },
+        async () => {
+            // fetch only after updated
+            console.log("inside toChordEditView callback");
+            let newList;
+            try{
+                newList = await this.fetchAlteredChordList();
+            }
+
+            catch(err){
+                console.log(err);
+                console.log("bad altered chord fetch");
+                return;
+            }
+            
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    chord: {
+                        ...state.list.chord,
+                        edit: newList,
+                    },
+                },
+            }));
         });
     }
 
@@ -588,6 +645,43 @@ class SPA extends Component{
                 } else { //not text searching
                     response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
                 }
+
+                //const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+                let newList = JSON.parse(response);
+
+                if (Array.isArray(newList)) {
+                    return newList.map((obj) => ({
+                        label: obj.name,
+                        object: obj,
+                    }));
+                }
+            } catch (err) {
+                console.error("Error fetching new list:", err);
+            }
+        }
+        return null;
+    };
+
+    fetchAlteredChordList = async () => {
+        console.log("inside fetchAlteredChordList");
+        const state = this.state;
+        const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
+        const userInputString = state.textInput[state.focus];
+
+        // only for chord or scale, never settings, but then again we dont need to DB call for settings atm
+        // if we have a userInputString and we are in the text search view, then take searchString into account
+        const searchString = (userInputString && (state.view[state.focus] === "search")) ? userInputString : ""; 
+
+        //only for chord or scale, never settings, but then again we dont need to DB call for settings atm
+        const other = state.focus === "chord" ? state.scale : state.chord; 
+        const objectLimiter = state[state.focus]; 
+    
+        if (state.focus === "chord") {
+            try {
+                let response;
+                //response = await fapi_getChordAlterations(null, null, objectLimiter, searchString);
+                console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
+                response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
 
                 //const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
                 let newList = JSON.parse(response);
@@ -829,6 +923,8 @@ class SPA extends Component{
         async () => {
             // if which is Settings, ignore everything and return
             // if which is chord, do this no matter if nav or edit or text
+
+            if (this.state.focus === "scale") {return; }; //not yet supported WILL NEED TO DELETE THIS WHEN IMPLEMENTED
             let chords;
             try{
                 chords = await this.fetchBasicChordList();
@@ -1056,6 +1152,9 @@ class SPA extends Component{
                         on: this.state.list.modal.chord,
                         open: this.openListModal,
                         onExitClick: this.onListModalExitClick, //a function that sets this listModal off when they press the X on the modal
+                    },
+                    edit: {
+                        chordList: this.state.list.chord.edit
                     }
                 };
                 viewSwitch = {
@@ -1111,7 +1210,7 @@ class SPA extends Component{
                     selectedNotes: notes.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection} type="chord" />
+                contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection}type="chord" />
                 break;
             case "scale":
                 toggle = {
