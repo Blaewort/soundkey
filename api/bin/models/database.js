@@ -259,11 +259,10 @@ async function getScales(obj,root = null,mode = null) {
 //obj is either an array of notes or a chord/scale object
 async function getModes(root, type = "heptatonic", obj){
     const typeLookupTable = {
-        "heptatonic": 7,
         "pentatonic": 5,
         "hexatonic":  6,
-        "octatonic":  8,
-        "dodecatonic": 12
+        "heptatonic": 7,
+        "octatonic":  8
     };
     let notes = formatLookupInput(obj);
     let notesListString = '("' + notes.join('","') + '")';

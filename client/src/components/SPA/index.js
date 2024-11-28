@@ -662,40 +662,32 @@ class SPA extends Component{
         return null;
     };
 
+    //
     fetchAlteredChordList = async () => {
         console.log("inside fetchAlteredChordList");
         const state = this.state;
-        const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
-        const userInputString = state.textInput[state.focus];
+        const radioValue = state.radio.chord?.edit || EditChordRadio.defaultValue; //optional chaining is wild
 
-        // only for chord or scale, never settings, but then again we dont need to DB call for settings atm
-        // if we have a userInputString and we are in the text search view, then take searchString into account
-        const searchString = (userInputString && (state.view[state.focus] === "search")) ? userInputString : ""; 
+        // objectLimiter is selected chord
+        const objectLimiter = state[state.focus];
 
-        //only for chord or scale, never settings, but then again we dont need to DB call for settings atm
-        const other = state.focus === "chord" ? state.scale : state.chord; 
-        const objectLimiter = state[state.focus]; 
-    
-        if (state.focus === "chord") {
-            try {
-                let response;
-                //response = await fapi_getChordAlterations(null, null, objectLimiter, searchString);
-                console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
-                response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+        try {
+            let response;
+            console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
+            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
 
-                //const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
-                let newList = JSON.parse(response);
+            let newList = JSON.parse(response);
 
-                if (Array.isArray(newList)) {
-                    return newList.map((obj) => ({
-                        label: obj.name,
-                        object: obj,
-                    }));
-                }
-            } catch (err) {
-                console.error("Error fetching new list:", err);
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
             }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
         }
+        
         return null;
     };
 

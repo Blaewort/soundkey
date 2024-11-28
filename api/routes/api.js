@@ -26,11 +26,6 @@ router.post('/getChords/Alterations',async (req,res) => {
   res.json(JSON.stringify(chords));
 });
 
-/*router.get('/getChords/Alterations/', (req,res) => {
-  console.log("inside router.get('/getChord/Alterations/')");
-  res.send('chords');
-});*/
-
 router.post('/getChords/fromStrings/' ,(req,res) => {
   console.log(req.body);
   let chords = chordExpressions.Chord.chordFromNotation(req.body.string);
