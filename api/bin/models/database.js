@@ -329,15 +329,15 @@ async function getChordExtensions(baseChord, root = null, category = null) {
     const categoryString = (() => {
         if (!category) {return '';} 
         // Triad extends to Seven or Six for UX
-        if (category === "Triad") {return "(chord.category = 'Seven'OR chord.category = 'Six')";}
+        if (category === "Triad") {return "(chord.category = 'Seven' OR chord.category = 'Six')";}
         // Thirteen doesn't extend so nonsense string that returns nothing I guess
         if (category === "Thirteen") {return "ExtensionsForThirteen (None)";}
         // The rest is simple
         return {
-            "Seven": "Nine",
-            "Nine": "Eleven",
-            "Eleven": "Thirteen"
-        }[category] || "ERROR: there's no extension available here";
+            "Seven": "chord.category = 'Nine'",
+            "Nine": "chord.category = 'Eleven'",
+            "Eleven": "chord.category = 'Thirteen'"
+        }[category] || "chord.category = 'ERROR: there's no extension available here'";
     })();
 
     let sql = `
@@ -357,7 +357,7 @@ async function getChordExtensions(baseChord, root = null, category = null) {
         chn.root_note
     HAVING 
         COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
-        AND SUM(CASE WHEN chn.note IN ('E', 'G#', 'B') THEN 1 ELSE 0 END) = `+ noteCount +`;  -- Number of matching notes in source chord (all of them)`
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`;  -- Number of matching notes in source chord (all of them)`
 
     console.log(sql);
     console.log("sql^");
