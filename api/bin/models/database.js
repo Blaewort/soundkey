@@ -327,17 +327,17 @@ async function getChordExtensions(baseChord, root = null, category = null) {
     const noteCount = notes.length;
     const rootString = root !== null ? 'chord.root_note = "' + root + '"':  '';
     const categoryString = (() => {
-        if (!category) {return '';} 
+        if (!category) {throw error("cant get an extension if there's no category")} 
         // Triad extends to Seven or Six for UX
         if (category === "Triad") {return "(chord.category = 'Seven' OR chord.category = 'Six')";}
         // Thirteen doesn't extend so nonsense string that returns nothing I guess
-        if (category === "Thirteen") {return "ExtensionsForThirteen (None)";}
+        if (category === "Thirteen") {return "chord.category = 'ExtensionsForThirteen (None)'";}
         // The rest is simple
         return {
             "Seven": "chord.category = 'Nine'",
             "Nine": "chord.category = 'Eleven'",
             "Eleven": "chord.category = 'Thirteen'"
-        }[category] || "chord.category = 'ERROR: there's no extension available here'";
+        }[category] || "chord.category = 'ERROR: invalid chord category in getChordExtensions'";
     })();
 
     let sql = `

@@ -83,6 +83,13 @@ class SPA extends Component{
                 category: "Seven",
                 notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}, {label: "D#", value: 6}]
             },*/
+            /*chord: {
+                root: "A",
+                name: "A Minor",
+                symbol: "Am",
+                category: "Triad",
+                notes: [{label: "A", value: 0},{label: "C", value: 3}, {label: "E", value: 7}]
+            },*/
             scale: {
                 root: "E",
                 /*name: "E Lydian",
@@ -216,7 +223,7 @@ class SPA extends Component{
             "onListModalExitClick",
             "openListModal",
             "onTextEnterKeyUp",
-            "updateBasicChordList",
+            "updateNavSearchChordList",
             "updateEditedChordList"
         ];
 
@@ -359,7 +366,7 @@ class SPA extends Component{
         },
         async () => {
             // THEN Fetch the new list in the nav only after state is updated
-            this.updateBasicChordList();
+            this.updateNavSearchChordList();
         });
     }
 
@@ -464,7 +471,6 @@ class SPA extends Component{
             };
         });
     }
-
     
     onNoteSelectionUpdate(updated, which) {
 
@@ -487,13 +493,13 @@ class SPA extends Component{
             // fetch only after updated
             switch(this.state.focus) {
                 case "chord":
-                    this.updateBasicChordList();
+                    this.updateNavSearchChordList();
                     break;
                 case "scale":
                     // not yet supported
                     break;
                 default:
-                    throw Error("onNoteSelectionUpdate should be called only when this.state.focus is 'chord' or 'scale'. Instead got " + this.state.focus);
+                    throw Error("onNoteSelectionUpdate should be called only when this.state.focus is 'chord' or 'scale'. Instead got :" + this.state.focus);
                     break;
             }
         });
@@ -544,7 +550,7 @@ class SPA extends Component{
 
                 switch(this.state.view.chord){
                     case "navsearch":
-                        this.updateBasicChordList();
+                        this.updateNavSearchChordList();
                         break;
                     case "edit":
                         this.updateEditedChordList();
@@ -590,7 +596,7 @@ class SPA extends Component{
         }
     }
 
-    async updateBasicChordList() {
+    async updateNavSearchChordList() {
         let newList;
         try{
             newList = await this.fetchBasicChordList();
@@ -621,40 +627,25 @@ class SPA extends Component{
     fetchBasicChordList = async () => {
         const state = this.state;
         const radioValue = state.radio.chord?.nav || ChordTypeRadio.defaultValue; //optional chaining is wild
-        const userInputString = state.textInput[state.focus];
-
-        // only for chord or scale, never settings, but then again we dont need to DB call for settings atm
-        // if we have a userInputString and we are in the text search view, then take searchString into account
-        const searchString = (userInputString && (state.view[state.focus] === "search")) ? userInputString : ""; 
-
-        // TODO: am i tired or is this searchString code complete pointless? chord text search interacts with chord parser not the database
 
         //only for chord or scale, never settings, but then again we dont need to DB call for settings atm
         const other = state.focus === "chord" ? state.scale : state.chord; 
         const objectLimiter = state.toggle[state.focus] ? other : null; 
-    
-        if (state.focus === "chord") {
-            try {
-                let response;
-                if (searchString) { //there is a non-empty searchstring plus in textsearch view so we dont want to be bound by root note or type, but toggle constraint is okay
-                    response = await fapi_getChords(null, null, objectLimiter, searchString);
-                } else { //not text searching
-                    response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
-                }
 
-                //const response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
-                let newList = JSON.parse(response);
+        try {
+            let response = await fapi_getChords(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+            let newList = JSON.parse(response);
 
-                if (Array.isArray(newList)) {
-                    return newList.map((obj) => ({
-                        label: obj.name,
-                        object: obj,
-                    }));
-                }
-            } catch (err) {
-                console.error("Error fetching new list:", err);
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
             }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
         }
+
         return null;
     };
 
@@ -938,7 +929,7 @@ class SPA extends Component{
             if (this.state.focus === "chord") {
                 switch(this.state.view.chord) {
                     case "navsearch":
-                        this.updateBasicChordList();
+                        this.updateNavSearchChordList();
                         break;
                     case "edit":
                         // not yet supported
