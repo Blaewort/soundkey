@@ -352,25 +352,7 @@ class SPA extends Component{
         },
         async () => {
             // THEN Fetch the new list in the nav only after state is updated
-            let chords;
-            try{
-                chords = await this.fetchBasicChordList();
-            }
-
-            catch(err){
-                console.log(err);
-                console.log("bad chord fetch");
-                return;
-            }
-            this.setState((state) => ({
-                list: {
-                    ...state.list,
-                    chord: {
-                        ...state.list.chord,
-                        nav: chords,
-                    }
-                }
-            }));
+            this.updateBasicChordList();
         });
     }
 
@@ -410,36 +392,6 @@ class SPA extends Component{
         },
         async () => {
             this.updateEditedChordList();
-
-
-
-
-
-
-
-
-            /*// fetch only after updated
-            console.log("inside toChordEditView callback");
-            let newList;
-            try{
-                newList = await this.fetchAlteredChordList();
-            }
-
-            catch(err){
-                console.log(err);
-                console.log("bad altered chord fetch");
-                return;
-            }
-            
-            this.setState((state) => ({
-                list: {
-                    ...state.list,
-                    chord: {
-                        ...state.list.chord,
-                        edit: newList,
-                    },
-                },
-            }));*/
         });
     }
 
