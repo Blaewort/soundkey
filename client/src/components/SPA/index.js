@@ -928,51 +928,22 @@ class SPA extends Component{
             };
         },
         async () => {
-            // if which is Settings, ignore everything and return
-            // if which is chord, do this no matter if nav or edit or text
-
-            if (this.state.focus === "scale") {return; }; //not yet supported WILL NEED TO DELETE THIS WHEN IMPLEMENTED
-            let chords;
-            try{
-                chords = await this.fetchBasicChordList();
-            }
-            catch(err){
-                console.log(err);
-                console.log("bad chord fetch");
-                return;
-            }
-
-            this.setState((state) => {
-                const whichView = state.view[state.focus];
-                
-                let whichList;
-
-                switch(whichView) {
+            if (this.state.focus === "chord") {
+                switch(this.state.view.chord) {
                     case "navsearch":
-                        whichList = "nav";
+                        this.updateBasicChordList();
                         break;
                     case "edit":
-                        whichList = "edit";
-                        return; //edit not supported yet
+                        // not yet supported
                         break;
                     case "search":
-                        whichList = "text";
-                        return; //text not supported yet
+                        // not yet supported
                         break;
-                    default: 
-                        throw new Error("state.view[state.focus] is not one of: 'navsearch', 'edit', 'search'");
+                    default:
+                         throw Error("Toggle only exists in 'navsearch' at the moment and your view.chord is wrong, it is: " + this.state.view.chord);
+                        break;
                 }
-            
-                return {
-                    list: {
-                        ...state.list,
-                        chord: {
-                            ...state.list.chord,
-                            [whichList]: chords,
-                        }
-                    }
-                };
-            });
+            }
         });
     }
 
