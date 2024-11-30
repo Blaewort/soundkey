@@ -14,6 +14,7 @@ import { fapi_getModes,
     fapi_getScalesFromModeName, 
     fapi_getChords,
     fapi_getChordAlterations, 
+    fapi_getChordExtensions,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,
@@ -72,6 +73,7 @@ class SPA extends Component{
                 root: "E",
                 name: "E Major",
                 symbol: "E",
+                category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}]
             },
             scale: {
@@ -207,6 +209,8 @@ class SPA extends Component{
             "onListModalExitClick",
             "openListModal",
             "onTextEnterKeyUp",
+            "updateBasicChordList",
+            "updateEditedChordList"
         ];
 
         methods.forEach((method) => {
@@ -394,18 +398,6 @@ class SPA extends Component{
         });
     }
 
-    /*toChordEditView() {
-        this.setState((state, props) => {
-            return {
-                ...state,
-                view: {
-                    ...state.view,
-                    chord: "edit"
-                }
-            }
-        });
-    }*/
-
     toChordEditView() {
         this.setState((state, props) => {
             return {
@@ -417,7 +409,16 @@ class SPA extends Component{
             }
         },
         async () => {
-            // fetch only after updated
+            this.updateEditedChordList();
+
+
+
+
+
+
+
+
+            /*// fetch only after updated
             console.log("inside toChordEditView callback");
             let newList;
             try{
@@ -438,7 +439,7 @@ class SPA extends Component{
                         edit: newList,
                     },
                 },
-            }));
+            }));*/
         });
     }
 
@@ -525,6 +526,8 @@ class SPA extends Component{
         },
         async () => {
             // fetch only after updated
+
+            if (this.state.focus === "scale") {return; }; //not yet supported WILL NEED TO DELETE THIS WHEN IMPLEMENTED
             let newList;
             try{
                 newList = await this.fetchBasicChordList();
@@ -595,29 +598,80 @@ class SPA extends Component{
             },
             async () => {
                 // THEN Fetch the new list in the nav only after state is updated
-                let newList;
-                try{
-                    newList = await this.fetchBasicChordList();
-                }
 
-                catch(err){
-                    console.log(err);
-                    console.log("bad chord fetch");
-                    return;
-                }
-                if (newList && which !=="settings") {
-                    this.setState((state) => ({
-                        list: {
-                            ...state.list,
-                            [state.focus]: {
-                                ...state.list[state.focus],
-                                [which]: newList,
-                            },
-                        },
-                    }));
+                if (this.state.focus === "scale") {return; }; //not yet supported WILL NEED TO DELETE THIS WHEN IMPLEMENTED
+                if (this.state.focus === "settings") {return;} // dont need to fetch data
+
+                switch(this.state.view.chord){
+                    case "navsearch":
+                        this.updateBasicChordList();
+                        break;
+                    case "edit":
+                        this.updateEditedChordList();
+                        break;
                 }
             }
         );
+    }
+
+    async updateEditedChordList() {
+        console.log("inside updateEditedChordList");
+        const radioValue = this.state.radio.chord.edit || EditChordRadio.defaultValue;
+        const whichFetch = {
+            "Extensions": "fetchExtendedChordList",
+            "Alterations": "fetchAlteredChordList",
+            "Added Tones": "notsupportedyet",
+            "Removed Tones": "notsupportedyet",
+        }[radioValue] || "not a supported radioValue for updatedEditedChordList";
+
+        console.log(whichFetch);
+        console.log("whichFetch^");
+
+        let newList;
+        try{
+            newList = await this[whichFetch]();
+        }
+
+        catch(err){
+            console.log(err);
+            console.log("bad chord fetch");
+            return;
+        }
+        if (newList) {
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        edit: newList,
+                    },
+                },
+            }));
+        }
+    }
+
+    async updateBasicChordList() {
+        let newList;
+        try{
+            newList = await this.fetchBasicChordList();
+        }
+
+        catch(err){
+            console.log(err);
+            console.log("bad chord fetch");
+            return;
+        }
+        if (newList) {
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        nav: newList,
+                    },
+                },
+            }));
+        }
     }
     
     //fetch basic chord list from the database 
@@ -632,6 +686,8 @@ class SPA extends Component{
         // only for chord or scale, never settings, but then again we dont need to DB call for settings atm
         // if we have a userInputString and we are in the text search view, then take searchString into account
         const searchString = (userInputString && (state.view[state.focus] === "search")) ? userInputString : ""; 
+
+        // TODO: am i tired or is this searchString code complete pointless? chord text search interacts with chord parser not the database
 
         //only for chord or scale, never settings, but then again we dont need to DB call for settings atm
         const other = state.focus === "chord" ? state.scale : state.chord; 
@@ -659,6 +715,32 @@ class SPA extends Component{
                 console.error("Error fetching new list:", err);
             }
         }
+        return null;
+    };
+
+    fetchExtendedChordList = async () => {
+        console.log("inside fetchExtendedChordList");
+        const state = this.state;
+
+        //alterations dont have toggle support...yet? nto having it seems like an oversight but lets see what the data looks like in app first
+        //const other = state.focus === "chord" ? state.scale : state.chord; 
+        //const objectLimiter = state.toggle[state.focus] ? other : null; 
+    
+        
+        try {
+            let response = await fapi_getChordExtensions(parseInt(state.noteSelect.chord.value), state.chord.category, state.chord);
+            let newList = JSON.parse(response);
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
         return null;
     };
 

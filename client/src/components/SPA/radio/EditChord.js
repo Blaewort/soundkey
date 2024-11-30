@@ -8,6 +8,7 @@ import Radio from './index'
         super(props);
     }
 
+    static defaultValue = "Extensions";
 
     render() {
         const title = "Edit Chord";

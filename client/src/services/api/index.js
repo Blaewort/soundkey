@@ -113,6 +113,34 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy, searchString 
     });
 }
 
+function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy) {
+    console.log("inside fapi_getChordExtensions");
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(chordToLimitBy?.notes){
+        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    console.log("made it to just before the return of fapi_getChordExtensions");
+
+    return postData(urlRoot + '/getChords/Extensions/',
+        {
+            notes: chordToLimitBy, 
+            root: root,
+            category: category, //the radio value the UI is set to
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
 function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy) {
     console.log("inside fapi_getChordAlterations");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
@@ -442,6 +470,7 @@ export {
     fapi_getScalesFromModeName, 
     fapi_getChords,
     fapi_getChordAlterations,
+    fapi_getChordExtensions,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,

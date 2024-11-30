@@ -302,6 +302,78 @@ async function getModes(root, type = "heptatonic", obj){
     let results = await fetchSQL(sql);
     return results;
 }
+
+//ARG is a chord or notes array
+// RETURN should be an array of chords that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
+// USE user can see chord alterations 1 step away
+async function getChordExtensions(baseChord, root = null, category = null) {
+    console.log("inside DATABASE.JS getChordExtensions");
+
+    let notes;
+    if (baseChord !== null) {
+        try{
+            notes = formatLookupInput(baseChord);
+            validateNotesInput(root);
+            validateCategoryInput(category);
+        } catch(err){
+            return err;
+        }
+    }
+
+    console.log(notes);
+    console.log("getChordExtensions NOTES^");
+
+    //get baseChord note count
+    const noteCount = notes.length;
+    const rootString = root !== null ? 'chord.root_note = "' + root + '"':  '';
+    const categoryString = (() => {
+        if (!category) {return '';} 
+        // Triad extends to Seven or Six for UX
+        if (category === "Triad") {return "(chord.category = 'Seven'OR chord.category = 'Six')";}
+        // Thirteen doesn't extend so nonsense string that returns nothing I guess
+        if (category === "Thirteen") {return "ExtensionsForThirteen (None)";}
+        // The rest is simple
+        return {
+            "Seven": "Nine",
+            "Nine": "Eleven",
+            "Eleven": "Thirteen"
+        }[category] || "ERROR: there's no extension available here";
+    })();
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol,
+        chn.root_note
+    FROM 
+        chord_has_note chn
+    JOIN 
+        chords chord ON chord.chord_symbol = chn.chord_symbol
+    WHERE 
+        `+ rootString +`
+        AND
+        `+ categoryString +`
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note
+    HAVING 
+        COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
+        AND SUM(CASE WHEN chn.note IN ('E', 'G#', 'B') THEN 1 ELSE 0 END) = `+ noteCount +`;  -- Number of matching notes in source chord (all of them)`
+
+    console.log(sql);
+    console.log("sql^");
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    //console.log(qResults);
+    //console.log("qResults^");
+    qResults.forEach(ele => {
+        console.log(ele.chord_symbol);
+        console.log("ele.chordSymbol^");
+        results.push(Chord.chordFromNotation(ele.chord_symbol));
+    });
+    return results;
+}
  
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
@@ -353,7 +425,6 @@ async function getChordAlterations(baseChord) {
         results.push(Chord.chordFromNotation(ele.chord_symbol));
     });
     return results;
- 
 }
  
 //ARG is a scale or notes array
@@ -456,4 +527,4 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
     return results;
 }
 
-module.exports = { getChords, getScales, getModes, getChordAlterations}
+module.exports = { getChords, getScales, getModes, getChordAlterations, getChordExtensions}
