@@ -478,36 +478,17 @@ class SPA extends Component{
         },
         async () => {
             // fetch only after updated
-
-            if (this.state.focus === "scale") {return; }; //not yet supported WILL NEED TO DELETE THIS WHEN IMPLEMENTED
-            let newList;
-            try{
-                newList = await this.fetchBasicChordList();
+            switch(this.state.focus) {
+                case "chord":
+                    this.updateBasicChordList();
+                    break;
+                case "scale":
+                    // not yet supported
+                    break;
+                default:
+                    throw Error("onNoteSelectionUpdate should be called only when this.state.focus is 'chord' or 'scale'. Instead got " + this.state.focus);
+                    break;
             }
-
-            catch(err){
-                console.log(err);
-                console.log("bad chord fetch");
-                return;
-            }
-
-            let whitherward;
-    
-            if (this.state.view[this.state.focus] === "navsearch") {
-                whitherward = "nav";
-            } else if (this.state.view[this.state.focus] === "edit") {
-                whitherward = "edit";
-            }
-            
-            this.setState((state) => ({
-                list: {
-                    ...state.list,
-                    [state.focus]: {
-                        ...state.list[state.focus],
-                        [whitherward]: newList,
-                    },
-                },
-            }));
         });
     }
 
