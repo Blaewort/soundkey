@@ -441,6 +441,8 @@ class SPA extends Component{
                     scale: "edit"
                 }
             }
+        }, async () =>  {
+            this.updateEditedScaleList();
         });
     }
 
@@ -607,7 +609,38 @@ class SPA extends Component{
     }
 
     async updateEditedScaleList() {
-        
+        console.log("inside updateEditedScaleList");
+        const radioValue = this.state.radio.scale.edit || EditScaleRadio.defaultValue;
+        const whichFetch = {
+            "Alterations": "fetchAlteredScaleList",
+            "Added Tones": "fetchAppendedScaleList",
+            "Removed Tones": "fetchDeductedScaleList",
+        }[radioValue] || "not a supported radioValue for updatedEditedScaleList";
+
+        console.log(whichFetch);
+        console.log("whichFetch^");
+
+        let newList;
+        try{
+            newList = await this[whichFetch]();
+        }
+
+        catch(err){
+            console.log(err);
+            console.log("bad chord fetch");
+            return;
+        }
+        if (newList) {
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        edit: newList,
+                    },
+                },
+            }));
+        }
     }
 
     async updateEditedChordList() {
@@ -809,6 +842,18 @@ class SPA extends Component{
         
         return null;
     };
+
+    fetchAlteredScaleList = async () => {
+
+    }
+    
+    fetchAppendedScaleList = async () => {
+
+    }
+
+    fetchDeductedScaleList = async () => {
+
+    }
 
     //nav search stuff
     onNavSearchScaleItemClick(e, item) {

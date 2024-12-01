@@ -8,6 +8,7 @@ import Radio from './index'
         super(props);
     }
 
+    static defaultValue = "Alterations";
 
     render() {
         const title = "Edit Scale";
