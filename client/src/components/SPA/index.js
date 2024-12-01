@@ -311,6 +311,8 @@ class SPA extends Component{
       
     }
 
+    
+
     onChordDeselect() {
         this.setState((state, props) => {
             return {
@@ -824,7 +826,7 @@ class SPA extends Component{
             };
         }, //fetch chord list data
         async () => {
-            let chord = await fapi_getChordsFromUserString(this.state.textInput.chord); //i think using this.state in a callback like this is safe?
+            let chord = await fapi_getChordsFromUserString(this.state.textInput.chord);
             let newList = [];
 
             if (chord && chord.name) {

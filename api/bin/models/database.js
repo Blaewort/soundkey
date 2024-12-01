@@ -357,7 +357,7 @@ async function getChordExtensions(baseChord, root = null, category = null) {
         chn.root_note
     HAVING 
         COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
-        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`;  -- Number of matching notes in source chord (all of them)`
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`;  -- Number of matching notes in source chord (all of them)`;
 
     console.log(sql);
     console.log("sql^");
@@ -398,6 +398,8 @@ async function getChordAlterations(baseChord) {
     //get baseChord note count
     const noteCount = notes.length;
 
+    const sortedNotes = Note.getSortedNameAndValueFromRootName(baseChord[0]);
+
     let sql = `
     SELECT 
         chn.chord_symbol,
@@ -409,7 +411,13 @@ async function getChordAlterations(baseChord) {
         chn.root_note
     HAVING 
         COUNT(*) = `+ noteCount +` 
-        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`;  -- Number of matching notes in your chord minus 1`;
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in your chord minus 1
+    ORDER BY -- A-G# root note order, however when starting in the middle we can complete the circle
+        CASE chn.root_note
+            ${sortedNotes.map((note) => `WHEN '${note.name}' THEN ${note.value}`).join('\n    ')} -- 0-11
+            ELSE 12 -- Any unexpected notes come last
+        END,
+        chn.chord_symbol; -- alphanumerical order`;
 
     console.log(sql);
     console.log("sql^");
