@@ -41,6 +41,36 @@ router.post('/getChords/Extensions',async (req,res) => {
   res.json(JSON.stringify(chords));
 });
 
+router.post('/getChords/Appendments',async (req,res) => { // TODO: a lot of reusable code around these parts
+  console.log("in the /getChords/Extensions route");
+
+  console.log(req.body);
+  console.log("req.body^");
+
+  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+  let root = req.body.root ? req.body.root : null;
+  let category = req.body.category ? req.body.category : null;
+  let notes = req.body.notes;
+  console.log("db.getChords/Appendments(",notes,",",root,",",category,",",maxNotes,")");
+  let chords = await db.getChordAppendments(notes,root,category,maxNotes);
+  res.json(JSON.stringify(chords));
+});
+
+router.post('/getChords/Deductions',async (req,res) => {
+  console.log("in the /getChords/Deductions route");
+
+  console.log(req.body);
+  console.log("req.body^");
+
+  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+  let root = req.body.root ? req.body.root : null;
+  let category = req.body.category ? req.body.category : null;
+  let notes = req.body.notes;
+  console.log("db.getChords/Deductions(",notes,",",root,",",category,",",maxNotes,")");
+  let chords = await db.getChordDeductions(notes,root,category,maxNotes);
+  res.json(JSON.stringify(chords));
+});
+
 router.post('/getChords/fromStrings/' ,(req,res) => {
   console.log(req.body);
   let chords = chordExpressions.Chord.chordFromNotation(req.body.string);

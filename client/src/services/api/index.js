@@ -168,6 +168,60 @@ function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy) {
     });
 }
 
+function fapi_getChordAppendments(noteValue,category = null, chordToLimitBy) {
+    console.log("inside fapi_getChordAppendments");
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getChordAppendments")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(chordToLimitBy?.notes){
+        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getChords/Appendments/',
+        {
+            notes: chordToLimitBy, 
+            root: root, //this constraint works for A but nothing else. why?
+            category: category, //the radio value the UI is set to
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
+function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy) {
+    console.log("inside fapi_getChordDeductions");
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getChordDeductions")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(chordToLimitBy?.notes){
+        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getChords/Deductions/',
+        {
+            notes: chordToLimitBy, 
+            root: root, //this constraint works for A but nothing else. why?
+            category: category, //the radio value the UI is set to
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
 function getTriads(noteValue, scaleToLimitBy) {
     return fapi_getChords(noteValue, "Triad", scaleToLimitBy);
 }
@@ -469,8 +523,10 @@ export {
     fapi_getModes, 
     fapi_getScalesFromModeName, 
     fapi_getChords,
-    fapi_getChordAlterations,
     fapi_getChordExtensions,
+    fapi_getChordAlterations,
+    fapi_getChordAppendments,
+    fapi_getChordDeductions,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,

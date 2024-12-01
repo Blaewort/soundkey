@@ -13,8 +13,10 @@ import SettingsRadio from './radio/Settings';
 import { fapi_getModes, 
     fapi_getScalesFromModeName, 
     fapi_getChords,
-    fapi_getChordAlterations, 
     fapi_getChordExtensions,
+    fapi_getChordAlterations, 
+    fapi_getChordAppendments,
+    fapi_getChordDeductions,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,
@@ -568,8 +570,8 @@ class SPA extends Component{
         const whichFetch = {
             "Extensions": "fetchExtendedChordList",
             "Alterations": "fetchAlteredChordList",
-            "Added Tones": "notsupportedyet",
-            "Removed Tones": "notsupportedyet",
+            "Added Tones": "fetchAppendedChordList",
+            "Removed Tones": "fetchDeductedChordList",
         }[radioValue] || "not a supported radioValue for updatedEditedChordList";
 
         console.log(whichFetch);
@@ -690,6 +692,62 @@ class SPA extends Component{
             let response;
             console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
             response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+
+            let newList = JSON.parse(response);
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+    };
+
+    fetchAppendedChordList = async () => {
+        console.log("inside fetchAppendedChordList");
+        const state = this.state;
+        const radioValue = state.radio.chord?.edit || EditChordRadio.defaultValue; //optional chaining is wild
+
+        // objectLimiter is selected chord
+        const objectLimiter = state[state.focus];
+
+        try {
+            let response;
+            console.log("inside fetchAppendedChordList if (state.focus === 'chord')");
+            response = await fapi_getChordAppendments(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+
+            let newList = JSON.parse(response);
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+    };
+
+    fetchDeductedChordList = async () => {
+        console.log("inside fetchDeductedChordList");
+        const state = this.state;
+        const radioValue = state.radio.chord?.edit || EditChordRadio.defaultValue; //optional chaining is wild
+
+        // objectLimiter is selected chord
+        const objectLimiter = state[state.focus];
+
+        try {
+            let response;
+            console.log("inside fetchDeductedChordList if (state.focus === 'chord')");
+            response = await fapi_getChordDeductions(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
 
             let newList = JSON.parse(response);
 

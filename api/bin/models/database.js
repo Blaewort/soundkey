@@ -434,6 +434,116 @@ async function getChordAlterations(baseChord) {
     });
     return results;
 }
+
+async function getChordAppendments(baseChord) {
+    console.log("inside DATABASE.JS getChordAppendments");
+
+    let notes;
+    if (baseChord !== null) {
+        try{
+            notes = formatLookupInput(baseChord);
+        } catch(err){
+            return err;
+        }
+    }
+
+    console.log(notes);
+    console.log("getChordAppendments NOTES^");
+
+    //get baseChord note count
+    const noteCount = notes.length;
+
+    const sortedNotes = Note.getSortedNameAndValueFromRootName(baseChord[0]);
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol,
+        chn.root_note
+    FROM 
+        chord_has_note chn
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note
+    HAVING 
+        COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`  -- Number of matching notes in source chord (all of them)
+    ORDER BY -- A-G# root note order, however when starting in the middle we can complete the circle
+    CASE chn.root_note
+        ${sortedNotes.map((note) => `WHEN '${note.name}' THEN ${note.value}`).join('\n    ')} -- 0-11
+        ELSE 12 -- Any unexpected notes come last
+    END,
+    chn.chord_symbol; -- alphanumerical order`;
+
+    console.log(sql);
+    console.log("sql^");
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    //console.log(qResults);
+    //console.log("qResults^");
+    qResults.forEach(ele => {
+        console.log(ele.chord_symbol);
+        console.log("ele.chordSymbol^");
+        results.push(Chord.chordFromNotation(ele.chord_symbol));
+    });
+    return results;
+}
+
+async function getChordDeductions(baseChord) {
+    console.log("inside DATABASE.JS getChordDeductions");
+
+    let notes;
+    if (baseChord !== null) {
+        try{
+            notes = formatLookupInput(baseChord);
+        } catch(err){
+            return err;
+        }
+    }
+
+    console.log(notes);
+    console.log("getChordDeductions NOTES^");
+
+    //get baseChord note count
+    const noteCount = notes.length;
+
+    const sortedNotes = Note.getSortedNameAndValueFromRootName(baseChord[0]);
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol,
+        chn.root_note
+    FROM 
+        chord_has_note chn
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note
+    HAVING 
+        COUNT(*) = `+ (noteCount-1) +`  -- number of notes in the target chords
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in source chord (all of them)
+    ORDER BY -- A-G# root note order, however when starting in the middle we can complete the circle
+    CASE chn.root_note
+        ${sortedNotes.map((note) => `WHEN '${note.name}' THEN ${note.value}`).join('\n    ')} -- 0-11
+        ELSE 12 -- Any unexpected notes come last
+    END,
+    chn.chord_symbol; -- alphanumerical order`;
+
+    console.log(sql);
+    console.log("sql^");
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    //console.log(qResults);
+    //console.log("qResults^");
+    qResults.forEach(ele => {
+        console.log(ele.chord_symbol);
+        console.log("ele.chordSymbol^");
+        results.push(Chord.chordFromNotation(ele.chord_symbol));
+    });
+    return results;
+}
  
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
@@ -535,4 +645,4 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
     return results;
 }
 
-module.exports = { getChords, getScales, getModes, getChordAlterations, getChordExtensions}
+module.exports = { getChords, getScales, getModes, getChordExtensions, getChordAlterations, getChordAppendments, getChordDeductions }
