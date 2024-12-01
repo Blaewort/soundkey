@@ -305,12 +305,19 @@ class SPA extends Component{
                 [state.focus]: (sameValue && visFocusIsChordOrScale) ? "selected" : state.view[state.focus],
             }
           }
+        }, async () => {
+
+            if (this.state.focus === "scale") {
+                switch(this.state.view.scale) {
+                    case "navsearch":
+                        this.updateNavSearchScaleGroupList();
+                        break;
+                    case "navsearchmode":
+                        this.updateNavSearchScaleList();
+                        break;
+                }
+            }
         });
-
-
-
-
-      
     }
 
     
@@ -383,7 +390,13 @@ class SPA extends Component{
                     scale: "navsearch"
                 }
             }
+        }, async () => {
+            this.updateNavSearchScaleGroupList()
         });
+    }
+
+    updateNavSearchGroupList() {
+        // fetch scale groups and put them in the this.list.scale.navgroup list
     }
 
     toModeNavSearchView(mode) {
@@ -395,7 +408,13 @@ class SPA extends Component{
                     scale: "navsearchmode"
                 }
             }
+        }, async () => {
+            this.updateNavSearchScaleList();
         });
+    }
+
+    updateNavSearchScaleList() {
+        // fetch scales and put them in this.list.scale.nav list
     }
 
     toChordEditView() {
@@ -549,19 +568,46 @@ class SPA extends Component{
             async () => {
                 // THEN Fetch the new list in the nav only after state is updated
 
-                if (this.state.focus === "scale") {return; }; //not yet supported WILL NEED TO DELETE THIS WHEN IMPLEMENTED
-                if (this.state.focus === "settings") {return;} // dont need to fetch data
-
-                switch(this.state.view.chord){
-                    case "navsearch":
-                        this.updateNavSearchChordList();
-                        break;
-                    case "edit":
-                        this.updateEditedChordList();
-                        break;
+                if (this.state.focus === "chord") {
+                    this.chordRadioDataUpdate();
+                } else if(this.state.focus === "scale") {
+                    this.scaleRadioDataUpdate();
                 }
+
+                // settings doesnt fetch data from the Database (at least yet. Biggest thing is tunings which we could hardcode until the list grows large)
             }
         );
+    }
+    
+    async chordRadioDataUpdate() {
+        switch(this.state.view.chord){
+            case "navsearch":
+                this.updateNavSearchChordList();
+                break;
+            case "edit":
+                this.updateEditedChordList();
+                break;
+            default:
+                throw new Error("chordRadioUpdate called when we are not in this.state.view.chord of 'navsearch' or 'edit' but rather: " + this.state.view.chord);
+                break;
+        }
+    }
+
+    async scaleRadioDataUpdate() {
+        switch(this.state.view.scale) {
+            case "navsearch": // looking at a list of scale groups like 'Diatonic', 'Melodic Minor' which has a radio
+                this.updateNavSearchScaleGroupList(); // update scale group list based on radio selection (number of notes)
+                break;
+            case "edit":
+                this.updateEditedScaleList();
+                break;
+            default:
+                throw new Error("scaleRadioUpdate called when not in this.state.view.scale of 'navsearch' or 'edit' but rather: " + this.state.view.scale);
+        }
+    }
+
+    async updateEditedScaleList() {
+        
     }
 
     async updateEditedChordList() {
@@ -918,7 +964,14 @@ class SPA extends Component{
                     scale: evt,
                 },
             };
+        }, async () => {
+            // this.updateScaleTextSearchData();
         });
+    }
+
+    async updateScaleTextSearchData() {
+        // fetch data
+        // put it in the this.state.list.scale.text bucket
     }
 
     onSearchScaleItemClick(e, item) {
@@ -987,22 +1040,49 @@ class SPA extends Component{
         },
         async () => {
             if (this.state.focus === "chord") {
-                switch(this.state.view.chord) {
-                    case "navsearch":
-                        this.updateNavSearchChordList();
-                        break;
-                    case "edit":
-                        // not yet supported
-                        break;
-                    case "search":
-                        // not yet supported
-                        break;
-                    default:
-                         throw Error("Toggle only exists in 'navsearch' at the moment and your view.chord is wrong, it is: " + this.state.view.chord);
-                        break;
-                }
+                this.chordToggleDataUpdate();
+            } else if(this.state.focus === "scale") {
+                this.scaleToggleDataUpdate();
             }
         });
+    }
+
+    async chordToggleDataUpdate() {
+        switch(this.state.view.chord) {
+            case "navsearch":
+                this.updateNavSearchChordList();
+                break;
+            case "edit":
+                // not yet supported
+                break;
+            case "search":
+                // there is no chord toggle on text search. Ignore
+                break;
+            default:
+                 throw Error("Toggle only exists in 'navsearch' at the moment and your view.chord is wrong, it is: " + this.state.view.chord);
+                break;
+        }
+    }
+
+    async scaleToggleDataUpdate() {
+        switch(this.state.view.scale) {
+            case "navsearch":
+                this.updateNavSearchScaleGroupList();
+                break;
+            case "edit":
+                // not yet supported
+                break;
+            case "search":
+                this.updateTextSearchScaleList()
+                break;
+            default:
+                 throw Error("Toggle only exists in 'navsearch' at the moment and your view.chord is wrong, it is: " + this.state.view.chord);
+                break;
+        }
+    }
+
+    updateTextSearchScaleList() {
+
     }
 
     onTuningNavSearchItemClick(e, item) {
