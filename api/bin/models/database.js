@@ -398,7 +398,6 @@ async function getChordAlterations(baseChord) {
     //get baseChord note count
     const noteCount = notes.length;
 
-    const sortedNotes = Note.getSortedNameAndValueFromRootName(baseChord[0]);
 
     let sql = `
     SELECT 
@@ -454,7 +453,6 @@ async function getChordAppendments(baseChord) {
     //get baseChord note count
     const noteCount = notes.length;
 
-    const sortedNotes = Note.getSortedNameAndValueFromRootName(baseChord[0]);
 
     let sql = `
     SELECT 
@@ -508,8 +506,6 @@ async function getChordDeductions(baseChord) {
 
     //get baseChord note count
     const noteCount = notes.length;
-
-    const sortedNotes = Note.getSortedNameAndValueFromRootName(baseChord[0]);
 
     let sql = `
     SELECT 
