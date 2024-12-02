@@ -412,12 +412,13 @@ async function getChordAlterations(baseChord) {
     HAVING 
         COUNT(*) = `+ noteCount +` 
         AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in your chord minus 1
-    ORDER BY -- A-G# root note order, however when starting in the middle we can complete the circle
-        CASE chn.root_note
-            ${sortedNotes.map((note) => `WHEN '${note.name}' THEN ${note.value}`).join('\n    ')} -- 0-11
-            ELSE 12 -- Any unexpected notes come last
+    ORDER BY 
+        CASE 
+            WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
+            ELSE 2
         END,
-        chn.chord_symbol; -- alphanumerical order`;
+    chn.chord_symbol; -- alphanumerical order`;
+  
 
     console.log(sql);
     console.log("sql^");
@@ -467,11 +468,11 @@ async function getChordAppendments(baseChord) {
     HAVING 
         COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`  -- Number of matching notes in source chord (all of them)
-    ORDER BY -- A-G# root note order, however when starting in the middle we can complete the circle
-    CASE chn.root_note
-        ${sortedNotes.map((note) => `WHEN '${note.name}' THEN ${note.value}`).join('\n    ')} -- 0-11
-        ELSE 12 -- Any unexpected notes come last
-    END,
+    ORDER BY 
+        CASE 
+            WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
+            ELSE 2
+        END,
     chn.chord_symbol; -- alphanumerical order`;
 
     console.log(sql);
@@ -522,11 +523,11 @@ async function getChordDeductions(baseChord) {
     HAVING 
         COUNT(*) = `+ (noteCount-1) +`  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in source chord (all of them)
-    ORDER BY -- A-G# root note order, however when starting in the middle we can complete the circle
-    CASE chn.root_note
-        ${sortedNotes.map((note) => `WHEN '${note.name}' THEN ${note.value}`).join('\n    ')} -- 0-11
-        ELSE 12 -- Any unexpected notes come last
-    END,
+    ORDER BY 
+        CASE 
+            WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
+            ELSE 2
+        END,
     chn.chord_symbol; -- alphanumerical order`;
 
     console.log(sql);

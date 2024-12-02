@@ -104,17 +104,7 @@ class SPA extends Component{
                     {label: "C#", value: 4}, 
                     {label: "D#", value: 6}
                 ],*/
-                /*name: "E Dorian",
-                notes: [
-                    {label: "E", value: 7},
-                    {label: "F#", value: 9}, 
-                    {label: "G", value: 10}, 
-                    {label: "A", value: 0}, 
-                    {label: "B", value: 2}, 
-                    {label: "C#", value: 4}, 
-                    {label: "D", value: 5}
-                ],*/
-                name: "A Dorian",
+                /*name: "A Dorian",
                 notes: [
                     {label: "A", value: 0},
                     {label: "B", value: 2}, 
@@ -123,7 +113,18 @@ class SPA extends Component{
                     {label: "E", value: 7}, 
                     {label: "F#", value: 9}, 
                     {label: "G", value: 10}
-                ]
+                ]*/
+                name: "E Dorian",
+                notes: [
+                    {label: "E", value: 7},
+                    {label: "F#", value: 9}, 
+                    {label: "G", value: 10}, 
+                    {label: "A", value: 0}, 
+                    {label: "B", value: 2}, 
+                    {label: "C#", value: 4}, 
+                    {label: "D", value: 5}
+                ],
+                
             },
             toggle: {
                 // The toggle is visible when the focus is scale or chord and the other is not null (calculate it)
@@ -415,6 +416,9 @@ class SPA extends Component{
 
     updateNavSearchScaleList() {
         // fetch scales and put them in this.list.scale.nav list
+    }
+    updateNavSearchScaleGroupList() {
+        // get a list of scale groups like (for 7 notes) Diatonic, Melodic Minor, Neapolitan Major, Neapolitan Minor, Harmonic Minor, Harmonic Major, etc
     }
 
     toChordEditView() {
