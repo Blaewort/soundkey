@@ -287,7 +287,8 @@ class ChordScaleController extends Component{
 
             const title = this.props.radio.edit;
             const itemClick = this.props.search.nav.onModeItemClick;
-            const list = this.props.selection.getNearbys(this.props.selection.primary, this.props.radio.edit);
+            //const list = this.props.selection.getNearbys(this.props.selection.primary, this.props.radio.edit);
+            const list = this.props.search.edit.scaleList;
             listArea = <ListArea modal={this.props.search.listModal} title={ title || "Alterations"} handleItemClick={itemClick} list={list} />;
 
         }

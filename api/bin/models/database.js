@@ -432,6 +432,9 @@ async function getChordAlterations(baseChord) {
         console.log("ele.chordSymbol^");
         results.push(Chord.chordFromNotation(ele.chord_symbol));
     });
+
+    console.log(results);
+    console.log("results^");
     return results;
 }
 
@@ -544,48 +547,68 @@ async function getChordDeductions(baseChord) {
  
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
-// USE user can see chord alterations 1 step away
-async function getScaleAlterations(scale, numberOfNotesToAlterBy = 1) {
-    let notes = formatLookupInput(obj);
-    let notesListString = '("' + notes.join('","') + '")';
-    let noteslength = notes.length - numberOfNotesToAlterBy;
-    let sql = `SELECT
-    s.scale_name,
-    s.scale_mode,
-    s.root_note,
-    GROUP_CONCAT(sn.note) as notes
-    FROM
-    scales s
-    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.scale_name = sn.scale_name
-    WHERE
-    sn.scale_name = ANY (
-        SELECT
-        scale_name 
-        FROM
-        scale_has_note
-        where
-        note IN ` + notesListString + `
-        group by 
-        scale_name
-        HAVING count(note) >= ` + noteslength + `
-    ) AND  sn.root_note = ANY (
-        SELECT
-        root_note
-        FROM
-        scale_has_note
-        where
-        note IN ` + notesListString + `
-        group by 
-        scale_name
-        HAVING count(note) >= ` + noteslength + `
-    )
-    GROUP BY
-    sn.scale_name, sn.root_note`;
+async function getScaleAlterations(baseScale) {
+    console.log("inside getScaleAlterations");
+
+    console.log(baseScale);
+    console.log("baseScale^")
+
+    let notes;
+    if (baseScale !== null) {
+        try{
+            notes = formatLookupInput(baseScale);
+            //validateNotesInput(root);
+            //validateCategoryInput(category);
+        } catch(err){
+            return err;
+        }
+    }
+
+    console.log("right before the sql");
+
+    let sql = `
+    SELECT 
+        scale.scale_name,
+        scale.root_note,
+        GROUP_CONCAT(sn.note ORDER BY 
+            CASE 
+                WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
+                ELSE 2
+            END,
+            sn.note ASC
+        ) AS notes
+    FROM 
+        scales scale
+    JOIN scale_has_note sn
+        ON scale.scale_name = sn.scale_name
+        AND scale.root_note = sn.root_note
+    GROUP BY 
+        scale.scale_name, scale.root_note
+    HAVING 
+        COUNT(sn.note) = `+ notes.length +` -- note count of the scale we are altering
+        AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Note list from the scale we are altering, matching n-1 notes
+    ORDER BY 
+        CASE 
+            WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
+            ELSE 2
+        END,
+    scale.root_note ASC;`
+
+    console.log(sql);
+
+
     let qResults = await fetchSQL(sql);
     let results = [];
+
+    
+
+ 
+
     qResults.forEach(ele => {
+        const noteNameList = ele.notes.split(",");
         try{
-            results.push(new Scale.Scale(ele.root_note ,ele.scale_mode,ele.scale_name ));
+            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            results.push(scale);
         } catch(err) {
         }
     });
@@ -642,4 +665,13 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
     return results;
 }
 
-module.exports = { getChords, getScales, getModes, getChordExtensions, getChordAlterations, getChordAppendments, getChordDeductions }
+module.exports = { 
+    getChords,
+    getScales,
+    getModes,
+    getChordExtensions,
+    getChordAlterations,
+    getChordAppendments,
+    getChordDeductions,
+    getScaleAlterations
+ };

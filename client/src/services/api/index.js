@@ -222,6 +222,33 @@ function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy) {
     });
 }
 
+function fapi_getScaleAlterations(noteValue,category = null, scaleToLimitBy) {
+    console.log("inside fapi_getScaleAlterations");
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getScaleAlterations")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(scaleToLimitBy?.notes){
+        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getScales/Alterations/',
+        {
+            notes: scaleToLimitBy, 
+            root: root, //this constraint works for A but nothing else. why?
+            category: category, //the radio value the UI is set to
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
 function getTriads(noteValue, scaleToLimitBy) {
     return fapi_getChords(noteValue, "Triad", scaleToLimitBy);
 }
@@ -527,6 +554,7 @@ export {
     fapi_getChordAlterations,
     fapi_getChordAppendments,
     fapi_getChordDeductions,
+    fapi_getScaleAlterations,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,
