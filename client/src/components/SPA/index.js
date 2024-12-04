@@ -18,6 +18,8 @@ import { fapi_getModes,
     fapi_getChordAppendments,
     fapi_getChordDeductions,
     fapi_getScaleAlterations,
+    fapi_getScaleAppendments,
+    fapi_getScaleDeductions,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,
@@ -882,11 +884,61 @@ class SPA extends Component{
 
     
     fetchAppendedScaleList = async () => {
+        console.log("inside fetchAppendedScaleList");
+        const state = this.state;
+        const radioValue = state.radio.scale?.edit || EditScaleRadio.defaultValue; 
 
+        // objectLimiter is selected scale
+        const objectLimiter = state[state.focus];
+
+        try {
+            let response;
+            console.log("inside fetchAppendedScaleList try");
+            response = await fapi_getScaleAppendments(parseInt(state.noteSelect.scale.value), radioValue, objectLimiter);
+
+            //let newList = JSON.parse(response);
+            let newList = response;
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
     }
 
     fetchDeductedScaleList = async () => {
+        console.log("inside fetchDeductedScaleList");
+        const state = this.state;
+        const radioValue = state.radio.scale?.edit || EditScaleRadio.defaultValue; 
 
+        // objectLimiter is selected scale
+        const objectLimiter = state[state.focus];
+
+        try {
+            let response;
+            console.log("inside fetchDeductedScaleList");
+            response = await fapi_getScaleDeductions(parseInt(state.noteSelect.scale.value), radioValue, objectLimiter);
+
+            //let newList = JSON.parse(response);
+            let newList = response;
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
     }
 
     //nav search stuff

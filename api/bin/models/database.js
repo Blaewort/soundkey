@@ -550,9 +550,6 @@ async function getChordDeductions(baseChord) {
 async function getScaleAlterations(baseScale) {
     console.log("inside getScaleAlterations");
 
-    console.log(baseScale);
-    console.log("baseScale^")
-
     let notes;
     if (baseScale !== null) {
         try{
@@ -563,8 +560,6 @@ async function getScaleAlterations(baseScale) {
             return err;
         }
     }
-
-    console.log("right before the sql");
 
     let sql = `
     SELECT 
@@ -594,15 +589,132 @@ async function getScaleAlterations(baseScale) {
         END,
     scale.root_note ASC;`
 
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    qResults.forEach(ele => {
+        const noteNameList = ele.notes.split(",");
+        try{
+            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            results.push(scale);
+        } catch(err) {
+        }
+    });
+    return results;
+}
+
+async function getScaleAppendments(baseScale) {
+    console.log("inside getScaleAppendments");
+
+    console.log(baseScale);
+    console.log("baseScale^")
+
+    let notes;
+    if (baseScale !== null) {
+        try{
+            notes = formatLookupInput(baseScale);
+            //validateNotesInput(root);
+            //validateCategoryInput(category);
+        } catch(err){
+            return err;
+        }
+    }
+
+    let sql = `
+    SELECT 
+        scale.scale_name,
+        scale.root_note,
+        GROUP_CONCAT(sn.note ORDER BY 
+            CASE 
+                WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
+                ELSE 2
+            END,
+            sn.note ASC
+        ) AS notes
+    FROM 
+        scales scale
+    JOIN scale_has_note sn
+        ON scale.scale_name = sn.scale_name
+        AND scale.root_note = sn.root_note
+    GROUP BY 
+        scale.scale_name, scale.root_note
+    HAVING 
+        COUNT(sn.note) = `+ (notes.length+1) +` -- (the count of scale we are altering) plus 1
+        AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ notes.length +` -- Number of matching notes in source scale (all (scale.notes.length)of them)
+    ORDER BY 
+        CASE 
+            WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
+            ELSE 2
+        END,
+    scale.root_note ASC;`
+
     console.log(sql);
 
 
     let qResults = await fetchSQL(sql);
     let results = [];
 
-    
+    qResults.forEach(ele => {
+        const noteNameList = ele.notes.split(",");
+        try{
+            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            results.push(scale);
+        } catch(err) {
+        }
+    });
+    return results;
+}
 
- 
+async function getScaleDeductions(baseScale) {
+    console.log("inside getScaleDeductions");
+
+    console.log(baseScale);
+    console.log("baseScale^")
+
+    let notes;
+    if (baseScale !== null) {
+        try{
+            notes = formatLookupInput(baseScale);
+            //validateNotesInput(root);
+            //validateCategoryInput(category);
+        } catch(err){
+            return err;
+        }
+    }
+
+    let sql = `
+    SELECT 
+        scale.scale_name,
+        scale.root_note,
+        GROUP_CONCAT(sn.note ORDER BY 
+            CASE 
+                WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
+                ELSE 2
+            END,
+            sn.note ASC
+        ) AS notes
+    FROM 
+        scales scale
+    JOIN scale_has_note sn
+        ON scale.scale_name = sn.scale_name
+        AND scale.root_note = sn.root_note
+    GROUP BY 
+        scale.scale_name, scale.root_note
+    HAVING 
+        COUNT(sn.note) = `+ (notes.length-1) +` -- note count of the scale we are altering minus 1
+        AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Number of matching notes in source scale (all (scale.notes.length-1)of them)
+    ORDER BY 
+        CASE 
+            WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
+            ELSE 2
+        END,
+    scale.root_note ASC;`
+
+    console.log(sql);
+
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
 
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
@@ -673,5 +785,7 @@ module.exports = {
     getChordAlterations,
     getChordAppendments,
     getChordDeductions,
-    getScaleAlterations
+    getScaleAlterations,
+    getScaleAppendments,
+    getScaleDeductions
  };

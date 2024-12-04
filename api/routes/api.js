@@ -106,6 +106,28 @@ router.post('/getScales/Alterations',async (req,res) => {
   res.send(scales);
 });
 
+router.post('/getScales/Appendments',async (req,res) => {
+  console.log("in the route /getScales/Appendments");
+  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+  let root = req.body.root ? req.body.root : null;
+  let category = req.body.category ? req.body.category : null;
+  let notes = req.body.notes;
+  console.log("db.getScaleAppendments(",notes,",",root,",",category,",",maxNotes,")");
+  let scales = await db.getScaleAppendments(notes, root, maxNotes);
+  res.send(scales);
+});
+
+router.post('/getScales/Deductions',async (req,res) => {
+  console.log("in the route /getScales/Deductions");
+  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+  let root = req.body.root ? req.body.root : null;
+  let category = req.body.category ? req.body.category : null;
+  let notes = req.body.notes;
+  console.log("db.getScalesDeductions(",notes,",",root,",",category,",",maxNotes,")");
+  let scales = await db.getScaleDeductions(notes, root, maxNotes);
+  res.send(scales);
+});
+
 
 //(noteValue, type = "Heptatonic", obj)
 router.post('/getModes/',async (req,res) => {
