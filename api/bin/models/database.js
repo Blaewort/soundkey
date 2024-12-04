@@ -740,17 +740,17 @@ async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, us
     if (objectLimiter !== null && objectLimiter !== undefined) {
         try{
             limiterNotes = formatLookupInput(objectLimiter);
-            selectedScaleNotes = userSelectedScaleNotes ? formatLookupInput(userSelectedScaleNotes) : null;
         } catch(err){
             return err;
         }
-
         noteConstraint = `COUNT(CASE WHEN sn.note IN ("`+ limiterNotes.join('","') +`") THEN 1 END) = 3 -- notes in MATCH_CHORD and number of matching notes in MATCH_CHORD_NOTES
                          AND `;
     }
 
+
     let orderBySelectedScale = ``;
-    if (selectedScaleNotes) {
+    if (userSelectedScaleNotes !== null && userSelectedScaleNotes !== undefined) {
+        const selectedScaleNotes = userSelectedScaleNotes ? formatLookupInput(userSelectedScaleNotes) : null;
         orderBySelectedScale = `CASE 
             WHEN scale.root_note >= '`+ selectedScaleNotes[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale user currently has selected (if any)
             ELSE 2

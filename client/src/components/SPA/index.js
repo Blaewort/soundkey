@@ -1276,8 +1276,14 @@ class SPA extends Component{
             case "search":
                 this.updateScaleTextSearchList();
                 break;
+            case "selected":
+                if (!this.state.scale) {
+                    //we are then viewing textsearch contents, so update textsearch
+                    this.updateScaleTextSearchList();
+                }
+                break;
             default:
-                 throw Error("Toggle only exists in 'navsearch' at the moment and your view.chord is wrong, it is: " + this.state.view.chord);
+                 throw Error("Toggle only exists in 'navsearch' at the moment and your view.scale is wrong, it is: " + this.state.view.scale);
                 break;
         }
     }
