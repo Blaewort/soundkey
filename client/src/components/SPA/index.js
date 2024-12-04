@@ -1500,7 +1500,9 @@ class SPA extends Component{
                 // why would they enter say Em7 if not to select an Em7 chord regardless of matching the selected scale?
                 // this situation would be different if we were actually searching the DB for partial text matches, when
                 // what we are actually doing is constructing a chord from chord symbol being typed, so there's either no result or there's one result
-                const isTextSearchView = this.state.view.chord === "search";
+
+                //2nd check is because textsearch view is generated when we are in selected view but have no selected chord
+                const isTextSearchView = this.state.view.chord === "search" || (this.state.view.chord === "selected" && !this.state.chord); 
                 toggle.isRequired = selection.secondary && !isTextSearchView;
 
                 landscapeClassName = getLandScapeClassName({

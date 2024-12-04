@@ -349,7 +349,7 @@ ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection,
 
     switch(view) {
         case "selected":
-            return (!selection.primary && selection.secondary);
+            return (!selection.primary && selection.secondary && !isChordView); //toggle only visible on text search for scale
         case "search":
             return selection.secondary && !isChordView; //toggle only visible on text search for scale
         case "navsearch":
