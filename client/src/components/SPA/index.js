@@ -20,6 +20,7 @@ import { fapi_getModes,
     fapi_getScaleAlterations,
     fapi_getScaleAppendments,
     fapi_getScaleDeductions,
+    fapi_getScaleFromUserString,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,
@@ -170,7 +171,8 @@ class SPA extends Component{
                     text: null,
                 },
                 scale: {
-                    edit: null
+                    edit: null,
+                    text: null
                 },
                 modal: {
                     chord: true, //I'd like the low-heigh modals to be on by default on website entry. Even though you can't
@@ -327,13 +329,16 @@ class SPA extends Component{
         });
     }
 
-    
-
     onChordDeselect() {
         this.setState((state, props) => {
             return {
                 ...state,
                 chord: null
+            }
+        }, async () => {
+            if (this.state.view.chord === "selected") {
+                //on deselect scale view we go to text search so need to update it
+                this.updateChordTextSearchList();
             }
         });
     }
@@ -343,6 +348,11 @@ class SPA extends Component{
             return {
                 ...state,
                 scale: null
+            }
+        }, async () => {
+            if (this.state.view.scale === "selected") {
+                //on deselect scale view we go to text search so need to update it
+                this.updateScaleTextSearchList();
             }
         });
     }
@@ -368,6 +378,8 @@ class SPA extends Component{
                     scale: "search"
                 }
             }
+        }, async () => {
+            this.updateScaleTextSearchList();
         });
     }
 
@@ -653,6 +665,32 @@ class SPA extends Component{
         }
     }
 
+    async updateScaleTextSearchList() {
+        console.log("inside updateScaleTextSearchList");
+
+        let newList;
+        try{
+            newList = await this.fetchScaleTextSearchList();
+        }
+
+        catch(err){
+            console.log(err);
+            console.log("bad chord fetch");
+            return;
+        }
+        if (newList) {
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        text: newList,
+                    },
+                },
+            }));
+        }
+    }
+
     async updateEditedChordList() {
         console.log("inside updateEditedChordList");
         const radioValue = this.state.radio.chord.edit || EditChordRadio.defaultValue;
@@ -882,6 +920,39 @@ class SPA extends Component{
         return null;
     }
 
+    fetchScaleTextSearchList = async () => {
+        console.log("inside fetchScaleTextSearchList");
+        const state = this.state;
+
+        // objectLimiter is selected chord, if any
+        const objectLimiter = state.toggle.scale && state.chord ? state.chord : null;
+
+        console.log(objectLimiter);
+        console.log("OBJECT LIMITER OR NULL?");
+        const userString = state.textInput[state.focus];
+        const selectedScale = state.scale ? state.scale : null;
+
+        try {
+            let response;
+            console.log("inside fetchScaleTextSearchList try");
+            response = await fapi_getScaleFromUserString(userString, selectedScale, objectLimiter);
+
+            //let newList = JSON.parse(response);
+            let newList = response;
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+    }
+
     
     fetchAppendedScaleList = async () => {
         console.log("inside fetchAppendedScaleList");
@@ -1061,27 +1132,31 @@ class SPA extends Component{
             };
         }, //fetch chord list data
         async () => {
-            let chord = await fapi_getChordsFromUserString(this.state.textInput.chord);
-            let newList = [];
-
-            if (chord && chord.name) {
-                newList.push({
-                    label: chord.name,
-                    object: chord
-                });
-            }
-
-            this.setState((state) => ({
-                ...state,
-                list: {
-                    ...state.list,
-                    chord: {
-                        ...state.list.chord,
-                        text: newList,
-                    }
-                },
-            }));
+            this.updateChordTextSearchList();
         });
+    }
+
+    async updateChordTextSearchList() {
+        let chord = await fapi_getChordsFromUserString(this.state.textInput.chord);
+        let newList = [];
+
+        if (chord && chord.name) {
+            newList.push({
+                label: chord.name,
+                object: chord
+            });
+        }
+
+        this.setState((state) => ({
+            ...state,
+            list: {
+                ...state.list,
+                chord: {
+                    ...state.list.chord,
+                    text: newList,
+                }
+            },
+        }));
     }
 
     onScaleSearchTextChange(event) {
@@ -1096,13 +1171,8 @@ class SPA extends Component{
                 },
             };
         }, async () => {
-            // this.updateScaleTextSearchData();
+            this.updateScaleTextSearchList();
         });
-    }
-
-    async updateScaleTextSearchData() {
-        // fetch data
-        // put it in the this.state.list.scale.text bucket
     }
 
     onSearchScaleItemClick(e, item) {
@@ -1204,7 +1274,7 @@ class SPA extends Component{
                 // not yet supported
                 break;
             case "search":
-                this.updateTextSearchScaleList()
+                this.updateScaleTextSearchList();
                 break;
             default:
                  throw Error("Toggle only exists in 'navsearch' at the moment and your view.chord is wrong, it is: " + this.state.view.chord);
@@ -1212,9 +1282,6 @@ class SPA extends Component{
         }
     }
 
-    updateTextSearchScaleList() {
-
-    }
 
     onTuningNavSearchItemClick(e, item) {
         this.setState((state, props) => {
@@ -1470,6 +1537,7 @@ class SPA extends Component{
                         input: this.state.textInput.scale,
                         onChange: this.onScaleSearchTextChange,
                         onItemClick: this.onSearchScaleItemClick,
+                        scaleList: this.state.list.scale.text,
                     },
                     nav: {
                         //scaleList: this.state.list.scale.nav, //why doesnt scale need this but chord does

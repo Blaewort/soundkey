@@ -65,8 +65,9 @@ class ChordScaleController extends Component{
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
 
         if (this.props.search.gets) {
+            const listName = this.props.type + "List";
             const listItemClick = this.props.search.text.onItemClick;
-            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text.chordList} title={this.props.type === "chord" ? "Chord" : "Scales"} />
+            listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text[listName]} title={this.props.type === "chord" ? "Chord" : "Scales"} />
         }
 
         if (this.props.toggle.isRequired) {

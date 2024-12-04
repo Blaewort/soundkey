@@ -128,6 +128,19 @@ router.post('/getScales/Deductions',async (req,res) => {
   res.send(scales);
 });
 
+router.post('/getScales/FromString',async (req,res) => {
+  console.log("in the route /getScales/FromString");
+  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+  let root = req.body.root ? req.body.root : null;
+  let category = req.body.category ? req.body.category : null;
+  let limiterNotes = req.body.limiterNotes;
+  let userString = req.body.userString;
+  let userSelectedScaleNotes = req.body.userSelectedScaleNotes;
+  console.log("db.getScalesDeductions(",limiterNotes,",",userSelectedScaleNotes,",",userString,")");
+  let scales = await db.getScalesFromUserString(limiterNotes, userSelectedScaleNotes, userString);
+  res.send(scales);
+});
+
 
 //(noteValue, type = "Heptatonic", obj)
 router.post('/getModes/',async (req,res) => {

@@ -297,6 +297,34 @@ function fapi_getScaleDeductions(noteValue,category = null, scaleToLimitBy) {
     });
 }
 
+function fapi_getScaleFromUserString(userString, userSelectedScale, selectedChord) {
+    console.log("inside fapi_getScaleFromUserString");
+
+    console.log("made it to fapi_getScaleFromUserString")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    let userSelectedScaleNotes;
+    if(userSelectedScale?.notes){
+        userSelectedScaleNotes = userSelectedScale.notes.map(val => val.label);
+    }
+
+    let selectedChordNotes;
+    if(selectedChord?.notes){
+        selectedChordNotes = selectedChord.notes.map(val => val.label);
+    }
+
+    return postData(urlRoot + '/getScales/FromString/',
+        {
+            userSelectedScaleNotes: userSelectedScaleNotes, 
+            userString: userString, 
+            limiterNotes: selectedChordNotes,
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
 function getTriads(noteValue, scaleToLimitBy) {
     return fapi_getChords(noteValue, "Triad", scaleToLimitBy);
 }
@@ -605,6 +633,7 @@ export {
     fapi_getScaleAlterations,
     fapi_getScaleAppendments,
     fapi_getScaleDeductions,
+    fapi_getScaleFromUserString,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
     fapi_getTunings,

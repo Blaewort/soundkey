@@ -137,7 +137,7 @@ async function getChords(obj, root = null, category = null, searchString = "", n
 
     let noteConstraint;
 
-    if (obj !== null) {
+    if (obj !== null) { //TODO: all these things below are only being validated if we have an obj to limit us? doesnt validate otherwise
         try{
             notes = formatLookupInput(obj);
             validateNotesInput(root);
@@ -726,6 +726,79 @@ async function getScaleDeductions(baseScale) {
     });
     return results;
 }
+
+async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, userString) {
+    console.log("inside getScalesFromUserString");
+
+    let limiterNotes;
+    let selectedScaleNotes;
+    let noteConstraint = ``;
+
+    console.log(userSelectedScaleNotes);
+    console.log("userSelectedScaleNotes^"); //okay this is passing
+
+    if (objectLimiter !== null && objectLimiter !== undefined) {
+        try{
+            limiterNotes = formatLookupInput(objectLimiter);
+            selectedScaleNotes = userSelectedScaleNotes ? formatLookupInput(userSelectedScaleNotes) : null;
+        } catch(err){
+            return err;
+        }
+
+        noteConstraint = `COUNT(CASE WHEN sn.note IN ("`+ limiterNotes.join('","') +`") THEN 1 END) = 3 -- notes in MATCH_CHORD and number of matching notes in MATCH_CHORD_NOTES
+                         AND `;
+    }
+
+    let orderBySelectedScale = ``;
+    if (selectedScaleNotes) {
+        orderBySelectedScale = `CASE 
+            WHEN scale.root_note >= '`+ selectedScaleNotes[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale user currently has selected (if any)
+            ELSE 2
+        END,`
+    }
+
+    let sql = `
+    SELECT 
+        scale.scale_name,
+        scale.root_note,
+        GROUP_CONCAT(sn.note ORDER BY 
+            CASE 
+                WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
+                ELSE 2
+            END,
+            sn.note ASC
+        ) AS notes,
+        CONCAT(scale.root_note, ' ', scale.scale_name) AS full_name
+    FROM 
+        scales scale
+    JOIN scale_has_note sn
+        ON scale.scale_name = sn.scale_name
+        AND scale.root_note = sn.root_note
+    GROUP BY 
+        scale.scale_name, scale.root_note
+    HAVING 
+        `+ noteConstraint + `
+        full_name LIKE '%`+ userString +`%'
+    ORDER BY 
+        `+ orderBySelectedScale +`
+        scale.root_note ASC;`
+
+    console.log(sql);
+
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    qResults.forEach(ele => {
+        const noteNameList = ele.notes.split(",");
+        try{
+            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            results.push(scale);
+        } catch(err) {
+        }
+    });
+    return results;
+}
  
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have N-1 amount of matching notes AND N-1 amount of notes. Meaning [C,E,G] might return [[C, G], [E,G], [C,E], etc...]
@@ -787,5 +860,6 @@ module.exports = {
     getChordDeductions,
     getScaleAlterations,
     getScaleAppendments,
-    getScaleDeductions
+    getScaleDeductions,
+    getScalesFromUserString
  };
