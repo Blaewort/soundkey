@@ -72,7 +72,7 @@ function saveScales() {
                 }
             });
         });
-        con.query("INSERT IGNORE INTO scale_groups (id,name) VALUES(?,?)", [element.groupID,element.modeName], function(err,result){
+        con.query("INSERT IGNORE INTO scale_groups (id,name) VALUES(?,?)", [element.groupID,element.groupName], function(err,result){
             if (err) {
                 console.log(err);
                 throw err;
