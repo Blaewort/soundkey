@@ -149,13 +149,17 @@ async function getChords(obj, root = null, category = null, searchString = "", n
         //if lacking both root and category, then we can't add AND because it's the first and only item after WHERE
         const andStr = (root && category) ? `AND ` : ``; //this should anticipate the text search which will have no root or category
 
-        noteConstraint = andStr + `NOT EXISTS (
+        /* noteConstraint = andStr + `NOT EXISTS (
             SELECT 1
             FROM chord_has_note cn2
             WHERE cn2.chord_symbol = c.symbol
             AND cn2.note NOT IN ("` + notes.join('","') + `")
-        )`;
+        )`; */
 
+
+        noteConstraint = `HAVING COUNT(CASE 
+                                            WHEN cn.note IN ("` + notes.join('","') + `") THEN 1
+                                        END) = COUNT(DISTINCT cn.note)`;
     }
 
     else { //obj is null
@@ -170,7 +174,7 @@ async function getChords(obj, root = null, category = null, searchString = "", n
 
     root = root !== null ? 'c.root_note = "' + root + '"':  '';
 
-    let sql = `SELECT
+    /* let old_sql = `SELECT
         c.name,
         c.symbol,
         c.root_note,
@@ -185,7 +189,25 @@ async function getChords(obj, root = null, category = null, searchString = "", n
         -- Only select chords that contain notes from the allowed list
         `+ noteConstraint + `
     GROUP BY
-        c.name, c.symbol, c.root_note;`;
+        c.name, c.symbol, c.root_note;`; */
+
+    let sql = `SELECT
+        c.name,
+        c.symbol,
+        c.root_note,
+        JSON_ARRAYAGG(cn.note) AS notes
+    FROM
+        chords c
+    INNER JOIN chord_has_note cn
+        ON c.symbol = cn.chord_symbol
+        AND c.root_note = cn.root_note
+    ` + hasAnyConditions + `
+        ` + category + root + `
+        
+    GROUP BY
+        c.name, c.symbol, c.root_note
+    -- Only select chords that contain notes from the allowed list
+    `+ noteConstraint+`;`;
 
 
     console.log(sql);
@@ -197,7 +219,7 @@ async function getChords(obj, root = null, category = null, searchString = "", n
     console.log(results);
     return results;
 }
- 
+
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have ALL notes the scale does plus any extras
 // USE user can see chords with added tones (we may only want this to be 1 extra note so if chord.notes.length is 3 then find 4 note chords)
