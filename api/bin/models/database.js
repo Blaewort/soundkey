@@ -152,7 +152,7 @@ async function getChords(obj, root = null, category = null, searchString = "", n
         noteConstraint = andStr + `NOT EXISTS (
             SELECT 1
             FROM chord_has_note cn2
-            WHERE cn2.chord_symbol = c.chord_symbol
+            WHERE cn2.chord_symbol = c.symbol
             AND cn2.note NOT IN ("` + notes.join('","') + `")
         )`;
 
@@ -171,28 +171,28 @@ async function getChords(obj, root = null, category = null, searchString = "", n
     root = root !== null ? 'c.root_note = "' + root + '"':  '';
 
     let sql = `SELECT
-        c.chord_name,
-        c.chord_symbol,
+        c.name,
+        c.symbol,
         c.root_note,
         JSON_ARRAYAGG(cn.note) AS notes
     FROM
         chords c
     INNER JOIN chord_has_note cn
-        ON c.chord_symbol = cn.chord_symbol
+        ON c.symbol = cn.chord_symbol
         AND c.root_note = cn.root_note
     ` + hasAnyConditions + `
         ` + category + root + `
         -- Only select chords that contain notes from the allowed list
         `+ noteConstraint + `
     GROUP BY
-        c.chord_name, c.chord_symbol, c.root_note;`;
+        c.name, c.symbol, c.root_note;`;
 
 
     console.log(sql);
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
+        results.push(Chord.chordFromNotation(ele.symbol));
     });
     console.log(results);
     return results;
@@ -208,25 +208,25 @@ async function getScales(obj,root = null,mode = null) {
     let notesListString = '("' + notes.join('","') + '")';
     let noteslength = notes.length;
     root = root !== null ? 'AND sn.root_note = "' + root + '"':  '';
-    mode = mode !== null ? 'AND sn.scale_mode = "' + mode + '"': '';
+    mode = mode !== null ? 'AND sn.mode_id = "' + mode + '"': '';
     let sql = `SELECT
-    s.scale_name,
-    s.scale_mode,
+    s.name,
+    s.mode_id,
     s.root_note,
     GROUP_CONCAT(sn.note) as notes
     FROM
     scales s
-    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.scale_name = sn.scale_name
+    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.name = sn.scale_name
     WHERE
     sn.scale_name = ANY (
         SELECT
-        scale_name 
+        name 
         FROM
         scale_has_note
         where
         note IN ` + notesListString + `
         group by 
-        scale_name
+        name
         HAVING count(note) >= ` + noteslength + `
     ) AND  sn.root_note = ANY (
         SELECT
@@ -236,20 +236,20 @@ async function getScales(obj,root = null,mode = null) {
         where
         note IN ` + notesListString + `
         group by 
-        scale_name
+        name
         HAVING count(note) >= ` + noteslength + `
     ) ` + root + mode +
     `
     GROUP BY
     sn.scale_name, sn.root_note`
-    `s.scale_name,`
-    `s.scale_mode,`
+    `s.name,`
+    `s.mode_id,`
     `s.root_note`;
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
         try{
-            results.push(new Scale.Scale(ele.root_note ,ele.scale_mode,ele.scale_name ));
+            results.push(new Scale.Scale(ele.root_note ,ele.mode_id,ele.name ));
         } catch(err) {
         }
     });
@@ -270,30 +270,30 @@ async function getModes(root, type = "heptatonic", obj){
     //TODO: Should scaleLength fail instead of defautling to heptatonic
     let scaleLength = typeLookupTable[type] ? typeLookupTable[type] : 7;
     let sql = `SELECT DISTINCT
-    s.scale_mode
+    s.mode_id
   FROM
     scales s
-    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.scale_name = sn.scale_name
+    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.name = sn.scale_name
   WHERE
-    sn.scale_mode = ANY (
+    sn.mode_id = ANY (
       SELECT
-        scale_mode
+        mode_id
       FROM
         scale_has_note
       where
         note IN ` + notesListString + ` and root_note = "` + root + '"'+ `
       group by 
-       scale_name
+       name
       HAVING count(distinct note) = ` + noteslength + `
     ) AND sn.scale_name = ANY (
       SELECT
-        scale_name
+        name
       FROM
         scale_has_note
       where
       note IN ` + notesListString + ` and root_note = "` + root + '"'+ `
       group by 
-       scale_name
+       name
       HAVING count(distinct note) = ` + noteslength + `
     ) AND  sn.root_note = "` + root + '"'+ `
   GROUP BY
@@ -347,7 +347,7 @@ async function getChordExtensions(baseChord, root = null, category = null) {
     FROM 
         chord_has_note chn
     JOIN 
-        chords chord ON chord.chord_symbol = chn.chord_symbol
+        chords chord ON chord.symbol = chn.chord_symbol
     WHERE 
         `+ rootString +`
         AND
@@ -563,7 +563,7 @@ async function getScaleAlterations(baseScale) {
 
     let sql = `
     SELECT 
-        scale.scale_name,
+        scale.name,
         scale.root_note,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
@@ -575,10 +575,10 @@ async function getScaleAlterations(baseScale) {
     FROM 
         scales scale
     JOIN scale_has_note sn
-        ON scale.scale_name = sn.scale_name
+        ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
     GROUP BY 
-        scale.scale_name, scale.root_note
+        scale.name, scale.root_note
     HAVING 
         COUNT(sn.note) = `+ notes.length +` -- note count of the scale we are altering
         AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Note list from the scale we are altering, matching n-1 notes
@@ -595,7 +595,7 @@ async function getScaleAlterations(baseScale) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             results.push(scale);
         } catch(err) {
         }
@@ -622,7 +622,7 @@ async function getScaleAppendments(baseScale) {
 
     let sql = `
     SELECT 
-        scale.scale_name,
+        scale.name,
         scale.root_note,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
@@ -634,10 +634,10 @@ async function getScaleAppendments(baseScale) {
     FROM 
         scales scale
     JOIN scale_has_note sn
-        ON scale.scale_name = sn.scale_name
+        ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
     GROUP BY 
-        scale.scale_name, scale.root_note
+        scale.name, scale.root_note
     HAVING 
         COUNT(sn.note) = `+ (notes.length+1) +` -- (the count of scale we are altering) plus 1
         AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ notes.length +` -- Number of matching notes in source scale (all (scale.notes.length)of them)
@@ -657,7 +657,7 @@ async function getScaleAppendments(baseScale) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             results.push(scale);
         } catch(err) {
         }
@@ -684,7 +684,7 @@ async function getScaleDeductions(baseScale) {
 
     let sql = `
     SELECT 
-        scale.scale_name,
+        scale.name,
         scale.root_note,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
@@ -696,10 +696,10 @@ async function getScaleDeductions(baseScale) {
     FROM 
         scales scale
     JOIN scale_has_note sn
-        ON scale.scale_name = sn.scale_name
+        ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
     GROUP BY 
-        scale.scale_name, scale.root_note
+        scale.name, scale.root_note
     HAVING 
         COUNT(sn.note) = `+ (notes.length-1) +` -- note count of the scale we are altering minus 1
         AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Number of matching notes in source scale (all (scale.notes.length-1)of them)
@@ -719,7 +719,7 @@ async function getScaleDeductions(baseScale) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             results.push(scale);
         } catch(err) {
         }
@@ -759,7 +759,7 @@ async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, us
 
     let sql = `
     SELECT 
-        scale.scale_name,
+        scale.name,
         scale.root_note,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
@@ -768,14 +768,14 @@ async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, us
             END,
             sn.note ASC
         ) AS notes,
-        CONCAT(scale.root_note, ' ', scale.scale_name) AS full_name
+        CONCAT(scale.root_note, ' ', scale.name) AS full_name
     FROM 
         scales scale
     JOIN scale_has_note sn
-        ON scale.scale_name = sn.scale_name
+        ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
     GROUP BY 
-        scale.scale_name, scale.root_note
+        scale.name, scale.root_note
     HAVING 
         `+ noteConstraint + `
         full_name LIKE '%`+ userString +`%'
@@ -792,7 +792,7 @@ async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, us
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.scale_name, noteNameList);
+            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             results.push(scale);
         } catch(err) {
         }
@@ -808,23 +808,23 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
     let notesListString = '("' + notes.join('","') + '")';
     let noteslength = notes.length - numberOfNotesToAlterBy;
     let sql = `SELECT
-    s.scale_name,
-    s.scale_mode,
+    s.name,
+    s.mode_id,
     s.root_note,
     GROUP_CONCAT(sn.note) as notes
     FROM
     scales s
-    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.scale_name = sn.scale_name
+    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.name = sn.scale_name
     WHERE
     sn.scale_name = ANY (
         SELECT
-        scale_name 
+        name 
         FROM
         scale_has_note
         where
         note IN ` + notesListString + `
         group by 
-        scale_name
+        name
         HAVING count(note) >= ` + noteslength + `
     ) AND  sn.root_note = ANY (
         SELECT
@@ -834,7 +834,7 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
         where
         note IN ` + notesListString + `
         group by 
-        scale_name
+        name
         HAVING count(note) >= ` + noteslength + `
     )
     GROUP BY
@@ -843,7 +843,7 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
     let results = [];
     qResults.forEach(ele => {
         try{
-            results.push(new Scale.Scale(ele.root_note ,ele.scale_mode,ele.scale_name ));
+            results.push(new Scale.Scale(ele.root_note ,ele.mode_id,ele.name ));
         } catch(err) {
         }
     });
