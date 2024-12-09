@@ -310,6 +310,9 @@ class ChordScaleController extends Component{
         } 
         footer = <Footer pageCount={pages} onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
+    
+        const toggle = ChordScaleController.getToggle(this.props.view, this.props.selection, this.props.focus, this.props.toggle.onClick, this.props.toggle.value);
+
         return <>
             <div class="top-controls">
                 {header}
@@ -318,6 +321,7 @@ class ChordScaleController extends Component{
             {visualInstrument}
             <div class="bottom-controls">
                 {radio}
+                {toggle}
                 {footer}
             </div>
         </>
@@ -364,6 +368,7 @@ ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection,
             return selection.secondary && !isChordView; //toggle only visible on text search for scale
         case "navsearch":
         case "navsearchmode":
+        case "edit":
           return selection.secondary;
         default:
           return false;

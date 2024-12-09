@@ -115,30 +115,27 @@ router.post('/getScales/Alterations',async (req,res) => {
   let root = req.body.root ? req.body.root : null;
   let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getScalesAlterations(",notes,",",root,",",category,",",maxNotes,")");
-  let scales = await db.getScaleAlterations(notes, root, maxNotes);
+  let chordToLimitBy = req.body.chordToLimitBy;
+  console.log("db.getScalesAlterations(",notes,",",chordToLimitBy,")");
+  let scales = await db.getScaleAlterations(notes, chordToLimitBy);
   res.send(scales);
 });
 
 router.post('/getScales/Appendments',async (req,res) => {
   console.log("in the route /getScales/Appendments");
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
-  let root = req.body.root ? req.body.root : null;
-  let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getScaleAppendments(",notes,",",root,",",category,",",maxNotes,")");
-  let scales = await db.getScaleAppendments(notes, root, maxNotes);
+  let chordToLimitBy = req.body.chordToLimitBy;
+  console.log("db.getScaleAppendments(",notes,",",chordToLimitBy,")");
+  let scales = await db.getScaleAppendments(notes, chordToLimitBy);
   res.send(scales);
 });
 
 router.post('/getScales/Deductions',async (req,res) => {
   console.log("in the route /getScales/Deductions");
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
-  let root = req.body.root ? req.body.root : null;
-  let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getScalesDeductions(",notes,",",root,",",category,",",maxNotes,")");
-  let scales = await db.getScaleDeductions(notes, root, maxNotes);
+  let chordToLimitBy = req.body.chordToLimitBy;
+  console.log("db.getScalesDeductions(",notes,",",chordToLimitBy,")");
+  let scales = await db.getScaleDeductions(notes, chordToLimitBy);
   res.send(scales);
 });
 

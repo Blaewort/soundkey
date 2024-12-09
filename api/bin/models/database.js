@@ -559,7 +559,7 @@ async function getChordDeductions(baseChord) {
  
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
-async function getScaleAlterations(baseScale) {
+async function getScaleAlterations(baseScale, chordToLimitBy) {
     console.log("inside getScaleAlterations");
 
     let notes;
@@ -571,6 +571,12 @@ async function getScaleAlterations(baseScale) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(chordToLimitBy) {
+        let limiterNotes = formatLookupInput(chordToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN sn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ limiterNotes.length +` `;
     }
 
     let sql = `
@@ -594,12 +600,15 @@ async function getScaleAlterations(baseScale) {
     HAVING 
         COUNT(sn.note) = `+ notes.length +` -- note count of the scale we are altering
         AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Note list from the scale we are altering, matching n-1 notes
+        `+ constrainStr +`
     ORDER BY 
         CASE 
             WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
             ELSE 2
         END,
     scale.root_note ASC;`
+
+    console.log(sql);
 
     let qResults = await fetchSQL(sql);
     let results = [];
@@ -615,7 +624,7 @@ async function getScaleAlterations(baseScale) {
     return results;
 }
 
-async function getScaleAppendments(baseScale) {
+async function getScaleAppendments(baseScale, chordToLimitBy) {
     console.log("inside getScaleAppendments");
 
     console.log(baseScale);
@@ -630,6 +639,12 @@ async function getScaleAppendments(baseScale) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(chordToLimitBy) {
+        let limiterNotes = formatLookupInput(chordToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN sn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ limiterNotes.length +` `;
     }
 
     let sql = `
@@ -653,6 +668,7 @@ async function getScaleAppendments(baseScale) {
     HAVING 
         COUNT(sn.note) = `+ (notes.length+1) +` -- (the count of scale we are altering) plus 1
         AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ notes.length +` -- Number of matching notes in source scale (all (scale.notes.length)of them)
+        `+ constrainStr +`
     ORDER BY 
         CASE 
             WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
@@ -677,7 +693,7 @@ async function getScaleAppendments(baseScale) {
     return results;
 }
 
-async function getScaleDeductions(baseScale) {
+async function getScaleDeductions(baseScale, chordToLimitBy) {
     console.log("inside getScaleDeductions");
 
     console.log(baseScale);
@@ -692,6 +708,12 @@ async function getScaleDeductions(baseScale) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(chordToLimitBy) {
+        let limiterNotes = formatLookupInput(chordToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN sn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ limiterNotes.length +` `;
     }
 
     let sql = `
@@ -715,6 +737,7 @@ async function getScaleDeductions(baseScale) {
     HAVING 
         COUNT(sn.note) = `+ (notes.length-1) +` -- note count of the scale we are altering minus 1
         AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Number of matching notes in source scale (all (scale.notes.length-1)of them)
+        `+ constrainStr +`
     ORDER BY 
         CASE 
             WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
