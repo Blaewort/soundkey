@@ -243,7 +243,7 @@ class ChordScaleController extends Component{
         //const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.search.nav.mode, this.props.search.limitByOther);
         const list = this.props.search.nav.scaleList;
         const itemClick = this.props.search.nav.onModeItemClick;
-        listArea = <ListArea modal={this.props.search.listModal} title={this.props.search.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
+        listArea = <ListArea modal={this.props.search.listModal} title={this.props.scaleGroupNavSelection?.name + " Modes"} handleItemClick={itemClick} list={list} />;
 
         if (this.props.toggle.isRequired) {
             const title = this.props.type === "chord" ? "Match Scale" : "Match Chord";

@@ -79,11 +79,18 @@ class SPA extends Component{
         this.state = {
             chord: {
                 root: "E",
+                name: "E Minor",
+                symbol: "Em",
+                category: "Triad",
+                notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}]
+            },
+            /*chord: {
+                root: "E",
                 name: "E Major",
                 symbol: "E",
                 category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}]
-            },
+            },*/
             /*chord: {
                 root: "E",
                 name: "E Major Seven",
@@ -908,9 +915,9 @@ class SPA extends Component{
         //const other = state.focus === "chord" ? state.scale : state.chord; 
         //const objectLimiter = state.toggle[state.focus] ? other : null; 
     
-        
+        const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
         try {
-            let response = await fapi_getChordExtensions(parseInt(state.noteSelect.chord.value), state.chord.category, state.chord);
+            let response = await fapi_getChordExtensions(parseInt(state.noteSelect.chord.value), state.chord.category, state.chord, scaleToLimitBy);
             let newList = JSON.parse(response);
 
             if (Array.isArray(newList)) {
@@ -934,11 +941,12 @@ class SPA extends Component{
 
         // objectLimiter is selected chord
         const objectLimiter = state[state.focus];
+        const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
-            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 
@@ -962,11 +970,12 @@ class SPA extends Component{
 
         // objectLimiter is selected chord
         const objectLimiter = state[state.focus];
+        const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchAppendedChordList if (state.focus === 'chord')");
-            response = await fapi_getChordAppendments(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+            response = await fapi_getChordAppendments(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 
@@ -990,11 +999,12 @@ class SPA extends Component{
 
         // objectLimiter is selected chord
         const objectLimiter = state[state.focus];
+        const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchDeductedChordList if (state.focus === 'chord')");
-            response = await fapi_getChordDeductions(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter);
+            response = await fapi_getChordDeductions(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 
@@ -1378,6 +1388,7 @@ class SPA extends Component{
                 break;
             case "edit":
                 // not yet supported
+                this.updateEditedChordList();
                 break;
             case "search":
                 // there is no chord toggle on text search. Ignore
@@ -1754,7 +1765,22 @@ class SPA extends Component{
                     selectedNotes: notess.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                contents = <ChordScaleController footer={footer} visualizer={visualizer} modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} focus={this.state.focus} type="scale" />
+
+                contents = <ChordScaleController 
+                    footer={footer}
+                    visualizer={visualizer}
+                    modes={modes}
+                    view={this.state.view.scale}
+                    toggle={toggle}
+                    search={search}
+                    viewSwitch={viewSwitch}
+                    radio={radio}
+                    selection={selection}
+                    focus={this.state.focus}
+                    scaleGroupNavSelection={this.state.scaleGroupNavSelection}
+                    type="scale" 
+                />;
+                
                 break;
             case "settings":
                 search = {

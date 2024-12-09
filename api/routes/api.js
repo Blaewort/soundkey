@@ -17,12 +17,10 @@ router.post('/getChords/Alterations',async (req,res) => {
   console.log(req.body);
   console.log("req.body^");
 
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
-  let root = req.body.root ? req.body.root : null;
-  let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getChords/Alterations(",notes,",",root,",",category,",",maxNotes,")");
-  let chords = await db.getChordAlterations(notes,root,category,maxNotes);
+  let scaleToLimitBy = req.body.scaleToLimitBy;
+  console.log("db.getChords/Alterations(",notes,",",scaleToLimitBy,")");
+  let chords = await db.getChordAlterations(notes,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 
@@ -32,12 +30,12 @@ router.post('/getChords/Extensions',async (req,res) => {
   console.log(req.body);
   console.log("req.body^");
 
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
   let root = req.body.root ? req.body.root : null;
   let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getChords/Extensions(",notes,",",root,",",category,",",maxNotes,")");
-  let chords = await db.getChordExtensions(notes,root,category,maxNotes);
+  let scaleToLimitBy = req.body.scaleToLimitBy;
+  console.log("db.getChords/Extensions(",notes,",",root,",",category,",",scaleToLimitBy,")");
+  let chords = await db.getChordExtensions(notes,root,category,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 
@@ -47,12 +45,10 @@ router.post('/getChords/Appendments',async (req,res) => { // TODO: a lot of reus
   console.log(req.body);
   console.log("req.body^");
 
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
-  let root = req.body.root ? req.body.root : null;
-  let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getChords/Appendments(",notes,",",root,",",category,",",maxNotes,")");
-  let chords = await db.getChordAppendments(notes,root,category,maxNotes);
+  let scaleToLimitBy = req.body.scaleToLimitBy;
+  console.log("db.getChords/Appendments(",notes,",",scaleToLimitBy,")");
+  let chords = await db.getChordAppendments(notes,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 
@@ -62,12 +58,10 @@ router.post('/getChords/Deductions',async (req,res) => {
   console.log(req.body);
   console.log("req.body^");
 
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
-  let root = req.body.root ? req.body.root : null;
-  let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getChords/Deductions(",notes,",",root,",",category,",",maxNotes,")");
-  let chords = await db.getChordDeductions(notes,root,category,maxNotes);
+  let scaleToLimitBy = req.body.scaleToLimitBy;
+  console.log("db.getChords/Deductions(",notes,",",scaleToLimitBy,")");
+  let chords = await db.getChordDeductions(notes,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 

@@ -147,7 +147,7 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy, searchString 
     });
 }
 
-function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy) {
+function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy, scaleToLimitBy) {
     console.log("inside fapi_getChordExtensions");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
@@ -155,6 +155,9 @@ function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy) {
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
     if(chordToLimitBy?.notes){
         chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+    if(scaleToLimitBy?.notes){
+        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
     }
 
     const root = Note.fromValue(noteValue).name;
@@ -168,6 +171,7 @@ function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy) {
             notes: chordToLimitBy, 
             root: root,
             category: category, //the radio value the UI is set to
+            scaleToLimitBy: scaleToLimitBy
         }
     ).then(
         response => {
@@ -175,7 +179,7 @@ function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy) {
     });
 }
 
-function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy) {
+function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy, scaleToLimitBy) {
     console.log("inside fapi_getChordAlterations");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
@@ -184,6 +188,9 @@ function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy) {
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
     if(chordToLimitBy?.notes){
         chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+    if(scaleToLimitBy?.notes){
+        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
     }
 
     const root = Note.fromValue(noteValue).name;
@@ -195,6 +202,7 @@ function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy) {
             notes: chordToLimitBy, 
             root: root, //this constraint works for A but nothing else. why?
             category: category, //the radio value the UI is set to
+            scaleToLimitBy: scaleToLimitBy
         }
     ).then(
         response => {
@@ -202,7 +210,7 @@ function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy) {
     });
 }
 
-function fapi_getChordAppendments(noteValue,category = null, chordToLimitBy) {
+function fapi_getChordAppendments(noteValue,category = null, chordToLimitBy, scaleToLimitBy) {
     console.log("inside fapi_getChordAppendments");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
@@ -211,6 +219,9 @@ function fapi_getChordAppendments(noteValue,category = null, chordToLimitBy) {
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
     if(chordToLimitBy?.notes){
         chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+    if(scaleToLimitBy?.notes){
+        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
     }
 
     const root = Note.fromValue(noteValue).name;
@@ -222,6 +233,7 @@ function fapi_getChordAppendments(noteValue,category = null, chordToLimitBy) {
             notes: chordToLimitBy, 
             root: root, //this constraint works for A but nothing else. why?
             category: category, //the radio value the UI is set to
+            scaleToLimitBy: scaleToLimitBy
         }
     ).then(
         response => {
@@ -229,7 +241,7 @@ function fapi_getChordAppendments(noteValue,category = null, chordToLimitBy) {
     });
 }
 
-function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy) {
+function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy, scaleToLimitBy) {
     console.log("inside fapi_getChordDeductions");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
@@ -238,6 +250,9 @@ function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy) {
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
     if(chordToLimitBy?.notes){
         chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+    if(scaleToLimitBy?.notes){
+        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
     }
 
     const root = Note.fromValue(noteValue).name;
@@ -249,6 +264,7 @@ function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy) {
             notes: chordToLimitBy, 
             root: root, //this constraint works for A but nothing else. why?
             category: category, //the radio value the UI is set to
+            scaleToLimitBy: scaleToLimitBy
         }
     ).then(
         response => {

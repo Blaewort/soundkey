@@ -318,7 +318,7 @@ async function getScaleGroups(obj, root, type){
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
 // USE user can see chord alterations 1 step away
-async function getChordExtensions(baseChord, root = null, category = null) {
+async function getChordExtensions(baseChord, root = null, category = null, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordExtensions");
 
     let notes;
@@ -330,6 +330,12 @@ async function getChordExtensions(baseChord, root = null, category = null) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(scaleToLimitBy) {
+        let limiterNotes = formatLookupInput(scaleToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN chn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ (notes.length+1) +` `;
     }
 
     console.log(notes);
@@ -369,7 +375,9 @@ async function getChordExtensions(baseChord, root = null, category = null) {
         chn.root_note
     HAVING 
         COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
-        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`;  -- Number of matching notes in source chord (all of them)`;
+        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`  -- Number of matching notes in source chord (all of them)
+        `+ constrainStr +`
+        ;`;
 
     console.log(sql);
     console.log("sql^");
@@ -390,7 +398,7 @@ async function getChordExtensions(baseChord, root = null, category = null) {
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
 // USE user can see chord alterations 1 step away
-async function getChordAlterations(baseChord) {
+async function getChordAlterations(baseChord, scaleToLimitBy) {
     console.log("inside getChordAlterations");
 
     let notes;
@@ -402,6 +410,12 @@ async function getChordAlterations(baseChord) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(scaleToLimitBy) {
+        let limiterNotes = formatLookupInput(scaleToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN chn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ notes.length +` `;
     }
 
     console.log(notes);
@@ -423,6 +437,7 @@ async function getChordAlterations(baseChord) {
     HAVING 
         COUNT(*) = `+ noteCount +` 
         AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in your chord minus 1
+        `+ constrainStr +`
     ORDER BY 
         CASE 
             WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
@@ -450,7 +465,7 @@ async function getChordAlterations(baseChord) {
     return results;
 }
 
-async function getChordAppendments(baseChord) {
+async function getChordAppendments(baseChord, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordAppendments");
 
     let notes;
@@ -460,6 +475,12 @@ async function getChordAppendments(baseChord) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(scaleToLimitBy) {
+        let limiterNotes = formatLookupInput(scaleToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN chn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ (notes.length+1) +` `;
     }
 
     console.log(notes);
@@ -481,6 +502,7 @@ async function getChordAppendments(baseChord) {
     HAVING 
         COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`  -- Number of matching notes in source chord (all of them)
+        `+ constrainStr +`
     ORDER BY 
         CASE 
             WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
@@ -504,7 +526,7 @@ async function getChordAppendments(baseChord) {
     return results;
 }
 
-async function getChordDeductions(baseChord) {
+async function getChordDeductions(baseChord, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordDeductions");
 
     let notes;
@@ -514,6 +536,12 @@ async function getChordDeductions(baseChord) {
         } catch(err){
             return err;
         }
+    }
+
+    let constrainStr = ``;
+    if(scaleToLimitBy) {
+        let limiterNotes = formatLookupInput(scaleToLimitBy);
+        constrainStr = `AND COUNT(CASE WHEN chn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` `;
     }
 
     console.log(notes);
@@ -534,6 +562,7 @@ async function getChordDeductions(baseChord) {
     HAVING 
         COUNT(*) = `+ (noteCount-1) +`  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in source chord (all of them)
+        `+ constrainStr +`
     ORDER BY 
         CASE 
             WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
