@@ -90,9 +90,23 @@ router.post('/getChords/',async (req,res) => {
 });
 //getScales(obj,root = null,mode = null)
 router.post('/getScales/',async (req,res) => {
-  let body = req.body;
-  let scales = await db.getScales(body.data, body.root, body.mode);
-  res.send(scales);
+  console.log("in the /getScales/ route");
+  let root = req.body.root ? req.body.root : null;
+  let notes = req.body.notes;
+  let groupID = req.body.groupID;
+  console.log("db.getScales(",notes,",",root,",",groupID,")");
+  let scales = await db.getScales(notes, root, groupID);
+  res.json(scales);
+});
+
+router.post('/getScaleGroups/',async (req,res) => {
+  console.log("in the /getScaleGroups/ route");
+  let root = req.body.root ? req.body.root : null;
+  let notes = req.body.notes;
+  let type = req.body.type;
+  console.log("db.getScaleGroups(",notes,",",root,",",type,")");
+  let scales = await db.getScaleGroups(notes, root, type);
+  res.json(scales);
 });
 
 router.post('/getScales/Alterations',async (req,res) => {
@@ -142,11 +156,6 @@ router.post('/getScales/FromString',async (req,res) => {
 });
 
 
-//(noteValue, type = "Heptatonic", obj)
-router.post('/getModes/',async (req,res) => {
-  let body = req.body;
-  let results = await db.getModes(body.root, body.type , body.data);
-  res.send(results);
-});
+
 
 module.exports = router;

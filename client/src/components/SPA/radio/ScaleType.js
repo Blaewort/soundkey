@@ -8,6 +8,8 @@ import Radio from './index'
         super(props);
     }
 
+    static defaultValue = "Heptatonic";
+
 
     render() {
         const title = "Scale Notes";

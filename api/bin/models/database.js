@@ -149,13 +149,6 @@ async function getChords(obj, root = null, category = null, searchString = "", n
         //if lacking both root and category, then we can't add AND because it's the first and only item after WHERE
         const andStr = (root && category) ? `AND ` : ``; //this should anticipate the text search which will have no root or category
 
-        /* noteConstraint = andStr + `NOT EXISTS (
-            SELECT 1
-            FROM chord_has_note cn2
-            WHERE cn2.chord_symbol = c.symbol
-            AND cn2.note NOT IN ("` + notes.join('","') + `")
-        )`; */
-
 
         noteConstraint = `HAVING COUNT(CASE 
                                             WHEN cn.note IN ("` + notes.join('","') + `") THEN 1
@@ -173,23 +166,6 @@ async function getChords(obj, root = null, category = null, searchString = "", n
     category = category !== null ? 'c.category = "' + category + '" AND ':  '';
 
     root = root !== null ? 'c.root_note = "' + root + '"':  '';
-
-    /* let old_sql = `SELECT
-        c.name,
-        c.symbol,
-        c.root_note,
-        JSON_ARRAYAGG(cn.note) AS notes
-    FROM
-        chords c
-    INNER JOIN chord_has_note cn
-        ON c.symbol = cn.chord_symbol
-        AND c.root_note = cn.root_note
-    ` + hasAnyConditions + `
-        ` + category + root + `
-        -- Only select chords that contain notes from the allowed list
-        `+ noteConstraint + `
-    GROUP BY
-        c.name, c.symbol, c.root_note;`; */
 
     let sql = `SELECT
         c.name,
@@ -220,107 +196,121 @@ async function getChords(obj, root = null, category = null, searchString = "", n
     return results;
 }
 
-//ARG is a scale or notes array
-// RETURN should be an array of scales that have ALL notes the scale does plus any extras
-// USE user can see chords with added tones (we may only want this to be 1 extra note so if chord.notes.length is 3 then find 4 note chords)
-async function getScales(obj,root = null,mode = null) { 
-    let notes = formatLookupInput(obj);
+function validateGroupID(id) {
+    return Number.isInteger(id);
+}
+
+
+async function getScales(obj,root, groupID) { 
+    console.log("inside database.js getScales");
+    console.log(obj);
+    console.log("obj^");
+
+    let notesLimiter;
+    let noteConstraintStr = ``;
+    if (obj) {
+        notesLimiter = formatLookupInput(obj);
+        noteConstraintStr = `HAVING 
+        COUNT(CASE WHEN sn.note IN ("` + notesLimiter.join('","') + `") THEN 1 END) = `+ notesLimiter.length +` -- matches all notes in chord if match toggle, which may not be`;
+        
+    } 
     validateNotesInput(root);
-    validateModeInput(mode);
-    let notesListString = '("' + notes.join('","') + '")';
-    let noteslength = notes.length;
-    root = root !== null ? 'AND sn.root_note = "' + root + '"':  '';
-    mode = mode !== null ? 'AND sn.mode_id = "' + mode + '"': '';
-    let sql = `SELECT
-    s.name,
-    s.mode_id,
-    s.root_note,
-    GROUP_CONCAT(sn.note) as notes
+    validateGroupID(groupID);
+
+    console.log(root);
+    console.log("root^");
+    console.log(groupID);
+    console.log("groupID^");
+
+    console.log("made it to just before the sql");
+
+    let sql = `
+    SELECT
+        scale.name,
+        scale.root_note,
+        GROUP_CONCAT(sn.note ORDER BY
+            CASE
+            WHEN sn.note >= "`+ root +`" THEN 1 -- Root Note alphabetical order starting on root note from navnote selection
+                ELSE 2
+            END,
+            sn.note ASC) AS notes
     FROM
-    scales s
-    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.name = sn.scale_name
+        scales scale
+    INNER JOIN scale_has_note sn
+            ON scale.name = sn.scale_name
+            AND scale.root_note = sn.root_note
     WHERE
-    sn.scale_name = ANY (
-        SELECT
-        name 
-        FROM
-        scale_has_note
-        where
-        note IN ` + notesListString + `
-        group by 
-        name
-        HAVING count(note) >= ` + noteslength + `
-    ) AND  sn.root_note = ANY (
-        SELECT
-        root_note
-        FROM
-        scale_has_note
-        where
-        note IN ` + notesListString + `
-        group by 
-        name
-        HAVING count(note) >= ` + noteslength + `
-    ) ` + root + mode +
-    `
+            scale.root_note = "`+ root +`" AND scale.group_id = `+ groupID +` -- root comes from navnote selection, group_id comes from state.scaleGroupSelection
     GROUP BY
-    sn.scale_name, sn.root_note`
-    `s.name,`
-    `s.mode_id,`
-    `s.root_note`;
+        scale.name, scale.root_note
+    `+ noteConstraintStr + `
+    `;
+
+    console.log(sql);
+
     let qResults = await fetchSQL(sql);
     let results = [];
     qResults.forEach(ele => {
+        const noteNameList = ele.notes.split(",");
         try{
-            results.push(new Scale.Scale(ele.root_note ,ele.mode_id,ele.name ));
+            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            results.push(scale);
         } catch(err) {
+            console.log("RUH ROH RAGGY");
+            throw err;
         }
     });
     return results;
 }
+
+
 //should noteValue just be a note instead? it would prevent a lookup that we could do on the client instead
 //obj is either an array of notes or a chord/scale object
-async function getModes(root, type = "heptatonic", obj){
+async function getScaleGroups(obj, root, type){
     const typeLookupTable = {
-        "pentatonic": 5,
-        "hexatonic":  6,
-        "heptatonic": 7,
-        "octatonic":  8
+        "Pentatonic": 5,
+        "Hexatonic":  6,
+        "Heptatonic": 7,
+        "Octatonic":  8,
+        "Dodecatonic": 12,
     };
-    let notes = formatLookupInput(obj);
-    let notesListString = '("' + notes.join('","') + '")';
-    let noteslength = notes.length;
-    //TODO: Should scaleLength fail instead of defautling to heptatonic
-    let scaleLength = typeLookupTable[type] ? typeLookupTable[type] : 7;
-    let sql = `SELECT DISTINCT
-    s.mode_id
-  FROM
-    scales s
-    INNER JOIN scale_has_note sn ON s.root_note = sn.root_note and s.name = sn.scale_name
-  WHERE
-    sn.mode_id = ANY (
-      SELECT
-        mode_id
-      FROM
-        scale_has_note
-      where
-        note IN ` + notesListString + ` and root_note = "` + root + '"'+ `
-      group by 
-       name
-      HAVING count(distinct note) = ` + noteslength + `
-    ) AND sn.scale_name = ANY (
-      SELECT
-        name
-      FROM
-        scale_has_note
-      where
-      note IN ` + notesListString + ` and root_note = "` + root + '"'+ `
-      group by 
-       name
-      HAVING count(distinct note) = ` + noteslength + `
-    ) AND  sn.root_note = "` + root + '"'+ `
-  GROUP BY
-    sn.scale_name, sn.root_note
-  HAVING Count(sn.note) = ` + scaleLength;
+
+    let notesLimiter;
+    let noteConstraintStr = ``;
+    if (obj) {
+        notesLimiter = formatLookupInput(obj);
+        noteConstraintStr = `AND COUNT(CASE WHEN sn.note IN ("` + notesLimiter.join('","') + `") THEN 1 END) = `+ notesLimiter.length +` -- matches all notes in chord if match toggle, which may not be`;
+        
+    } 
+
+    const SCALE_LENGTH = typeLookupTable[type];
+    if (!SCALE_LENGTH) {throw new Error("Invalid SCALE_LENGTH");}
+
+    let sql = `
+        SELECT 
+            DISTINCT(scale.group_id) as id,
+            sg.name AS name 
+        FROM 
+            scales scale
+        JOIN scale_has_note sn
+            ON scale.name = sn.scale_name
+            AND scale.root_note = sn.root_note
+        JOIN scale_groups sg
+            ON scale.group_id = sg.id 
+        WHERE
+            scale.root_note = '`+ root +`' -- root note from note nav selection
+        GROUP BY 
+            scale.name, scale.root_note
+        HAVING 
+            COUNT(sn.note) = `+ SCALE_LENGTH +` -- note count from radio
+            `+ noteConstraintStr+ `
+        ORDER BY 
+            scale.group_id ASC;
+    `;
+
+    console.log(sql);
+
+
     let results = await fetchSQL(sql);
     return results;
 }
@@ -874,8 +864,8 @@ async function getSubscalesFromScale(scale, numberOfNotesToAlterBy = 1 , numberO
 
 module.exports = { 
     getChords,
+    getScaleGroups,
     getScales,
-    getModes,
     getChordExtensions,
     getChordAlterations,
     getChordAppendments,

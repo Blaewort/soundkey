@@ -10,7 +10,9 @@ import EditChordRadio from './radio/EditChord';
 import EditScaleRadio from './radio/EditScale';
 import SettingsRadio from './radio/Settings';
 
-import { fapi_getModes, 
+import { 
+    fapi_getScaleGroups,
+    fapi_getScales, 
     fapi_getScalesFromModeName, 
     fapi_getChords,
     fapi_getChordExtensions,
@@ -130,6 +132,10 @@ class SPA extends Component{
                 ],
                 
             },
+            scaleGroupNavSelection: {
+                id: 0,
+                name: "Diatonic"
+            },
             toggle: {
                 // The toggle is visible when the focus is scale or chord and the other is not null (calculate it)
                 scale: true,
@@ -172,14 +178,16 @@ class SPA extends Component{
                 },
                 scale: {
                     edit: null,
-                    text: null
+                    text: null,
+                    navModes: null, //list of actual scales
+                    navGroups: null // list of scale groups
                 },
                 modal: {
                     chord: true, //I'd like the low-heigh modals to be on by default on website entry. Even though you can't
                     scale: true, //    use some of the controls with modal on (theoretically?), the defaults are user friendly 
                     settings: true,
                 },
-                //TODO: Add settings, scale
+                //TODO: Add settings
             },
             focus: "chord", // "chord", "scale", "settings", null ---this is with regard to all the controls
             visualizerFocus: "chord", //"chord, "scale"  --this is what the visual instrument is set to
@@ -410,7 +418,7 @@ class SPA extends Component{
                 }
             }
         }, async () => {
-            this.updateNavSearchScaleGroupList()
+            this.updateNavSearchScaleGroupList();
         });
     }
 
@@ -432,11 +440,118 @@ class SPA extends Component{
         });
     }
 
-    updateNavSearchScaleList() {
+    async updateNavSearchScaleList() {
         // fetch scales and put them in this.list.scale.nav list
+        console.log("inside updateNavSearchScaleList");
+        
+
+        let newList;
+        try{
+            newList = await this.fetchBasicScaleList();
+        }
+
+        catch(err){
+            console.log(err);
+            console.log("bad scale fetch");
+            return;
+        }
+        if (newList) {
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        navModes: newList,
+                    },
+                },
+            }));
+        }
     }
-    updateNavSearchScaleGroupList() {
+
+    async fetchBasicScaleList() {
+        console.log("inside fetchBasicScaleList");
+        const state = this.state;
+
+        // objectLimiter is selected scale
+        const objectLimiter = state.chord && state.toggle.scale ? state.chord : null;
+        const groupID = state.scaleGroupNavSelection?.id;
+
+        try {
+            let response;
+            console.log("inside fetchBasicScaleList");
+            response = await fapi_getScales(parseInt(state.noteSelect.scale.value), objectLimiter, groupID);
+
+            let newList = response;
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+    }
+
+    async updateNavSearchScaleGroupList() {
         // get a list of scale groups like (for 7 notes) Diatonic, Melodic Minor, Neapolitan Major, Neapolitan Minor, Harmonic Minor, Harmonic Major, etc
+        console.log("inside updateNavSearchScaleGroupList");
+        
+
+        let newList;
+        try{
+            newList = await this.fetchScaleGroupList();
+        }
+
+        catch(err){
+            console.log(err);
+            console.log("bad scale fetch");
+            return;
+        }
+        if (newList) {
+            this.setState((state) => ({
+                list: {
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        navGroups: newList,
+                    },
+                },
+            }));
+        }
+    }
+
+    async fetchScaleGroupList() {
+        console.log("inside fetchAScaleGroupList");
+        const state = this.state;
+        const scaleCountType = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
+
+        // objectLimiter is selected scale
+        const objectLimiter = state.chord && state.toggle.scale ? state.chord : null;
+
+        try {
+            let response;
+            console.log("inside fetchScaleGroupList");
+            response = await fapi_getScaleGroups(parseInt(state.noteSelect.scale.value), objectLimiter, scaleCountType);
+
+            let newList = response;
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+
+
     }
 
     toChordEditView() {
@@ -1270,6 +1385,9 @@ class SPA extends Component{
             case "navsearch":
                 this.updateNavSearchScaleGroupList();
                 break;
+            case "navsearchmode":
+                this.updateNavSearchScaleList();
+                break;
             case "edit":
                 // not yet supported
                 break;
@@ -1521,6 +1639,11 @@ class SPA extends Component{
                     navSearchGets: search.nav.gets,
                     instrument: this.state.instrument
                 });
+
+                //getToggle test
+                /* const FUNCTIONAL_TOGGLE = ChordScaleController.getToggle(this.state.view[this.state.focus],selection,this.state.focus,toggle.onClick,toggle.value);
+                console.log("get a toggle?");
+                console.log(FUNCTIONAL_TOGGLE);*/
                      
                 //add visual for fretboard,piano
                 let notes = [];
@@ -1532,7 +1655,7 @@ class SPA extends Component{
                     selectedNotes: notes.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection}type="chord" />
+                contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection} focus={this.state.focus} type="chord" />
                 break;
             case "scale":
                 toggle = {
@@ -1553,6 +1676,8 @@ class SPA extends Component{
                         onModeItemClick: this.onNavSearchModeItemClick,
                         mode: this.state.view.scaleNavSearchMode,
                         gets: true, //just for now using this to signify that the user has a list. later it will be something connected to a database call
+                        scaleList: this.state.list.scale.navModes,
+                        scaleGroupList: this.state.list.scale.navGroups,
                     },
                     noteSelect: {
                         handleClickOutside: this.handleCustomClickOutsideNoteNav,
@@ -1588,7 +1713,7 @@ class SPA extends Component{
                 };
                 let modes = {
                     getScalesFromModeName: fapi_getScalesFromModeName,
-                    get: fapi_getModes,
+                    get: fapi_getScaleGroups,
                 };
 
                 footer = {
@@ -1620,7 +1745,7 @@ class SPA extends Component{
                     selectedNotes: notess.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                contents = <ChordScaleController footer={footer} visualizer={visualizer} modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} type="scale" />
+                contents = <ChordScaleController footer={footer} visualizer={visualizer} modes={modes} view={this.state.view.scale} toggle={toggle} search={search} viewSwitch={viewSwitch} radio={radio} selection={selection} focus={this.state.focus} type="scale" />
                 break;
             case "settings":
                 search = {

@@ -35,25 +35,7 @@ async function postData(url = '', data = {}) {
 // although this might be limited to the simple addition of a label attribute for item display in the UI
 
 
-async function fapi_getModes(root, type = "Heptatonic", chordToLimitBy) {
-    console.log("root");
-    console.log(root);
-    type = type === null ? "Heptatonic": type;
 
-    //noteValue would be 0-12 and we'd grab all chords with root note 0-12
-    await postData(urlRoot + '/getModes/',
-    {
-        root: Note.fromValue(root).name,
-        type: type,
-        data: chordToLimitBy
-    }
-    ).then(response => {
-        return response.json
-    }).catch((error) => {
-        console.error('Error:', error);
-      });;
-
-}
 
 
 //let list = this.props.getScalesFromModeName(this.props.noteSelect.value, this.props.mode); blark
@@ -84,6 +66,58 @@ async function getOctatonicModes(noteValue, chordToLimitBy = null) {
 
 async function getDodecatonicModes(noteValue, chordToLimitBy = null) {
     return await fapi_getScalesFromModeName(noteValue,"dodecatonic", chordToLimitBy);
+}
+
+function fapi_getScales(noteValue,chordToLimitBy, groupID) {
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getScales")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(chordToLimitBy?.notes){
+        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getScales/',
+        {
+            notes: chordToLimitBy, 
+            root: root, //this constraint works for A but nothing else. why?
+            groupID: groupID,
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
+function fapi_getScaleGroups(noteValue,chordToLimitBy, type) {
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getScaleGroups")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(chordToLimitBy?.notes){
+        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getScaleGroups/',
+        {
+            notes: chordToLimitBy, 
+            root: root, 
+            type: type,
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
 }
  
 function fapi_getChords(noteValue,category = null, scaleToLimitBy, searchString = "") {
@@ -623,8 +657,9 @@ function fapi_getOrientations() {
 
 
 export {  
-    fapi_getModes, 
+    fapi_getScaleGroups,
     fapi_getScalesFromModeName, 
+    fapi_getScales,
     fapi_getChords,
     fapi_getChordExtensions,
     fapi_getChordAlterations,

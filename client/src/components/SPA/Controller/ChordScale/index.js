@@ -43,6 +43,9 @@ class ChordScaleController extends Component{
         }
     }
 
+    
+
+
     getTextSearchViewContents() {
         const headerText = this.props.search.text.input;
         const onTextChange = this.props.search.text.onChange;
@@ -70,10 +73,15 @@ class ChordScaleController extends Component{
             listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text[listName]} title={this.props.type === "chord" ? "Chord" : "Scales"} />
         }
 
-        if (this.props.toggle.isRequired) {
+        toggle = ChordScaleController.getToggle(this.props.view, this.props.selection, this.props.focus, this.props.toggle.onClick, this.props.toggle.value);
+
+        console.log("check toggle");
+        console.log(toggle);
+
+        /*if (this.props.toggle.isRequired) {
             const title = this.props.type === "chord" ? "Match Scale" : "Match Chord";
             toggle = <Toggle handleClick={this.props.toggle.onClick} checked={this.props.toggle.value} title={title} />;
-        }
+        }*/
 
         
         let pages = 0;
@@ -187,7 +195,8 @@ class ChordScaleController extends Component{
             listArea = <ListArea modal={this.props.search.listModal} title={this.props.radio.nav || "Triad"}  handleItemClick={listItemClick} list={list} />;
         } else if (this.props.type === "scale") {
             // need to make it a mode list that links to other lists
-            const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, this.props.search.limitByOther);
+            //const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, this.props.search.limitByOther);
+            const list = this.props.search.nav.scaleGroupList;
             const itemClick = this.props.search.nav.onScaleItemClick;
             listArea = <ListArea modal={this.props.search.listModal} title={"Scale Groups"} handleItemClick={itemClick} list={list} />;
         }
@@ -231,7 +240,8 @@ class ChordScaleController extends Component{
         
         visualInstrument = <VisualInstrument instrument={this.props.visualizer.instrument} selectedNotes={this.props.visualizer.selectedNotes}/>;
 
-        const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.search.nav.mode, this.props.search.limitByOther);
+        //const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.search.nav.mode, this.props.search.limitByOther);
+        const list = this.props.search.nav.scaleList;
         const itemClick = this.props.search.nav.onModeItemClick;
         listArea = <ListArea modal={this.props.search.listModal} title={this.props.search.nav.mode + " Modes"} handleItemClick={itemClick} list={list} />;
 
@@ -383,6 +393,27 @@ ChordScaleController.listIsVisible = function listIsVisible(view, navSearchGets,
         default:
             return false;
     }
+}
+
+// toggleobj is a {} that has onClick and value
+ChordScaleController.getToggle =  function getToggle(view, selection, focus, onClick, value){
+    const isVisible = ChordScaleController.toggleIsVisible(view, selection, focus);
+    if (!isVisible) {console.log("NO TOGGLE");return <></>;}
+
+    if (focus === "chord") {return ChordScaleController.getChordToggle(view, focus, onClick, value);}
+    else if (focus === "scale") {return ChordScaleController.getScaleToggle(view, focus, onClick, value);}
+    else {
+        throw new Error("bad getToggle");
+    }
+}
+
+ChordScaleController.getChordToggle = function getChordToggle(view, focus, onClick, value) {
+    return <Toggle handleClick={onClick} checked={value} title={"Match Scale"} />;
+}
+
+ChordScaleController.getScaleToggle = function getScaleToggle(view, focus, onClick, value) {
+    return <Toggle handleClick={onClick} checked={value} title={"Match Chord"} />;
+
 }
 
 
