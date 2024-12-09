@@ -659,6 +659,11 @@ class SPA extends Component{
                     break;
                 case "scale":
                     // not yet supported
+                    if (this.state.view.scale === "navsearchmode") {
+                        this.updateNavSearchScaleList();
+                    } else if (this.state.view.scale === "navsearch"){
+                        this.updateNavSearchScaleGroupList();
+                    } else {throw new Error("this.state.view.scale is impossible value");}
                     break;
                 default:
                     throw Error("onNoteSelectionUpdate should be called only when this.state.focus is 'chord' or 'scale'. Instead got :" + this.state.focus);
