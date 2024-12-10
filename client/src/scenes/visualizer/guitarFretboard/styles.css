@@ -617,7 +617,7 @@ li.fret-wrapper:first-child .marker {
 }
 
 .options.with-list.with-radio .guitarFretboard {
-    /* has list and radio (settings and edit)) list assumed to be 4+ items*/
+    /* has list and radio (settings and edit-rotations)) list assumed to be 4+ items*/
     @media screen and (max-height: 535px) and (min-width: 1075px) {
         display: none;
     }
@@ -712,6 +712,30 @@ li.fret-wrapper:first-child .marker {
         display: none;
     }
 }
+
+/* need that liist shortening from 4-3 too */
+
+/* edit with toggle */
+.options.with-list.with-radio.with-toggle .guitarFretboard {
+    /* has list and radio and toggle (most settings and edit)) list assumed to be 4+ items*/
+    @media screen and (max-height: 572px) and (min-width: 1075px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 552px) and (min-width: 440px) and (max-width: 1074px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 535px) and (min-width: 400px) and (max-width: 439px) {
+        display: none;
+    }
+
+    @media screen and (max-height: 520px) and (min-width: 300px) and (max-width: 399px) {
+        display: none;
+    }
+}
+
+
 
 /* I'll have to add options.with-notenav.with-radio and options.with-notenav.with-radio-with-toggle  for when we dont actively have a list avaiable
  in 'navsearch' chord/scale view (right now all the settings navlists are hardcoded so they are always on) (searchGets havent yet been got) 
