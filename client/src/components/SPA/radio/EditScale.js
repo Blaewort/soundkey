@@ -24,9 +24,12 @@ import Radio from './index'
             {
                 html: <i class="fas fa-minus"></i>,
                 value: "Removed Tones"
+            },
+            {
+                html: <i class="fas fa-sync-alt"></i>,
+                value: "Rotations"
             }
         ];
-        //const selectedValue = "Alterations";
 
         return (
             <Radio name={"Edit Scale"} onUpdate={this.props.onUpdate}  title={title} options={options} selectedValue={this.props.selectedValue || "Alterations"} />

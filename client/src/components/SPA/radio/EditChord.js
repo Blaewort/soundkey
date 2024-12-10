@@ -28,6 +28,10 @@ import Radio from './index'
             {
                 html: <i class="fas fa-minus"></i>,
                 value: "Removed Tones"
+            },
+            {
+                html: <i class="fas fa-sync-alt"></i>,
+                value: "Rotations"
             }
         ];
         //const selectedValue = "Extensions";

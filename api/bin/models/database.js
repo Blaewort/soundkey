@@ -791,6 +791,104 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
     return results;
 }
 
+async function getScaleRotations(root, scaleToRotate) {
+    console.log("inside getScaleRotations");
+
+    validateNotesInput(root);
+    let notes = formatLookupInput(scaleToRotate);
+
+    let sql = `
+    SELECT 
+        s.name, 
+        s.root_note, 
+        GROUP_CONCAT(
+            sn.note 
+            ORDER BY 
+            CASE WHEN sn.note >= s.root_note THEN 1 -- Order note list based on root of scale
+            ELSE 2 END, 
+            sn.note ASC
+        ) AS notes 
+    FROM 
+        scales s 
+        INNER JOIN scale_has_note sn ON s.name = sn.scale_name 
+        AND s.root_note = sn.root_note 
+    WHERE 
+        s.root_note != "`+ root + `" -- root of the selected scale
+    GROUP BY 
+        s.name, 
+        s.root_note 
+    HAVING 
+        COUNT(*) = `+ notes.length +` -- note count of selected scale
+        AND COUNT(
+            CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 -- note list of selected chord
+            END
+        ) = 7 -- note count of selected scale
+    ORDER BY 
+        CASE WHEN s.root_note >= "`+ root +`" THEN 1 -- root note of scale selected
+        ELSE 2 END, 
+    s.root_note ASC;
+    `;
+
+    console.log(sql);
+
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    qResults.forEach(ele => {
+        const noteNameList = ele.notes.split(",");
+        try{
+            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            results.push(scale);
+        } catch(err) {
+        }
+    });
+    return results;
+}
+
+async function getChordRotations(root, chordToRotate) {
+    console.log("inside getChordRotations");
+
+    validateNotesInput(root);
+    let notes = formatLookupInput(chordToRotate);
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol, 
+        chn.root_note 
+    FROM 
+        chord_has_note chn 
+    WHERE 
+        chn.root_note != "`+ root +`" -- root note of selected chord
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note 
+    HAVING 
+        COUNT(*) = `+ notes.length +` -- note count of selected chord
+        AND COUNT(
+            CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 -- note list of selected chord
+            END
+        ) = 4 
+    ORDER BY 
+        CASE WHEN chn.root_note >= "`+ root + `" THEN 1 -- root note of chord selected
+        ELSE 2 END, 
+    chn.root_note ASC;
+    `;
+
+    console.log(sql);
+
+
+    let qResults = await fetchSQL(sql);
+    let results = [];
+
+    qResults.forEach(ele => {
+        console.log(ele.chord_symbol);
+        console.log("ele.chordSymbol^");
+        results.push(Chord.chordFromNotation(ele.chord_symbol));
+    });
+    return results;
+}
+
 async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, userString) {
     console.log("inside getScalesFromUserString");
 
@@ -922,8 +1020,10 @@ module.exports = {
     getChordAlterations,
     getChordAppendments,
     getChordDeductions,
+    getChordRotations,
     getScaleAlterations,
     getScaleAppendments,
     getScaleDeductions,
+    getScaleRotations,
     getScalesFromUserString
  };

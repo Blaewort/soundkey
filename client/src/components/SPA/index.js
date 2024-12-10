@@ -19,9 +19,11 @@ import {
     fapi_getChordAlterations, 
     fapi_getChordAppendments,
     fapi_getChordDeductions,
+    fapi_getChordRotations,
     fapi_getScaleAlterations,
     fapi_getScaleAppendments,
     fapi_getScaleDeductions,
+    fapi_getScaleRotations,
     fapi_getScaleFromUserString,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
@@ -45,14 +47,14 @@ function getLandScapeClassName({base, focus, view, navSearchGets, textSearchGets
     if (listIsVisible(view, focus, navSearchGets, textSearchGets, radio, selection, instrument)) {classString = classString.concat("with-list "); }
     if (radioIsVisible(view, focus)) {classString = classString.concat("with-radio ");}
     if (notenavIsVisible(view, focus)) {classString = classString.concat("with-notenav ")}
-    if (toggleIsVisible(view, focus, selection)) {classString = classString.concat("with-toggle ")}
+    if (toggleIsVisible(view, focus, selection, radio)) {classString = classString.concat("with-toggle ")}
 
     return classString;
 }
 
-function toggleIsVisible(view, focus, selection) {
+function toggleIsVisible(view, focus, selection, radio) {
     if (focus === "settings") { return InstrumentController.toggleIsVisible(); }
-    return ChordScaleController.toggleIsVisible(view[focus], selection, focus);
+    return ChordScaleController.toggleIsVisible(view[focus], selection, focus, radio);
 }
 
 function notenavIsVisible(view, focus) {
@@ -77,13 +79,20 @@ class SPA extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            chord: {
+             chord: {
                 root: "E",
                 name: "E Minor",
                 symbol: "Em",
                 category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}]
             },
+            /*chord: {
+                root: "E",
+                name: "E Minor Seven",
+                symbol: "Em7",
+                category: "Seven",
+                notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}, {label: "D", value: 5}]
+            },*/
             /*chord: {
                 root: "E",
                 name: "E Major",
@@ -764,6 +773,7 @@ class SPA extends Component{
             "Alterations": "fetchAlteredScaleList",
             "Added Tones": "fetchAppendedScaleList",
             "Removed Tones": "fetchDeductedScaleList",
+            "Rotations": "fetchRotatedScaleList"
         }[radioValue] || "not a supported radioValue for updatedEditedScaleList";
 
         console.log(whichFetch);
@@ -826,6 +836,7 @@ class SPA extends Component{
             "Alterations": "fetchAlteredChordList",
             "Added Tones": "fetchAppendedChordList",
             "Removed Tones": "fetchDeductedChordList",
+            "Rotations": "fetchRotatedChordList",
         }[radioValue] || "not a supported radioValue for updatedEditedChordList";
 
         console.log(whichFetch);
@@ -1005,6 +1016,60 @@ class SPA extends Component{
             let response;
             console.log("inside fetchDeductedChordList if (state.focus === 'chord')");
             response = await fapi_getChordDeductions(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter, scaleToLimitBy);
+
+            let newList = JSON.parse(response);
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+    };
+
+    fetchRotatedChordList = async () => {
+        console.log("inside fetchRotatedChordList");
+        const state = this.state;
+
+        // objectLimiter is selected chord
+        const objectLimiter = state[state.focus];
+
+        try {
+            let response;
+            console.log("inside fetchRotatedChordList if (state.focus === 'chord')");
+            response = await fapi_getChordRotations(parseInt(state.noteSelect.chord.value), objectLimiter);
+
+            let newList = JSON.parse(response);
+
+            if (Array.isArray(newList)) {
+                return newList.map((obj) => ({
+                    label: obj.name,
+                    object: obj,
+                }));
+            }
+        } catch (err) {
+            console.error("Error fetching new list:", err);
+        }
+        
+        return null;
+    };
+
+    fetchRotatedScaleList = async () => {
+        console.log("inside fetchRotatedScaleList");
+        const state = this.state;
+
+        // objectLimiter is selected chord
+        const objectLimiter = state[state.focus];
+
+        try {
+            let response;
+            console.log("inside fetchRotatedScaleList if (state.focus === 'scale')");
+            response = await fapi_getScaleRotations(parseInt(state.noteSelect.scale.value), objectLimiter);
 
             let newList = JSON.parse(response);
 
@@ -1661,7 +1726,7 @@ class SPA extends Component{
                 });
 
                 //getToggle test
-                /* const FUNCTIONAL_TOGGLE = ChordScaleController.getToggle(this.state.view[this.state.focus],selection,this.state.focus,toggle.onClick,toggle.value);
+                /* const FUNCTIONAL_TOGGLE = ChordScaleController.getToggle(this.state.view[this.state.focus],selection,this.state.focus,this.state.radio, toggle.onClick,toggle.value);
                 console.log("get a toggle?");
                 console.log(FUNCTIONAL_TOGGLE);*/
                      
@@ -1675,7 +1740,7 @@ class SPA extends Component{
                     selectedNotes: notes.map((note) => note.label), //str like "E"
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
-                contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} selection={selection} focus={this.state.focus} type="chord" />
+                contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} radioObj={this.state.radio} selection={selection} focus={this.state.focus} type="chord" />
                 break;
             case "scale":
                 toggle = {
@@ -1775,6 +1840,7 @@ class SPA extends Component{
                     search={search}
                     viewSwitch={viewSwitch}
                     radio={radio}
+                    radioObj={this.state.radio} //should switch to using this because chordScaleController looks at both chord/scale 
                     selection={selection}
                     focus={this.state.focus}
                     scaleGroupNavSelection={this.state.scaleGroupNavSelection}

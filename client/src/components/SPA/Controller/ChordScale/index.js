@@ -73,7 +73,7 @@ class ChordScaleController extends Component{
             listArea = <ListArea modal={this.props.search.listModal} handleItemClick={listItemClick} list={this.props.search.text[listName]} title={this.props.type === "chord" ? "Chord" : "Scales"} />
         }
 
-        toggle = ChordScaleController.getToggle(this.props.view, this.props.selection, this.props.focus, this.props.toggle.onClick, this.props.toggle.value);
+        toggle = ChordScaleController.getToggle(this.props.view, this.props.selection, this.props.focus, this.props.radioObj,  this.props.toggle.onClick, this.props.toggle.value);
 
         console.log("check toggle");
         console.log(toggle);
@@ -311,7 +311,7 @@ class ChordScaleController extends Component{
         footer = <Footer pageCount={pages} onUpdate={this.props.footer.onUpdate} selectedValue={this.props.footer.selectedValue} />;
 
     
-        const toggle = ChordScaleController.getToggle(this.props.view, this.props.selection, this.props.focus, this.props.toggle.onClick, this.props.toggle.value);
+        const toggle = ChordScaleController.getToggle(this.props.view, this.props.selection, this.props.focus, this.props.radioObj, this.props.toggle.onClick, this.props.toggle.value);
 
         return <>
             <div class="top-controls">
@@ -358,7 +358,7 @@ class ChordScaleController extends Component{
 }
 
 
-ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection, focus) {
+ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection, focus, radio) {
     const isChordView = (focus && focus === "chord");
 
     switch(view) {
@@ -369,7 +369,7 @@ ChordScaleController.toggleIsVisible = function toggleIsVisible(view, selection,
         case "navsearch":
         case "navsearchmode":
         case "edit":
-          return selection.secondary;
+          return selection.secondary && (radio[focus].edit !== "Rotations");
         default:
           return false;
       } 
@@ -401,8 +401,8 @@ ChordScaleController.listIsVisible = function listIsVisible(view, navSearchGets,
 }
 
 // toggleobj is a {} that has onClick and value
-ChordScaleController.getToggle =  function getToggle(view, selection, focus, onClick, value){
-    const isVisible = ChordScaleController.toggleIsVisible(view, selection, focus);
+ChordScaleController.getToggle =  function getToggle(view, selection, focus, radio, onClick, value){
+    const isVisible = ChordScaleController.toggleIsVisible(view, selection, focus, radio);
     if (!isVisible) {console.log("NO TOGGLE");return <></>;}
 
     if (focus === "chord") {return ChordScaleController.getChordToggle(view, focus, onClick, value);}

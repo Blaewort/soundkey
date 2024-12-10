@@ -65,6 +65,32 @@ router.post('/getChords/Deductions',async (req,res) => {
   res.json(JSON.stringify(chords));
 });
 
+router.post('/getChords/Rotations',async (req,res) => {
+  console.log("in the /getChords/Rotations route");
+
+  console.log(req.body);
+  console.log("req.body^");
+
+  let root = req.body.root;
+  let chordToRotate = req.body.chordToRotate;
+  console.log("db.getChords/Rotations(",root,",",chordToRotate,")");
+  let chords = await db.getChordRotations(root,chordToRotate);
+  res.json(JSON.stringify(chords));
+});
+
+router.post('/getScales/Rotations',async (req,res) => {
+  console.log("in the /getScales/Rotations route");
+
+  console.log(req.body);
+  console.log("req.body^");
+
+  let root = req.body.root;
+  let scaleToRotate = req.body.scaleToRotate;
+  console.log("db.getChords/Rotations(",root,",",scaleToRotate,")");
+  let scales = await db.getScaleRotations(root,scaleToRotate);
+  res.json(JSON.stringify(scales));
+});
+
 router.post('/getChords/fromStrings/' ,(req,res) => {
   console.log(req.body);
   let chords = chordExpressions.Chord.chordFromNotation(req.body.string);

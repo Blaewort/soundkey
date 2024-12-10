@@ -272,6 +272,58 @@ function fapi_getChordDeductions(noteValue,category = null, chordToLimitBy, scal
     });
 }
 
+function fapi_getChordRotations(noteValue, chordToRotate) {
+    console.log("inside fapi_getChordRotationss");
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getChordRotations")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(chordToRotate?.notes){
+        chordToRotate = chordToRotate.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getChords/Rotations/',
+        {
+            chordToRotate: chordToRotate, 
+            root: root, //this constraint works for A but nothing else. why?
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
+function fapi_getScaleRotations(noteValue, scaleToRotate) {
+    console.log("inside fapi_getScaleRotationss");
+    noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
+
+    console.log("made it to fapi_getScaleRotations")
+
+    // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
+    if(scaleToRotate?.notes){
+        scaleToRotate = scaleToRotate.notes.map(val => val.label);
+    }
+
+    const root = Note.fromValue(noteValue).name;
+    console.log("root");
+    console.log(root);
+
+    return postData(urlRoot + '/getScales/Rotations/',
+        {
+            scaleToRotate: scaleToRotate, 
+            root: root, //this constraint works for A but nothing else. why?
+        }
+    ).then(
+        response => {
+            return response.json();
+    });
+}
+
 function fapi_getScaleAlterations(noteValue,category = null, scaleToLimitBy, chordToLimitBy) {
     console.log("inside fapi_getScaleAlterations");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
@@ -693,9 +745,11 @@ export {
     fapi_getChordAlterations,
     fapi_getChordAppendments,
     fapi_getChordDeductions,
+    fapi_getChordRotations,
     fapi_getScaleAlterations,
     fapi_getScaleAppendments,
     fapi_getScaleDeductions,
+    fapi_getScaleRotations,
     fapi_getScaleFromUserString,
     fapi_getChordNearbys,
     fapi_getScaleNearbys,
