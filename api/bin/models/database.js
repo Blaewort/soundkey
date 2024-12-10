@@ -822,7 +822,7 @@ async function getScaleRotations(root, scaleToRotate) {
         AND COUNT(
             CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 -- note list of selected chord
             END
-        ) = 7 -- note count of selected scale
+        ) = `+ notes.length +` -- note count of selected scale
     ORDER BY 
         CASE WHEN s.root_note >= "`+ root +`" THEN 1 -- root note of scale selected
         ELSE 2 END, 
@@ -868,7 +868,7 @@ async function getChordRotations(root, chordToRotate) {
         AND COUNT(
             CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 -- note list of selected chord
             END
-        ) = 4 
+        ) = `+ notes.length +`  -- note count of selected chord
     ORDER BY 
         CASE WHEN chn.root_note >= "`+ root + `" THEN 1 -- root note of chord selected
         ELSE 2 END, 
