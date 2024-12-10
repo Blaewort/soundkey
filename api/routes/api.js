@@ -100,14 +100,17 @@ router.post('/getChords/fromStrings/' ,(req,res) => {
 
 router.post('/getChords/',async (req,res) => {
   console.log("in the route");
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
+
   let root = req.body.root ? req.body.root : null;
   let category = req.body.category ? req.body.category : null;
   let notes = req.body.notes;
-  console.log("db.getChords(",notes,",",root,",",category,",",maxNotes,")");
-  let chords = await db.getChords(notes,root,category,maxNotes);
+
+  console.log("db.getChords(",notes,",",root,",",category,")");
+
+  let chords = await db.getChords(notes,root,category);
   res.json(JSON.stringify(chords));
 });
+
 //getScales(obj,root = null,mode = null)
 router.post('/getScales/',async (req,res) => {
   console.log("in the /getScales/ route");

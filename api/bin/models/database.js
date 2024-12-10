@@ -139,51 +139,14 @@ function validateCategoryInput(category){
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have ALL notes the chord does plus any extras
 // USE user can see chords with added tones
-async function getChords(obj, root = null, category = null, searchString = "", noteOffset = 0) {
-    console.log("made it here");
-    console.log('\n',"GetChords(",obj,",",root,",",category,",",noteOffset,")");
-
-    let notes = null;
-
-    console.log("objd");
-    console.log(obj);
-    console.log("obj^");
-
-    let noteConstraint;
-
-    if (obj !== null) { //TODO: all these things below are only being validated if we have an obj to limit us? doesnt validate otherwise
-        try{
-            notes = formatLookupInput(obj);
-            validateNotesInput(root);
-            validateCategoryInput(category);
-        } catch(err){
-            return err;
-        }
-
-        //if lacking both root and category, then we can't add AND because it's the first and only item after WHERE
-        const andStr = (root && category) ? `AND ` : ``; //this should anticipate the text search which will have no root or category
+async function getChords(scaleToLimitBy, root = null, category = null) {
+    console.log("inside db.getChords");
+    console.log(scaleToLimitBy);
+    console.log("scaleToLimitBy^");
 
 
-        noteConstraint = `HAVING COUNT(CASE 
-                                            WHEN cn.note IN ("` + notes.join('","') + `") THEN 1
-                                        END) = COUNT(DISTINCT cn.note)`;
-                                        
-        /* noteConstraint = `HAVING COUNT(CASE 
-                                        WHEN cn.note IN ("` + notes.join('","') + `") THEN 1
-                                    END) = LEAST(COUNT(DISTINCT cn.note), ?)`;*/
-    }
-
-    else { //obj is null
-        noteConstraint = ``;
-    }
-
-    const hasAnyConditions = (!category && !root && !obj) ? `` : `WHERE`;
-
-    console.log("Validation passed");
-    
-    category = category !== null ? 'c.category = "' + category + '" AND ':  '';
-
-    root = root !== null ? 'c.root_note = "' + root + '"':  '';
+    validateNotesInput(root);
+    validateCategoryInput(category);
 
     let sql = `SELECT
         c.name,
@@ -195,17 +158,30 @@ async function getChords(obj, root = null, category = null, searchString = "", n
     INNER JOIN chord_has_note cn
         ON c.symbol = cn.chord_symbol
         AND c.root_note = cn.root_note
-    ` + hasAnyConditions + `
-        ` + category + root + `
-        
+    WHERE
+        c.root_note = ? AND c.category = ?
     GROUP BY
         c.name, c.symbol, c.root_note
-    -- Only select chords that contain notes from the allowed list
-    `+ noteConstraint+`;`;
+    -- Only select chords that contain notes from the allowed list 
+    `;
 
+    let qResults;
 
-    console.log(sql);
-    let qResults = await fetchSQL(sql);
+    if (scaleToLimitBy) { 
+        const notesLimiter = formatLookupInput(scaleToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `HAVING COUNT(CASE WHEN cn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT cn.note),?) -- matches all notes in chord if match toggle, which may not be`;
+        sql += constrainerStr; 
+        
+        console.log(sql);
+        console.log("sql^");
+        console.log('Parameters:', [root, category, ...notesLimiter, notesLimiter.length]);
+
+        qResults = await fetchPreparedStatement(sql, [root, category, ...notesLimiter, notesLimiter.length]);
+    } else {
+        qResults = await fetchPreparedStatement(sql, [root, category]);
+    }
+
     let results = [];
     qResults.forEach(ele => {
         results.push(Chord.chordFromNotation(ele.symbol));
@@ -221,8 +197,6 @@ function validateGroupID(id) {
 
 async function getScales(chordToLimitBy, root, groupID) { 
     console.log("inside database.js getScales");
-
-    const limitByChord = chordToLimitBy ? true : false;
 
     validateNotesInput(root);
     validateGroupID(groupID);
@@ -251,7 +225,7 @@ async function getScales(chordToLimitBy, root, groupID) {
     
     let qResults;
 
-    if (limitByChord) { 
+    if (chordToLimitBy) { 
         const notesLimiter = formatLookupInput(chordToLimitBy);
         const placeholders = notesLimiter.map(() => '?').join(', ');
         const constrainerStr = `HAVING COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) -- matches all notes in chord if match toggle, which may not be`;
