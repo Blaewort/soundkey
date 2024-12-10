@@ -38,6 +38,20 @@ async function fetchSQL(sql){
     });
 }
 
+async function fetchPreparedStatement(sql, params){
+    return new Promise((resolve, reject) => {
+        pool.execute(sql, params, function (error, results) {
+            if (error) {
+                console.log("FetchPreparedStatement error: " + error);
+                reject(error);
+            };
+            resolve(results);
+        });
+    });
+}
+
+
+
 function formatLookupInput(obj){
     let notes;
     
@@ -197,30 +211,17 @@ async function getChords(obj, root = null, category = null, searchString = "", n
 }
 
 function validateGroupID(id) {
-    return Number.isInteger(id);
+    if (!Number.isInteger(id)) {throw new Error ("groupID must be an integer");}
 }
 
 
-async function getScales(obj,root, groupID) { 
+async function getScales(chordToLimitBy, root, groupID) { 
     console.log("inside database.js getScales");
-    console.log(obj);
-    console.log("obj^");
 
-    let notesLimiter;
-    let noteConstraintStr = ``;
-    if (obj) {
-        notesLimiter = formatLookupInput(obj);
-        noteConstraintStr = `HAVING 
-        COUNT(CASE WHEN sn.note IN ("` + notesLimiter.join('","') + `") THEN 1 END) = `+ notesLimiter.length +` -- matches all notes in chord if match toggle, which may not be`;
-        
-    } 
+    const limitByChord = chordToLimitBy ? true : false;
+
     validateNotesInput(root);
     validateGroupID(groupID);
-
-    console.log(root);
-    console.log("root^");
-    console.log(groupID);
-    console.log("groupID^");
 
     console.log("made it to just before the sql");
 
@@ -230,7 +231,7 @@ async function getScales(obj,root, groupID) {
         scale.root_note,
         GROUP_CONCAT(sn.note ORDER BY
             CASE
-            WHEN sn.note >= "`+ root +`" THEN 1 -- Root Note alphabetical order starting on root note from navnote selection
+            WHEN sn.note >= ? THEN 1 -- Root Note alphabetical order starting on root note from navnote selection
                 ELSE 2
             END,
             sn.note ASC) AS notes
@@ -240,15 +241,33 @@ async function getScales(obj,root, groupID) {
             ON scale.name = sn.scale_name
             AND scale.root_note = sn.root_note
     WHERE
-            scale.root_note = "`+ root +`" AND scale.group_id = `+ groupID +` -- root comes from navnote selection, group_id comes from state.scaleGroupSelection
+            scale.root_note = ? AND scale.group_id = ? -- root comes from navnote selection, group_id comes from state.scaleGroupSelection
     GROUP BY
         scale.name, scale.root_note
-    `+ noteConstraintStr + `
     `;
 
-    console.log(sql);
+    
+    let qResults;
 
-    let qResults = await fetchSQL(sql);
+    if (limitByChord) { 
+        const notesLimiter = formatLookupInput(chordToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `HAVING COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = ? -- matches all notes in chord if match toggle, which may not be`;
+        sql += constrainerStr; 
+
+        console.log(sql);
+        console.log("sql^");
+        console.log('Parameters:', [root, root, groupID, ...notesLimiter, notesLimiter.length]);
+
+        qResults = await fetchPreparedStatement(sql, [root, root, groupID, ...notesLimiter, notesLimiter.length]);
+    } else {
+        qResults = await fetchPreparedStatement(sql, [root, root, groupID]);
+
+    }
+
+    console.log(qResults);
+    console.log("qResults^");
+
     let results = [];
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
