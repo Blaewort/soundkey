@@ -165,22 +165,24 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
     -- Only select chords that contain notes from the allowed list 
     `;
 
-    let qResults;
+
+    let params;
 
     if (scaleToLimitBy) { 
         const notesLimiter = formatLookupInput(scaleToLimitBy);
         const placeholders = notesLimiter.map(() => '?').join(', ');
         const constrainerStr = `HAVING COUNT(CASE WHEN cn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT cn.note),?) -- matches all notes in chord if match toggle, which may not be`;
         sql += constrainerStr; 
-        
-        console.log(sql);
-        console.log("sql^");
-        console.log('Parameters:', [root, category, ...notesLimiter, notesLimiter.length]);
-
-        qResults = await fetchPreparedStatement(sql, [root, category, ...notesLimiter, notesLimiter.length]);
+ 
+        params = [root, category, ...notesLimiter, notesLimiter.length];
     } else {
-        qResults = await fetchPreparedStatement(sql, [root, category]);
+        params = [root, category];
     }
+
+    console.log(sql);
+    console.log('Parameters:', params);
+
+    let qResults = await fetchPreparedStatement(sql, params);
 
     let results = [];
     qResults.forEach(ele => {
@@ -222,27 +224,22 @@ async function getScales(chordToLimitBy, root, groupID) {
         scale.name, scale.root_note
     `;
 
-    
-    let qResults;
+    let params;
 
     if (chordToLimitBy) { 
         const notesLimiter = formatLookupInput(chordToLimitBy);
         const placeholders = notesLimiter.map(() => '?').join(', ');
         const constrainerStr = `HAVING COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) -- matches all notes in chord if match toggle, which may not be`;
         sql += constrainerStr; 
-        
-        console.log(sql);
-        console.log("sql^");
-        console.log('Parameters:', [root, root, groupID, ...notesLimiter, notesLimiter.length]);
-
-        qResults = await fetchPreparedStatement(sql, [root, root, groupID, ...notesLimiter, notesLimiter.length]);
+        params = [root, root, groupID, ...notesLimiter, notesLimiter.length];
     } else {
-        qResults = await fetchPreparedStatement(sql, [root, root, groupID]);
-
+        params = [root, root, groupID];
     }
 
-    console.log(qResults);
-    console.log("qResults^");
+    console.log(sql);
+    console.log('Parameters:', params);
+
+    let qResults = await fetchPreparedStatement(sql, params);
 
     let results = [];
     qResults.forEach(ele => {
