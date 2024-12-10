@@ -167,6 +167,10 @@ async function getChords(obj, root = null, category = null, searchString = "", n
         noteConstraint = `HAVING COUNT(CASE 
                                             WHEN cn.note IN ("` + notes.join('","') + `") THEN 1
                                         END) = COUNT(DISTINCT cn.note)`;
+                                        
+        /* noteConstraint = `HAVING COUNT(CASE 
+                                        WHEN cn.note IN ("` + notes.join('","') + `") THEN 1
+                                    END) = LEAST(COUNT(DISTINCT cn.note), ?)`;*/
     }
 
     else { //obj is null
@@ -223,8 +227,6 @@ async function getScales(chordToLimitBy, root, groupID) {
     validateNotesInput(root);
     validateGroupID(groupID);
 
-    console.log("made it to just before the sql");
-
     let sql = `
     SELECT
         scale.name,
@@ -252,9 +254,9 @@ async function getScales(chordToLimitBy, root, groupID) {
     if (limitByChord) { 
         const notesLimiter = formatLookupInput(chordToLimitBy);
         const placeholders = notesLimiter.map(() => '?').join(', ');
-        const constrainerStr = `HAVING COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = ? -- matches all notes in chord if match toggle, which may not be`;
+        const constrainerStr = `HAVING COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) -- matches all notes in chord if match toggle, which may not be`;
         sql += constrainerStr; 
-
+        
         console.log(sql);
         console.log("sql^");
         console.log('Parameters:', [root, root, groupID, ...notesLimiter, notesLimiter.length]);
