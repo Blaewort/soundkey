@@ -948,7 +948,6 @@ class SPA extends Component{
     fetchAlteredChordList = async () => {
         console.log("inside fetchAlteredChordList");
         const state = this.state;
-        const radioValue = state.radio.chord?.edit || EditChordRadio.defaultValue; //optional chaining is wild
 
         // objectLimiter is selected chord
         const objectLimiter = state[state.focus];
@@ -957,7 +956,7 @@ class SPA extends Component{
         try {
             let response;
             console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
-            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter, scaleToLimitBy);
+            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), objectLimiter, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 

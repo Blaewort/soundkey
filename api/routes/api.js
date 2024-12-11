@@ -17,10 +17,10 @@ router.post('/getChords/Alterations',async (req,res) => {
   console.log(req.body);
   console.log("req.body^");
 
-  let notes = req.body.notes;
+  let baseChord = req.body.baseChord;
   let scaleToLimitBy = req.body.scaleToLimitBy;
-  console.log("db.getChords/Alterations(",notes,",",scaleToLimitBy,")");
-  let chords = await db.getChordAlterations(notes,scaleToLimitBy);
+  console.log("db.getChords/Alterations(",baseChord,",",scaleToLimitBy,")");
+  let chords = await db.getChordAlterations(baseChord,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 

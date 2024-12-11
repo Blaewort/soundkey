@@ -179,15 +179,15 @@ function fapi_getChordExtensions(noteValue,category = null, baseChord, scaleToLi
     });
 }
 
-function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy, scaleToLimitBy) {
+function fapi_getChordAlterations(noteValue, baseChord, scaleToLimitBy) {
     console.log("inside fapi_getChordAlterations");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
     console.log("made it to fapi_getChordAlterations")
 
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
-    if(chordToLimitBy?.notes){
-        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    if(baseChord?.notes){
+        baseChord = baseChord.notes.map(val => val.label);
     }
     if(scaleToLimitBy?.notes){
         scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
@@ -199,9 +199,7 @@ function fapi_getChordAlterations(noteValue,category = null, chordToLimitBy, sca
 
     return postData(urlRoot + '/getChords/Alterations/',
         {
-            notes: chordToLimitBy, 
-            root: root, //this constraint works for A but nothing else. why?
-            category: category, //the radio value the UI is set to
+            baseChord: baseChord, 
             scaleToLimitBy: scaleToLimitBy
         }
     ).then(
