@@ -567,6 +567,45 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     });
     return results;
 }
+
+async function getChordRotations(root, baseChord) {
+    console.log("inside getChordRotations");
+
+    validateNotesInput(root);
+
+    baseChordNotes = formatLookupInput(baseChord);
+    const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol, 
+        chn.root_note 
+    FROM 
+        chord_has_note chn 
+    WHERE 
+        chn.root_note != ? -- root note of selected chord
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note 
+    HAVING 
+        COUNT(*) = ? -- note count of selected chord
+        AND COUNT(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 END) = ?  -- note count of selected chord
+    ORDER BY 
+        CASE WHEN chn.root_note >= ? THEN 1 -- root note of chord selected
+        ELSE 2 END, 
+    chn.root_note ASC;
+    `;
+
+    let qResults = await fetchPreparedStatement(sql, [root, baseChord.length, ...baseChord, baseChord.length, root]);
+    let results = [];
+
+    qResults.forEach(ele => {
+        console.log(ele.chord_symbol);
+        console.log("ele.chordSymbol^");
+        results.push(Chord.chordFromNotation(ele.chord_symbol));
+    });
+    return results;
+}
  
 //ARG is a scale or notes array
 // RETURN should be an array of scales that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
@@ -828,48 +867,7 @@ async function getScaleRotations(root, scaleToRotate) {
     return results;
 }
 
-async function getChordRotations(root, chordToRotate) {
-    console.log("inside getChordRotations");
 
-    validateNotesInput(root);
-    let notes = formatLookupInput(chordToRotate);
-
-    let sql = `
-    SELECT 
-        chn.chord_symbol, 
-        chn.root_note 
-    FROM 
-        chord_has_note chn 
-    WHERE 
-        chn.root_note != "`+ root +`" -- root note of selected chord
-    GROUP BY 
-        chn.chord_symbol, 
-        chn.root_note 
-    HAVING 
-        COUNT(*) = `+ notes.length +` -- note count of selected chord
-        AND COUNT(
-            CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 -- note list of selected chord
-            END
-        ) = `+ notes.length +`  -- note count of selected chord
-    ORDER BY 
-        CASE WHEN chn.root_note >= "`+ root + `" THEN 1 -- root note of chord selected
-        ELSE 2 END, 
-    chn.root_note ASC;
-    `;
-
-    console.log(sql);
-
-
-    let qResults = await fetchSQL(sql);
-    let results = [];
-
-    qResults.forEach(ele => {
-        console.log(ele.chord_symbol);
-        console.log("ele.chordSymbol^");
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
-    });
-    return results;
-}
 
 async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, userString) {
     console.log("inside getScalesFromUserString");

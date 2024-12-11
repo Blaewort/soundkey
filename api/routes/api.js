@@ -60,9 +60,6 @@ router.post('/getChords/Deductions',async (req,res) => {
 router.post('/getChords/Rotations',async (req,res) => {
   console.log("in the /getChords/Rotations route");
 
-  console.log(req.body);
-  console.log("req.body^");
-
   let root = req.body.root;
   let chordToRotate = req.body.chordToRotate;
   console.log("db.getChords/Rotations(",root,",",chordToRotate,")");
