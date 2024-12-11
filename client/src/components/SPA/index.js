@@ -1083,16 +1083,13 @@ class SPA extends Component{
     fetchAlteredScaleList = async () => {
         console.log("inside fetchAlteredScaleList");
         const state = this.state;
-        const radioValue = state.radio.scale?.edit || EditScaleRadio.defaultValue; 
-
-        // objectLimiter is selected scale
-        const objectLimiter = state[state.focus];
+        
         const chordToLimitBy = state.chord && state.toggle.scale ? state.chord : null;
 
         try {
             let response;
             console.log("inside fetchAlteredScaleList");
-            response = await fapi_getScaleAlterations(parseInt(state.noteSelect.scale.value), radioValue, objectLimiter, chordToLimitBy);
+            response = await fapi_getScaleAlterations(parseInt(state.noteSelect.scale.value), state.scale, chordToLimitBy);
 
             //let newList = JSON.parse(response);
             let newList = response;

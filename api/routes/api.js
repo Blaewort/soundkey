@@ -125,13 +125,11 @@ router.post('/getScaleGroups/',async (req,res) => {
 
 router.post('/getScales/Alterations',async (req,res) => {
   console.log("in the route /getScales/Alterations");
-  let maxNotes = req.body.maxNotes ? req.body.maxNotes : null;
-  let root = req.body.root ? req.body.root : null;
-  let category = req.body.category ? req.body.category : null;
-  let notes = req.body.notes;
+
+  let baseScale = req.body.baseScale;
   let chordToLimitBy = req.body.chordToLimitBy;
-  console.log("db.getScalesAlterations(",notes,",",chordToLimitBy,")");
-  let scales = await db.getScaleAlterations(notes, chordToLimitBy);
+  console.log("db.getScalesAlterations(",baseScale,",",chordToLimitBy,")");
+  let scales = await db.getScaleAlterations(baseScale, chordToLimitBy);
   res.send(scales);
 });
 

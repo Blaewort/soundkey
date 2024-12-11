@@ -612,22 +612,11 @@ async function getChordRotations(root, baseChord) {
 async function getScaleAlterations(baseScale, chordToLimitBy) {
     console.log("inside getScaleAlterations");
 
-    let notes;
-    if (baseScale !== null) {
-        try{
-            notes = formatLookupInput(baseScale);
-            //validateNotesInput(root);
-            //validateCategoryInput(category);
-        } catch(err){
-            return err;
-        }
-    }
+    baseScaleNotes = formatLookupInput(baseScale);
 
-    let constrainStr = ``;
-    if(chordToLimitBy) {
-        let limiterNotes = formatLookupInput(chordToLimitBy);
-        constrainStr = `AND COUNT(CASE WHEN sn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ limiterNotes.length +` `;
-    }
+    const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
+    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
+                                    `;
 
     let sql = `
     SELECT 
@@ -648,19 +637,36 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
     GROUP BY 
         scale.name, scale.root_note
     HAVING 
-        COUNT(sn.note) = `+ notes.length +` -- note count of the scale we are altering
-        AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` -- Note list from the scale we are altering, matching n-1 notes
-        `+ constrainStr +`
+        COUNT(sn.note) = ? -- note count of the scale we are altering
+        ${baseScaleConstrainerStr}
+    `
+
+    let sqlEnd = `
     ORDER BY 
         CASE 
-            WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
+            WHEN scale.root_note >= ? THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
             ELSE 2
         END,
-    scale.root_note ASC;`
+    scale.root_note ASC
+    `;
 
-    console.log(sql);
+    let params;
 
-    let qResults = await fetchSQL(sql);
+    if (chordToLimitBy) { 
+        const notesLimiter = formatLookupInput(chordToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `AND COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) 
+                                `;
+        sql += constrainerStr; 
+        sql += sqlEnd;
+    
+        params = [baseScaleNotes.length,  ...baseScaleNotes, baseScaleNotes.length - 1, ...notesLimiter, notesLimiter.length, baseScaleNotes[0]];
+    } else {
+        sql += sqlEnd;
+        params = [baseScaleNotes.length, ...baseScaleNotes, baseScaleNotes.length - 1, baseScaleNotes[0]];
+    }
+
+    let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
     qResults.forEach(ele => {
