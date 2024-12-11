@@ -874,35 +874,10 @@ async function getScaleRotations(root, baseScale) {
 
 
 
-async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, userString) {
+async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, userString) {
     console.log("inside getScalesFromUserString");
 
-    let limiterNotes;
-    let selectedScaleNotes;
-    let noteConstraint = ``;
-
-    console.log(userSelectedScaleNotes);
-    console.log("userSelectedScaleNotes^"); //okay this is passing
-
-    if (objectLimiter !== null && objectLimiter !== undefined) {
-        try{
-            limiterNotes = formatLookupInput(objectLimiter);
-        } catch(err){
-            return err;
-        }
-        noteConstraint = `COUNT(CASE WHEN sn.note IN ("`+ limiterNotes.join('","') +`") THEN 1 END) = 3 -- notes in MATCH_CHORD and number of matching notes in MATCH_CHORD_NOTES
-                         AND `;
-    }
-
-
-    let orderBySelectedScale = ``;
-    if (userSelectedScaleNotes !== null && userSelectedScaleNotes !== undefined) {
-        const selectedScaleNotes = userSelectedScaleNotes ? formatLookupInput(userSelectedScaleNotes) : null;
-        orderBySelectedScale = `CASE 
-            WHEN scale.root_note >= '`+ selectedScaleNotes[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale user currently has selected (if any)
-            ELSE 2
-        END,`
-    }
+    const baseScaleNotes = userSelectedScaleNotes ? formatLookupInput(userSelectedScaleNotes) : null;
 
     let sql = `
     SELECT 
@@ -923,17 +898,51 @@ async function getScalesFromUserString(objectLimiter, userSelectedScaleNotes, us
         AND scale.root_note = sn.root_note
     GROUP BY 
         scale.name, scale.root_note
-    HAVING 
-        `+ noteConstraint + `
-        full_name LIKE '%`+ userString +`%'
-    ORDER BY 
-        `+ orderBySelectedScale +`
-        scale.root_note ASC;`
+    HAVING
+        `;
+
+        let params = [];
+
+    if (chordToLimitBy) {
+        limiterNotes = formatLookupInput(chordToLimitBy);
+        const placeholders = limiterNotes.map(() => '?').join(', ');
+        sql += `COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) -- notes in MATCH_CHORD and number of matching notes in MATCH_CHORD_NOTES
+                         AND `;
+
+        params.push(...limiterNotes);
+        params.push(limiterNotes.length);
+    } 
+
+    sql += `full_name LIKE CONCAT('%', ?, '%')
+            ORDER BY
+            `;
+    params.push(userString);
+
+    // if we have a selected scale, order by the root note of that scale. If not, order by the root note of the selected chord if it exists
+    if (baseScaleNotes) {
+        sql += `CASE 
+            WHEN scale.root_note >= ? THEN 1 -- Root Note alphabetical order starting on root note of scale user currently has selected (if any)
+            ELSE 2
+        END,
+        `;
+        params.push(baseScaleNotes[0]);
+    } else if (chordToLimitBy) {
+        limiterNotes = formatLookupInput(chordToLimitBy);
+        sql += `CASE 
+            WHEN scale.root_note >= ? THEN 1 -- Root Note alphabetical order starting on root note of scale user currently has selected (if any)
+            ELSE 2
+        END,
+        `;
+        params.push(limiterNotes[0]);
+    }
+
+    sql += `scale.root_note ASC;`;
 
     console.log(sql);
+    console.log(params);
 
 
-    let qResults = await fetchSQL(sql);
+    let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
     qResults.forEach(ele => {

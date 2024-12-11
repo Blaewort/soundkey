@@ -417,7 +417,7 @@ function fapi_getScaleFromUserString(userString, userSelectedScale, selectedChor
         {
             userSelectedScaleNotes: userSelectedScaleNotes, 
             userString: userString, 
-            limiterNotes: selectedChordNotes,
+            chordToLimitBy: selectedChordNotes,
         }
     ).then(
         response => {

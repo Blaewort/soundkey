@@ -1108,15 +1108,12 @@ class SPA extends Component{
         // objectLimiter is selected chord, if any
         const objectLimiter = state.toggle.scale && state.chord ? state.chord : null;
 
-        console.log(objectLimiter);
-        console.log("OBJECT LIMITER OR NULL?");
         const userString = state.textInput[state.focus];
-        const selectedScale = state.scale ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchScaleTextSearchList try");
-            response = await fapi_getScaleFromUserString(userString, selectedScale, objectLimiter);
+            response = await fapi_getScaleFromUserString(userString, state.scale, objectLimiter);
 
             //let newList = JSON.parse(response);
             let newList = response;
