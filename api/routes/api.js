@@ -144,10 +144,11 @@ router.post('/getScales/Appendments',async (req,res) => {
 
 router.post('/getScales/Deductions',async (req,res) => {
   console.log("in the route /getScales/Deductions");
-  let notes = req.body.notes;
+
+  let baseScale = req.body.baseScale;
   let chordToLimitBy = req.body.chordToLimitBy;
-  console.log("db.getScalesDeductions(",notes,",",chordToLimitBy,")");
-  let scales = await db.getScaleDeductions(notes, chordToLimitBy);
+  console.log("db.getScalesDeductions(",baseScale,",",chordToLimitBy,")");
+  let scales = await db.getScaleDeductions(baseScale, chordToLimitBy);
   res.send(scales);
 });
 
