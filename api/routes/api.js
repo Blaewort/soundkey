@@ -50,13 +50,10 @@ router.post('/getChords/Appendments',async (req,res) => { // TODO: a lot of reus
 router.post('/getChords/Deductions',async (req,res) => {
   console.log("in the /getChords/Deductions route");
 
-  console.log(req.body);
-  console.log("req.body^");
-
-  let notes = req.body.notes;
+  let baseChord = req.body.baseChord;
   let scaleToLimitBy = req.body.scaleToLimitBy;
-  console.log("db.getChords/Deductions(",notes,",",scaleToLimitBy,")");
-  let chords = await db.getChordDeductions(notes,scaleToLimitBy);
+  console.log("db.getChords/Deductions(",baseChord,",",scaleToLimitBy,")");
+  let chords = await db.getChordDeductions(baseChord,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 

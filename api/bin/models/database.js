@@ -512,26 +512,11 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
 async function getChordDeductions(baseChord, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordDeductions");
 
-    let notes;
-    if (baseChord !== null) {
-        try{
-            notes = formatLookupInput(baseChord);
-        } catch(err){
-            return err;
-        }
-    }
+    baseChordNotes = formatLookupInput(baseChord);
 
-    let constrainStr = ``;
-    if(scaleToLimitBy) {
-        let limiterNotes = formatLookupInput(scaleToLimitBy);
-        constrainStr = `AND COUNT(CASE WHEN chn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ (notes.length-1) +` `;
-    }
-
-    console.log(notes);
-    console.log("getChordDeductions NOTES^");
-
-    //get baseChord note count
-    const noteCount = notes.length;
+    const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
+    const baseChordConstrainerStr = `AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
+                                    `;
 
     let sql = `
     SELECT 
@@ -543,24 +528,38 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
         chn.chord_symbol, 
         chn.root_note
     HAVING 
-        COUNT(*) = `+ (noteCount-1) +`  -- number of notes in the target chords
-        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ (noteCount-1) +`  -- Number of matching notes in source chord (all of them)
-        `+ constrainStr +`
+        COUNT(*) = ?  -- number of notes in the target chords
+        ${baseChordConstrainerStr}
+        `;
+
+    let sqlEnd = `
     ORDER BY 
         CASE 
-            WHEN chn.root_note >= "`+ baseChord[0] +`" THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
+            WHEN chn.root_note >= ? THEN 1 -- Root Note alphabetical order starting on root note of chord being altered
             ELSE 2
         END,
     chn.chord_symbol; -- alphanumerical order`;
 
-    console.log(sql);
-    console.log("sql^");
+    let params;
 
-    let qResults = await fetchSQL(sql);
+    if (scaleToLimitBy) { 
+        const notesLimiter = formatLookupInput(scaleToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `AND COUNT(CASE WHEN chn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT chn.note),?)
+                                `;
+        sql += constrainerStr; 
+        sql += sqlEnd;
+    
+        params = [baseChordNotes.length - 1,  ...baseChordNotes, baseChordNotes.length - 1, ...notesLimiter, notesLimiter.length, baseChordNotes[0]];
+    } else {
+        sql += sqlEnd;
+        params = [baseChordNotes.length - 1, ...baseChordNotes, baseChordNotes.length - 1, baseChordNotes[0]];
+    }
+
+
+    let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
-    //console.log(qResults);
-    //console.log("qResults^");
     qResults.forEach(ele => {
         console.log(ele.chord_symbol);
         console.log("ele.chordSymbol^");

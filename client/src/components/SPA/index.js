@@ -86,13 +86,13 @@ class SPA extends Component{
                 category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}]
             },
-            /*chord: {
+            chord: {
                 root: "E",
                 name: "E Minor Seven",
                 symbol: "Em7",
                 category: "Seven",
                 notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}, {label: "D", value: 5}]
-            },*/
+            },
             /*chord: {
                 root: "E",
                 name: "E Major",
@@ -949,14 +949,13 @@ class SPA extends Component{
         console.log("inside fetchAlteredChordList");
         const state = this.state;
 
-        // objectLimiter is selected chord
-        const objectLimiter = state[state.focus];
+        const baseChord = state[state.focus];
         const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchAlteredChordList if (state.focus === 'chord')");
-            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), objectLimiter, scaleToLimitBy);
+            response = await fapi_getChordAlterations(parseInt(state.noteSelect.chord.value), baseChord, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 
@@ -977,14 +976,13 @@ class SPA extends Component{
         console.log("inside fetchAppendedChordList");
         const state = this.state;
 
-        // objectLimiter is selected chord
-        const objectLimiter = state[state.focus];
+        const baseChord = state[state.focus];
         const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchAppendedChordList if (state.focus === 'chord')");
-            response = await fapi_getChordAppendments(parseInt(state.noteSelect.chord.value), objectLimiter, scaleToLimitBy);
+            response = await fapi_getChordAppendments(parseInt(state.noteSelect.chord.value), baseChord, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 
@@ -1004,16 +1002,14 @@ class SPA extends Component{
     fetchDeductedChordList = async () => {
         console.log("inside fetchDeductedChordList");
         const state = this.state;
-        const radioValue = state.radio.chord?.edit || EditChordRadio.defaultValue; //optional chaining is wild
 
-        // objectLimiter is selected chord
-        const objectLimiter = state[state.focus];
+        const baseChord = state[state.focus];
         const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
 
         try {
             let response;
             console.log("inside fetchDeductedChordList if (state.focus === 'chord')");
-            response = await fapi_getChordDeductions(parseInt(state.noteSelect.chord.value), radioValue, objectLimiter, scaleToLimitBy);
+            response = await fapi_getChordDeductions(parseInt(state.noteSelect.chord.value), baseChord, scaleToLimitBy);
 
             let newList = JSON.parse(response);
 
