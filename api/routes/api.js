@@ -27,15 +27,13 @@ router.post('/getChords/Alterations',async (req,res) => {
 router.post('/getChords/Extensions',async (req,res) => {
   console.log("in the /getChords/Extensions route");
 
-  console.log(req.body);
-  console.log("req.body^");
-
   let root = req.body.root ? req.body.root : null;
   let category = req.body.category ? req.body.category : null;
-  let notes = req.body.notes;
+  let baseChord = req.body.baseChord;
   let scaleToLimitBy = req.body.scaleToLimitBy;
-  console.log("db.getChords/Extensions(",notes,",",root,",",category,",",scaleToLimitBy,")");
-  let chords = await db.getChordExtensions(notes,root,category,scaleToLimitBy);
+
+  console.log("db.getChords/Extensions(",baseChord,",",root,",",category,",",scaleToLimitBy,")");
+  let chords = await db.getChordExtensions(baseChord,root,category,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 
@@ -124,11 +122,13 @@ router.post('/getScales/',async (req,res) => {
 
 router.post('/getScaleGroups/',async (req,res) => {
   console.log("in the /getScaleGroups/ route");
+
   let root = req.body.root ? req.body.root : null;
-  let notes = req.body.notes;
+  let chordToLimitBy = req.body.chordToLimitBy;
   let type = req.body.type;
-  console.log("db.getScaleGroups(",notes,",",root,",",type,")");
-  let scales = await db.getScaleGroups(notes, root, type);
+
+  console.log("db.getScaleGroups(",chordToLimitBy,",",root,",",type,")");
+  let scales = await db.getScaleGroups(chordToLimitBy, root, type);
   res.json(scales);
 });
 

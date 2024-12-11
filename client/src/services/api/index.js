@@ -110,7 +110,7 @@ function fapi_getScaleGroups(noteValue,chordToLimitBy, type) {
 
     return postData(urlRoot + '/getScaleGroups/',
         {
-            notes: chordToLimitBy, 
+            chordToLimitBy: chordToLimitBy, 
             root: root, 
             type: type,
         }
@@ -147,14 +147,14 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy, searchString 
     });
 }
 
-function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy, scaleToLimitBy) {
+function fapi_getChordExtensions(noteValue,category = null, baseChord, scaleToLimitBy) {
     console.log("inside fapi_getChordExtensions");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
 
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
-    if(chordToLimitBy?.notes){
-        chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
+    if(baseChord?.notes){
+        baseChord = baseChord.notes.map(val => val.label);
     }
     if(scaleToLimitBy?.notes){
         scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
@@ -168,7 +168,7 @@ function fapi_getChordExtensions(noteValue,category = null, chordToLimitBy, scal
 
     return postData(urlRoot + '/getChords/Extensions/',
         {
-            notes: chordToLimitBy, 
+            baseChord: baseChord, 
             root: root,
             category: category, //the radio value the UI is set to
             scaleToLimitBy: scaleToLimitBy

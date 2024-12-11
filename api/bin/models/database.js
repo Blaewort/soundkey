@@ -258,7 +258,7 @@ async function getScales(chordToLimitBy, root, groupID) {
 
 //should noteValue just be a note instead? it would prevent a lookup that we could do on the client instead
 //obj is either an array of notes or a chord/scale object
-async function getScaleGroups(obj, root, type){
+async function getScaleGroups(chordToLimitBy, root, type){
     const typeLookupTable = {
         "Pentatonic": 5,
         "Hexatonic":  6,
@@ -267,13 +267,7 @@ async function getScaleGroups(obj, root, type){
         "Dodecatonic": 12,
     };
 
-    let notesLimiter;
-    let noteConstraintStr = ``;
-    if (obj) {
-        notesLimiter = formatLookupInput(obj);
-        noteConstraintStr = `AND COUNT(CASE WHEN sn.note IN ("` + notesLimiter.join('","') + `") THEN 1 END) = `+ notesLimiter.length +` -- matches all notes in chord if match toggle, which may not be`;
-        
-    } 
+    validateNotesInput(root);
 
     const SCALE_LENGTH = typeLookupTable[type];
     if (!SCALE_LENGTH) {throw new Error("Invalid SCALE_LENGTH");}
@@ -290,20 +284,37 @@ async function getScaleGroups(obj, root, type){
         JOIN scale_groups sg
             ON scale.group_id = sg.id 
         WHERE
-            scale.root_note = '`+ root +`' -- root note from note nav selection
+            scale.root_note = ? -- root note from note nav selection
         GROUP BY 
             scale.name, scale.root_note
         HAVING 
-            COUNT(sn.note) = `+ SCALE_LENGTH +` -- note count from radio
-            `+ noteConstraintStr+ `
-        ORDER BY 
-            scale.group_id ASC;
-    `;
+            COUNT(sn.note) = ? -- note count from radio  
+        `;
+
+    let sqlEnd = `ORDER BY 
+            scale.group_id ASC;`;
+
+    let params;
+
+    if (chordToLimitBy) { 
+        const notesLimiter = formatLookupInput(chordToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `AND COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) 
+                                -- matches all notes in chord if match toggle, which may not be 
+                                `;
+        sql += constrainerStr; 
+        sql += sqlEnd;
+ 
+        params = [root, SCALE_LENGTH, ...notesLimiter, notesLimiter.length];
+    } else {
+        sql += sqlEnd;
+        params = [root, SCALE_LENGTH];
+    }
 
     console.log(sql);
+    console.log('Parameters:', params);
 
-
-    let results = await fetchSQL(sql);
+    let results = await fetchPreparedStatement(sql, params);
     return results;
 }
 
@@ -313,42 +324,24 @@ async function getScaleGroups(obj, root, type){
 async function getChordExtensions(baseChord, root = null, category = null, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordExtensions");
 
-    let notes;
-    if (baseChord !== null) {
-        try{
-            notes = formatLookupInput(baseChord);
-            validateNotesInput(root);
-            validateCategoryInput(category);
-        } catch(err){
-            return err;
-        }
-    }
+    validateNotesInput(root);
+    validateCategoryInput(category);
+    const baseChordNotes = formatLookupInput(baseChord);
 
-    let constrainStr = ``;
-    if(scaleToLimitBy) {
-        let limiterNotes = formatLookupInput(scaleToLimitBy);
-        constrainStr = `AND COUNT(CASE WHEN chn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ (notes.length+1) +` `;
-    }
-
-    console.log(notes);
-    console.log("getChordExtensions NOTES^");
-
-    //get baseChord note count
-    const noteCount = notes.length;
-    const rootString = root !== null ? 'chord.root_note = "' + root + '"':  '';
     const categoryString = (() => {
         if (!category) {throw error("cant get an extension if there's no category")} 
-        // Triad extends to Seven or Six for UX
-        if (category === "Triad") {return "(chord.category = 'Seven' OR chord.category = 'Six')";}
-        // Thirteen doesn't extend so nonsense string that returns nothing I guess
-        if (category === "Thirteen") {return "chord.category = 'ExtensionsForThirteen (None)'";}
-        // The rest is simple
         return {
+            "Triad": "(chord.category = 'Seven' OR chord.category = 'Six')",
             "Seven": "chord.category = 'Nine'",
             "Nine": "chord.category = 'Eleven'",
-            "Eleven": "chord.category = 'Thirteen'"
+            "Eleven": "chord.category = 'Thirteen'",
+            "Thirteen": "chord.category = 'ExtensionsForThirteen (None)'"
         }[category] || "chord.category = 'ERROR: invalid chord category in getChordExtensions'";
     })();
+
+    const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
+    const baseChordConstrainerStr = `AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
+        `;
 
     let sql = `
     SELECT 
@@ -359,26 +352,34 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     JOIN 
         chords chord ON chord.symbol = chn.chord_symbol
     WHERE 
-        `+ rootString +`
+        chord.root_note = ?
         AND
-        `+ categoryString +`
+        ${categoryString}
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note
     HAVING 
-        COUNT(*) = `+ (noteCount+1) +`  -- number of notes in the target chords
-        AND SUM(CASE WHEN chn.note IN ("` + notes.join('","') + `") THEN 1 ELSE 0 END) = `+ noteCount +`  -- Number of matching notes in source chord (all of them)
-        `+ constrainStr +`
-        ;`;
+        COUNT(*) = ?  -- number of notes in the target chords
+        ${baseChordConstrainerStr}
+        `;
 
-    console.log(sql);
-    console.log("sql^");
+    let params;
 
-    let qResults = await fetchSQL(sql);
+    if (scaleToLimitBy) { 
+        const notesLimiter = formatLookupInput(scaleToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `AND COUNT(CASE WHEN chn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT chn.note),?) 
+                                `;
+        sql += constrainerStr; 
+    
+        params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length, ...notesLimiter, notesLimiter.length];
+    } else {
+        params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length];
+    }
+
+    let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
-    //console.log(qResults);
-    //console.log("qResults^");
     qResults.forEach(ele => {
         console.log(ele.chord_symbol);
         console.log("ele.chordSymbol^");
