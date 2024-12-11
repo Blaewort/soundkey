@@ -328,7 +328,7 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     validateCategoryInput(category);
     const baseChordNotes = formatLookupInput(baseChord);
 
-    const categoryString = (() => {
+    const categoryCheck = (() => {
         if (!category) {throw error("cant get an extension if there's no category")} 
         return {
             "Triad": "(chord.category = 'Seven' OR chord.category = 'Six')",
@@ -340,8 +340,6 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     })();
 
     const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
-    const baseChordConstrainerStr = `AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
-        `;
 
     let sql = `
     SELECT 
@@ -354,13 +352,13 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     WHERE 
         chord.root_note = ?
         AND
-        ${categoryString}
+        ${categoryCheck}
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
-        ${baseChordConstrainerStr}
+        AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
         `;
 
     let params;
@@ -395,10 +393,7 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
     console.log("inside getChordAlterations");
 
     baseChordNotes = formatLookupInput(baseChord);
-
     const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
-    const baseChordConstrainerStr = `AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -410,8 +405,8 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
         chn.chord_symbol, 
         chn.root_note
     HAVING 
-        COUNT(*) = ? 
-        ${baseChordConstrainerStr}
+        COUNT(*) = ?
+        AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ? 
         `;
 
     let sqlEnd = `ORDER BY 
@@ -453,10 +448,7 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordAppendments");
 
     baseChordNotes = formatLookupInput(baseChord);
-
     const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
-    const baseChordConstrainerStr = `AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -469,7 +461,7 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
         chn.root_note
     HAVING 
         COUNT(*) = ? 
-        ${baseChordConstrainerStr}
+        AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
         `;
  
     let sqlEnd = `
@@ -513,10 +505,7 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     console.log("inside DATABASE.JS getChordDeductions");
 
     baseChordNotes = formatLookupInput(baseChord);
-
     const baseChordNotesPlaceholders = baseChordNotes.map(() => '?').join(', ');
-    const baseChordConstrainerStr = `AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -529,7 +518,7 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
         chn.root_note
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
-        ${baseChordConstrainerStr}
+        AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
         `;
 
     let sqlEnd = `
@@ -613,10 +602,7 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
     console.log("inside getScaleAlterations");
 
     baseScaleNotes = formatLookupInput(baseScale);
-
     const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
-    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -638,8 +624,8 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
         scale.name, scale.root_note
     HAVING 
         COUNT(sn.note) = ? -- note count of the scale we are altering
-        ${baseScaleConstrainerStr}
-    `
+        AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
+    `;
 
     let sqlEnd = `
     ORDER BY 
@@ -684,10 +670,7 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
     console.log("inside getScaleAppendments");
 
     baseScaleNotes = formatLookupInput(baseScale);
-
     const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
-    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -709,7 +692,7 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
         scale.name, scale.root_note
     HAVING 
         COUNT(sn.note) = ? -- (the count of scale we are altering) plus 1
-       ${baseScaleConstrainerStr} -- Number of matching notes in source scale (all (scale.notes.length)of them)
+        AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ? -- Number of matching notes in source scale (all (scale.notes.length)of them)
        `;
 
     let sqlEnd = `ORDER BY 
@@ -753,10 +736,7 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
     console.log("inside getScaleDeductions");
 
     baseScaleNotes = formatLookupInput(baseScale);
-
     const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
-    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -778,7 +758,7 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
         scale.name, scale.root_note
     HAVING 
         COUNT(sn.note) = ? -- note count of the scale we are altering minus 1
-        ${baseScaleConstrainerStr} -- Number of matching notes in source scale (all (scale.notes.length-1)of them)
+        AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ? -- Number of matching notes in source scale (all (scale.notes.length-1)of them)
         `;
 
     let sqlEnd = `
@@ -826,8 +806,6 @@ async function getScaleRotations(root, baseScale) {
 
     baseScaleNotes = formatLookupInput(baseScale);
     const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
-    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
-                                    `;
 
     let sql = `
     SELECT 
@@ -851,7 +829,7 @@ async function getScaleRotations(root, baseScale) {
         s.root_note 
     HAVING 
         COUNT(*) = ? -- note count of selected scale
-        ${baseScaleConstrainerStr} -- note count of selected scale
+        AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ? -- note count of selected scale
     ORDER BY 
         CASE WHEN s.root_note >= ? THEN 1 -- root note of scale selected
         ELSE 2 END, 
@@ -918,7 +896,9 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
             `;
     params.push(userString);
 
-    // if we have a selected scale, order by the root note of that scale. If not, order by the root note of the selected chord if it exists
+    // if we have a selected scale (in case user only typed a partial name rather than root+name), order by the root note of that scale
+    // if not, order by the root note of the selected chord if it exists
+    // otherwise list will be ordered from default root note of A
     if (baseScaleNotes) {
         sql += `CASE 
             WHEN scale.root_note >= ? THEN 1 -- Root Note alphabetical order starting on root note of scale user currently has selected (if any)
