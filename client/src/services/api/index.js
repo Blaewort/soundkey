@@ -343,15 +343,15 @@ function fapi_getScaleAlterations(noteValue, baseScale, chordToLimitBy) {
     });
 }
 
-function fapi_getScaleAppendments(noteValue,category = null, scaleToLimitBy, chordToLimitBy) {
+function fapi_getScaleAppendments(noteValue,baseScale, chordToLimitBy) {
     console.log("inside fapi_getScaleAppendments");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
     console.log("made it to fapi_getScaleAppendments")
 
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
-    if(scaleToLimitBy?.notes){
-        scaleToLimitBy = scaleToLimitBy.notes.map(val => val.label);
+    if(baseScale?.notes){
+        baseScale = baseScale.notes.map(val => val.label);
     }
     if(chordToLimitBy?.notes){
         chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
@@ -361,9 +361,7 @@ function fapi_getScaleAppendments(noteValue,category = null, scaleToLimitBy, cho
 
     return postData(urlRoot + '/getScales/Appendments/',
         {
-            notes: scaleToLimitBy, 
-            root: root, //this constraint works for A but nothing else. why?
-            category: category, //the radio value the UI is set to
+            baseScale: baseScale, 
             chordToLimitBy: chordToLimitBy,
         }
     ).then(

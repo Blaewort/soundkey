@@ -683,25 +683,11 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
 async function getScaleAppendments(baseScale, chordToLimitBy) {
     console.log("inside getScaleAppendments");
 
-    console.log(baseScale);
-    console.log("baseScale^")
+    baseScaleNotes = formatLookupInput(baseScale);
 
-    let notes;
-    if (baseScale !== null) {
-        try{
-            notes = formatLookupInput(baseScale);
-            //validateNotesInput(root);
-            //validateCategoryInput(category);
-        } catch(err){
-            return err;
-        }
-    }
-
-    let constrainStr = ``;
-    if(chordToLimitBy) {
-        let limiterNotes = formatLookupInput(chordToLimitBy);
-        constrainStr = `AND COUNT(CASE WHEN sn.note IN ("` + limiterNotes.join('","') + `") THEN 1 END) = `+ limiterNotes.length +` `;
-    }
+    const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
+    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
+                                    `;
 
     let sql = `
     SELECT 
@@ -722,20 +708,34 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
     GROUP BY 
         scale.name, scale.root_note
     HAVING 
-        COUNT(sn.note) = `+ (notes.length+1) +` -- (the count of scale we are altering) plus 1
-        AND COUNT(CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 END) = `+ notes.length +` -- Number of matching notes in source scale (all (scale.notes.length)of them)
-        `+ constrainStr +`
-    ORDER BY 
+        COUNT(sn.note) = ? -- (the count of scale we are altering) plus 1
+       ${baseScaleConstrainerStr} -- Number of matching notes in source scale (all (scale.notes.length)of them)
+       `;
+
+    let sqlEnd = `ORDER BY 
         CASE 
-            WHEN scale.root_note >= '`+ baseScale[0] +`' THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
+            WHEN scale.root_note >= ? THEN 1 -- Root Note alphabetical order starting on root note of scale being altered
             ELSE 2
         END,
     scale.root_note ASC;`
 
-    console.log(sql);
+    let params;
 
+    if (chordToLimitBy) { 
+        const notesLimiter = formatLookupInput(chordToLimitBy);
+        const placeholders = notesLimiter.map(() => '?').join(', ');
+        const constrainerStr = `AND COUNT(CASE WHEN sn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT sn.note),?) 
+                                `;
+        sql += constrainerStr; 
+        sql += sqlEnd;
+    
+        params = [baseScaleNotes.length + 1,  ...baseScaleNotes, baseScaleNotes.length, ...notesLimiter, notesLimiter.length, baseScaleNotes[0]];
+    } else {
+        sql += sqlEnd;
+        params = [baseScaleNotes.length + 1, ...baseScaleNotes, baseScaleNotes.length, baseScaleNotes[0]];
+    }
 
-    let qResults = await fetchSQL(sql);
+    let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
     qResults.forEach(ele => {
