@@ -40,13 +40,10 @@ router.post('/getChords/Extensions',async (req,res) => {
 router.post('/getChords/Appendments',async (req,res) => { // TODO: a lot of reusable code around these parts
   console.log("in the /getChords/Extensions route");
 
-  console.log(req.body);
-  console.log("req.body^");
-
-  let notes = req.body.notes;
+  let baseChord = req.body.baseChord;
   let scaleToLimitBy = req.body.scaleToLimitBy;
-  console.log("db.getChords/Appendments(",notes,",",scaleToLimitBy,")");
-  let chords = await db.getChordAppendments(notes,scaleToLimitBy);
+  console.log("db.getChords/Appendments(",baseChord,",",scaleToLimitBy,")");
+  let chords = await db.getChordAppendments(baseChord,scaleToLimitBy);
   res.json(JSON.stringify(chords));
 });
 
