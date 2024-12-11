@@ -1030,13 +1030,10 @@ class SPA extends Component{
         console.log("inside fetchRotatedChordList");
         const state = this.state;
 
-        // objectLimiter is selected chord
-        const objectLimiter = state[state.focus];
-
         try {
             let response;
             console.log("inside fetchRotatedChordList if (state.focus === 'chord')");
-            response = await fapi_getChordRotations(parseInt(state.noteSelect.chord.value), objectLimiter);
+            response = await fapi_getChordRotations(parseInt(state.noteSelect.chord.value), state.chord);
 
             let newList = JSON.parse(response);
 
@@ -1057,13 +1054,10 @@ class SPA extends Component{
         console.log("inside fetchRotatedScaleList");
         const state = this.state;
 
-        // objectLimiter is selected chord
-        const objectLimiter = state[state.focus];
-
         try {
             let response;
             console.log("inside fetchRotatedScaleList if (state.focus === 'scale')");
-            response = await fapi_getScaleRotations(parseInt(state.noteSelect.scale.value), objectLimiter);
+            response = await fapi_getScaleRotations(parseInt(state.noteSelect.scale.value), state.scale);
 
             let newList = JSON.parse(response);
 

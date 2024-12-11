@@ -819,11 +819,15 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
     return results;
 }
 
-async function getScaleRotations(root, scaleToRotate) {
+async function getScaleRotations(root, baseScale) {
     console.log("inside getScaleRotations");
 
     validateNotesInput(root);
-    let notes = formatLookupInput(scaleToRotate);
+
+    baseScaleNotes = formatLookupInput(baseScale);
+    const baseScaleNotesPlaceholders = baseScaleNotes.map(() => '?').join(', ');
+    const baseScaleConstrainerStr = `AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
+                                    `;
 
     let sql = `
     SELECT 
@@ -841,26 +845,20 @@ async function getScaleRotations(root, scaleToRotate) {
         INNER JOIN scale_has_note sn ON s.name = sn.scale_name 
         AND s.root_note = sn.root_note 
     WHERE 
-        s.root_note != "`+ root + `" -- root of the selected scale
+        s.root_note != ? -- root of the selected scale
     GROUP BY 
         s.name, 
         s.root_note 
     HAVING 
-        COUNT(*) = `+ notes.length +` -- note count of selected scale
-        AND COUNT(
-            CASE WHEN sn.note IN ("` + notes.join('","') + `") THEN 1 -- note list of selected chord
-            END
-        ) = `+ notes.length +` -- note count of selected scale
+        COUNT(*) = ? -- note count of selected scale
+        ${baseScaleConstrainerStr} -- note count of selected scale
     ORDER BY 
-        CASE WHEN s.root_note >= "`+ root +`" THEN 1 -- root note of scale selected
+        CASE WHEN s.root_note >= ? THEN 1 -- root note of scale selected
         ELSE 2 END, 
     s.root_note ASC;
     `;
 
-    console.log(sql);
-
-
-    let qResults = await fetchSQL(sql);
+    let qResults = await fetchPreparedStatement(sql, [root, baseScaleNotes.length, ...baseScaleNotes, baseScaleNotes.length, root]);
     let results = [];
 
     qResults.forEach(ele => {

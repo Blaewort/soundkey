@@ -70,9 +70,6 @@ router.post('/getChords/Rotations',async (req,res) => {
 router.post('/getScales/Rotations',async (req,res) => {
   console.log("in the /getScales/Rotations route");
 
-  console.log(req.body);
-  console.log("req.body^");
-
   let root = req.body.root;
   let scaleToRotate = req.body.scaleToRotate;
   console.log("db.getChords/Rotations(",root,",",scaleToRotate,")");
