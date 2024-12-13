@@ -386,6 +386,8 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
+    
+
     qResults.forEach(ele => {
         const chord = Chord.chordFromNotation(ele.chord_symbol);
 
@@ -397,6 +399,9 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         
         results.push(chord);
     });
+
+    
+
     return results;
 }
  

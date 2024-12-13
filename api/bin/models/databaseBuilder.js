@@ -44,6 +44,7 @@ function saveChords() {
     const chords = chordExp.generateChords();
     let chordsCount = 0;
     chords.forEach(chord =>{
+        //console.log(chord);
         saveChordAndAlterations(chord);
         chordsCount = chordsCount+1;
         process.stdout.write("Chords Completed: " +  chordsCount + '\r');
