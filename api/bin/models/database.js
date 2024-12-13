@@ -929,7 +929,7 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
         params.push(limiterNotes.length);
     } 
 
-    sql += `full_name LIKE CONCAT('%', ?, '%')
+    sql += `full_name REGEXP CONCAT("\\\\b",?,"\\\\b")
             ORDER BY
             `;
     params.push(userString);
