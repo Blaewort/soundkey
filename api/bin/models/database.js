@@ -186,7 +186,7 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
 
     let results = [];
     qResults.forEach(ele => {
-        const chord = Chord.chordFromNotation(ele.symbol);
+        const chord = Chord.chordFromNotation(ele.symbol, true);
 
         // app needs label
         chord.notes = chord.notes.map(note => {
@@ -352,7 +352,8 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     let sql = `
     SELECT 
         chn.chord_symbol,
-        chn.root_note
+        chn.root_note,
+        chord.name as name
     FROM 
         chord_has_note chn
     JOIN 
@@ -363,7 +364,8 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         ${categoryCheck}
     GROUP BY 
         chn.chord_symbol, 
-        chn.root_note
+        chn.root_note,
+        name
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -386,10 +388,12 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
+
+    /* THIS KIND OF CLUNKY */
     
 
     qResults.forEach(ele => {
-        const chord = Chord.chordFromNotation(ele.chord_symbol);
+        const chord = Chord.chordFromNotation(ele.chord_symbol, true);
 
         // app needs label
         chord.notes = chord.notes.map(note => {
@@ -455,7 +459,7 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
     let results = [];
 
     qResults.forEach(ele => {
-        const chord = Chord.chordFromNotation(ele.chord_symbol);
+        const chord = Chord.chordFromNotation(ele.chord_symbol, true);
 
         // app needs label
         chord.notes = chord.notes.map(note => {
@@ -519,7 +523,7 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
     let results = [];
 
     qResults.forEach(ele => {
-        const chord = Chord.chordFromNotation(ele.chord_symbol);
+        const chord = Chord.chordFromNotation(ele.chord_symbol, true);
 
         // app needs label
         chord.notes = chord.notes.map(note => {
@@ -581,7 +585,7 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     let results = [];
 
     qResults.forEach(ele => {
-        const chord = Chord.chordFromNotation(ele.chord_symbol);
+        const chord = Chord.chordFromNotation(ele.chord_symbol, true);
 
         // app needs label
         chord.notes = chord.notes.map(note => {
@@ -626,7 +630,7 @@ async function getChordRotations(root, baseChord) {
     let results = [];
 
     qResults.forEach(ele => {
-        const chord = Chord.chordFromNotation(ele.chord_symbol);
+        const chord = Chord.chordFromNotation(ele.chord_symbol, true);
 
         // app needs label
         chord.notes = chord.notes.map(note => {
