@@ -337,7 +337,7 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     const baseChordNotes = formatLookupInput(baseChord);
 
     const categoryCheck = (() => {
-        if (!category) {throw error("cant get an extension if there's no category")} 
+        if (!category) {throw Error("cant get an extension if there's no category")} 
         return {
             "Triad": "(chord.category = 'Seven' OR chord.category = 'Six')",
             "Seven": "chord.category = 'Nine'",

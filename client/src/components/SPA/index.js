@@ -111,6 +111,14 @@ class SPA extends Component{
                 category: "Seven",
                 notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}, {label: "D", value: 5}]
             },
+            chord: {
+                root: "E",
+                name: "E",
+                symbol: "E",
+                category: "Triad",
+                notes: [{label: "E", value: 7},{label: "G#", value: 12}, {label: "B", value: 2}]
+            },
+            
             /*chord: {
                 root: "E",
                 name: "E Major",
