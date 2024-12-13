@@ -29,11 +29,40 @@ const TEMP_ITEMS = [
 
 const TEMP_TITLE = "List";
 
+
 class ListArea extends Component {
 
     constructor(props) {
         super(props);
       }
+/* DEBUG */
+      componentDidUpdate(prevProps, prevState) {
+        console.log("ListArea re-rendered!");
+
+        console.log("UPDATE LISTAREA__________________________________________!");
+        Object.entries(this.props).forEach(([key, val]) =>
+          prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+        );
+        console.log(prevProps);
+        console.log("VS");
+        console.log(this.props);
+      
+        if (this.state) {
+          Object.entries(this.state).forEach(([key, val]) =>
+            prevState[key] !== val && console.log(`State '${key}' changed`)
+          );
+        }
+    }
+
+    
+
+
+    /*shouldComponentUpdate(nextProps, nextState) {
+        // Only re-render if props or state change that matter
+        console.log("SDFSDFSDFSDFSDFSDFEEEEEEEEEEEEEEEEEEEEEEEE");
+        return nextProps !== this.props;
+ }*/
+    
 
     render () {
         let list;
@@ -42,6 +71,7 @@ class ListArea extends Component {
         console.log(list);
 
         if(!this.props.list || !Array.isArray(this.props.list)) { //was this.props.list === undefined
+            //console.log(this.props.list);
             console.log("Invalid Object, Expected object with map function, received: ",this.props.list );
             list = TEMP_ITEMS;
         } else {
@@ -55,6 +85,8 @@ class ListArea extends Component {
 
         //how do I know if there is only room for one item (low-height resolution) so I can make one item or the first item click to open the modal???
         
+        console.log(this.props);
+        console.log("this.props^");
         
         
 
@@ -63,9 +95,21 @@ class ListArea extends Component {
             // so make a random number and tack it on top to fix it
             const randomNumber = Math.floor(Math.random() * 10000);
             const randomString = randomNumber.toString();
+
+            const handleItemClick = this.props.handleItemClick;
+            console.log("RENDERING");
+            console.log(handleItemClick);
+            console.log("handleItemClick^");
             
-            return <li key={item.label+randomString} onClick={(e) => this.props.handleItemClick(e,item)}>{item.label}</li>
+            return <li 
+            key={item.label+randomString} 
+            onClick={(e) => {console.log("INTHEBUTTON");return handleItemClick(e,item);}}>
+                {item.label}
+            </li>
         });
+
+        console.log(listItems);
+        console.log("listItems^");
 
         //make the list modal
         const listModalItems = [...listItems];
@@ -76,6 +120,8 @@ class ListArea extends Component {
         listItems.unshift (<li key="Choose..." onClick={this.props.modal.open} className="listModalButton"><i class="fa fa-bars" aria-hidden="true"></i>  View List</li>);
 
         const modalClassName = this.props.modal.on ? "listModal engaged" : "listModal";
+
+        console.log("Rendering ListArea");
 
         /* if firefox starts supporting the :has css selector we can not have the top line conditional and just use :has to select based on children class */
         return (

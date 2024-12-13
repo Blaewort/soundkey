@@ -74,7 +74,25 @@ function listIsVisible(view, focus, navSearchGets, textSearchGets, radio, select
 
 
 
+
+
 class SPA extends Component{
+
+    /* DEBUG */
+    componentDidUpdate(prevProps, prevState) {
+        console.log("UPDATE SPA__________________________________________!");
+        Object.entries(this.props).forEach(([key, val]) =>
+          prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+        );
+        if (this.state) {
+          Object.entries(this.state).forEach(([key, val]) =>
+            prevState[key] !== val && console.log(`State '${key}' changed`)
+          );
+          console.log(prevState.noteSelect);
+          console.log("VS");
+          console.log(this.state.noteSelect);
+        }
+    }
 
     constructor(props) {
         super(props);
@@ -616,9 +634,17 @@ class SPA extends Component{
         // Abort if it's not an outside click
         if (noteSelectNode.contains(event.target)) {return;}
 
+        //check if what we are about to change is same
+
+        
+
 
         this.setState((state, props) => {
             const whichObj = state.noteSelect[which];
+
+            if (whichObj.customListIsOpen === false) {
+                return null;  // No state change
+            } // there was a huge bug where not doing this check cause react to think it updated when it didn't
 
             return {
                 ...state,
@@ -631,6 +657,7 @@ class SPA extends Component{
                 },
             }
         });
+
     }
     handleCustomNoteNavSelectClick(event, which) {
 
@@ -1215,7 +1242,7 @@ class SPA extends Component{
         this.setState((state, props) => {
             return {
                 ...state,
-                chord: item,
+                chord: item.object,
                 view: {
                     ...state.view,
                     chord: "selected"
@@ -1232,14 +1259,13 @@ class SPA extends Component{
         this.setState((state, props) => {
             return {
                 ...state,
-                scale: item,
+                scale: item.object,
                 view: {
                     ...state.view,
                     scale: "selected"
                 }
             };
         });
-
     }
 
     toSettingsNavView() {
@@ -1359,7 +1385,7 @@ class SPA extends Component{
         this.setState((state, props) => {
             return {
                 ...state,
-                scale: item,
+                scale: item.object,
                 view: {
                     ...state.view,
                     scale: "selected"
@@ -1719,6 +1745,8 @@ class SPA extends Component{
                 contents = <ChordScaleController footer={footer} visualizer={visualizer} toggle={toggle} search={search} view={this.state.view.chord} viewSwitch={viewSwitch} radio={radio} radioObj={this.state.radio} selection={selection} focus={this.state.focus} type="chord" />
                 break;
             case "scale":
+
+            console.log("SPA RERENDER");
                 toggle = {
                     onClick: this.handleToggleClick, //is using 'this' okay
                     value: this.state.toggle.scale,
@@ -1803,7 +1831,7 @@ class SPA extends Component{
                     notess = this.state.scale.notes;
                 }
                 visualizer = {
-                    selectedNotes: notess.map((note) => note.label), //str like "E"
+                    selectedNotes: notess.map((note) => note.label), //str like "E", 
                     instrument: this.state.instrument, //obj with .name (str) and tuning (str like "EADGBE" (guitar only)) and pianoOctaves (int (piano only)) quick+hacky I know
                 };
 

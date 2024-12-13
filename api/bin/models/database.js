@@ -186,7 +186,15 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
 
     let results = [];
     qResults.forEach(ele => {
-        results.push(Chord.chordFromNotation(ele.symbol));
+        const chord = Chord.chordFromNotation(ele.symbol);
+
+        // app needs label
+        chord.notes = chord.notes.map(note => {
+            const { name, ...rest } = note; 
+            return { label: name, ...rest }; 
+        });
+
+        results.push(chord);
     });
     console.log(results);
     return results;
@@ -379,9 +387,15 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     let results = [];
 
     qResults.forEach(ele => {
-        console.log(ele.chord_symbol);
-        console.log("ele.chordSymbol^");
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
+        const chord = Chord.chordFromNotation(ele.chord_symbol);
+
+        // app needs label
+        chord.notes = chord.notes.map(note => {
+            const { name, ...rest } = note; 
+            return { label: name, ...rest }; 
+        });
+        
+        results.push(chord);
     });
     return results;
 }
@@ -436,9 +450,15 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
     let results = [];
 
     qResults.forEach(ele => {
-        console.log(ele.chord_symbol);
-        console.log("ele.chordSymbol^");
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
+        const chord = Chord.chordFromNotation(ele.chord_symbol);
+
+        // app needs label
+        chord.notes = chord.notes.map(note => {
+            const { name, ...rest } = note; 
+            return { label: name, ...rest }; 
+        });
+
+        results.push(chord);
     });
 
     return results;
@@ -494,9 +514,15 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
     let results = [];
 
     qResults.forEach(ele => {
-        console.log(ele.chord_symbol);
-        console.log("ele.chordSymbol^");
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
+        const chord = Chord.chordFromNotation(ele.chord_symbol);
+
+        // app needs label
+        chord.notes = chord.notes.map(note => {
+            const { name, ...rest } = note; 
+            return { label: name, ...rest }; 
+        });
+
+        results.push(chord);
     });
     return results;
 }
@@ -550,9 +576,15 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     let results = [];
 
     qResults.forEach(ele => {
-        console.log(ele.chord_symbol);
-        console.log("ele.chordSymbol^");
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
+        const chord = Chord.chordFromNotation(ele.chord_symbol);
+
+        // app needs label
+        chord.notes = chord.notes.map(note => {
+            const { name, ...rest } = note; 
+            return { label: name, ...rest }; 
+        });
+
+        results.push(chord);
     });
     return results;
 }
@@ -589,9 +621,15 @@ async function getChordRotations(root, baseChord) {
     let results = [];
 
     qResults.forEach(ele => {
-        console.log(ele.chord_symbol);
-        console.log("ele.chordSymbol^");
-        results.push(Chord.chordFromNotation(ele.chord_symbol));
+        const chord = Chord.chordFromNotation(ele.chord_symbol);
+
+        // app needs label
+        chord.notes = chord.notes.map(note => {
+            const { name, ...rest } = note; 
+            return { label: name, ...rest }; 
+        });
+
+        results.push(chord);
     });
     return results;
 }

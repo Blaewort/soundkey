@@ -17,6 +17,19 @@ import EditScaleRadio from '../../radio/EditScale';
 
 class ChordScaleController extends Component{
 
+    /* DEBUG */
+    componentDidUpdate(prevProps, prevState) {
+        console.log("UPDATE CHORDSCALECONTROLLER__________________________________________!");
+        Object.entries(this.props).forEach(([key, val]) =>
+          prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+        );
+        if (this.state) {
+          Object.entries(this.state).forEach(([key, val]) =>
+            prevState[key] !== val && console.log(`State '${key}' changed`)
+          );
+        }
+    }
+
     constructor(props) {
         super(props);
         this.getPlaceholder = this.getPlaceholder.bind(this);
@@ -197,7 +210,8 @@ class ChordScaleController extends Component{
             // need to make it a mode list that links to other lists
             //const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, this.props.search.limitByOther);
             const list = this.props.search.nav.scaleGroupList;
-            const itemClick = this.props.search.nav.onScaleItemClick;
+            //const itemClick = this.props.search.nav.onScaleItemClick;
+            const itemClick = this.props.search.nav.onModeItemClick;
             listArea = <ListArea modal={this.props.search.listModal} title={"Scale Groups"} handleItemClick={itemClick} list={list} />;
         }
 
@@ -221,6 +235,8 @@ class ChordScaleController extends Component{
     getNavSearchModeContents() {
         if (this.props.type === "chord") {throw new TypeError("props.type 'chord' has no 'navsearchmode'");}
 
+        console.log("DYNADAN INSIDE getNavSearchModeCOntents");
+
         let header;
         let noteNav;
         let listArea;
@@ -243,6 +259,11 @@ class ChordScaleController extends Component{
         //const list = this.props.modes.getScalesFromModeName(this.props.search.noteSelect.note.value, this.props.search.nav.mode, this.props.search.limitByOther);
         const list = this.props.search.nav.scaleList;
         const itemClick = this.props.search.nav.onModeItemClick;
+        console.log("Rendering ListArea in getNavSearchModeContents");
+        console.log(this.props.search.nav.onModeItemClick);
+        console.log("Item Click Function^");
+
+        
         listArea = <ListArea modal={this.props.search.listModal} title={this.props.scaleGroupNavSelection?.name + " Modes"} handleItemClick={itemClick} list={list} />;
 
         if (this.props.toggle.isRequired) {

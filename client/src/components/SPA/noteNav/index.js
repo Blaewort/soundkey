@@ -179,7 +179,9 @@ class NoteNav extends Component {
 
     enforceSelection() {
         if (this.props.name !== "chord") {return;} //only makes sense in chord
-        if (this.selectionAppearsInMatchList()) {return;} //nothing to enforce if selection is already in match list
+        if (this.selectionAppearsInMatchList()) {console.log("WERETURN!!!!!!!!!!!!!!!!!!!!!!!");return;} //nothing to enforce if selection is already in match list
+
+        console.log("WE DIDNT RETURN!!!!!!!!!!!!!!!!!!!!!!!");
 
         //find the closest matching note to ours and select it
         //this. stuff needs updating TODO //also might need to change stuff the way options is working
