@@ -1229,20 +1229,38 @@ class SPA extends Component{
     }
 
     //nav search stuff
+    // this is the SCALE GROUP item click "Diatonic", "Melodic", etc
     onNavSearchScaleItemClick(e, item) {
         // click from a scale navsearch menu (list of modes)
         // should open menu for mode where items are scales to select
+
+        console.log("shoooooooooooooooooooooooooooooooooooooooooooooooooooo");
+        console.log(item);
       
         
         this.setState((state, props) => {
+            if (state.scaleGroupNavSelection.id === item.object.id) {return null;}
+
+
             return {
                 ...state,
-                view: {
+                /*view: {
                     ...state.view,
                     scale: "navsearchmode",
                     scaleNavSearchMode: item.label
+                },*/
+                scaleGroupNavSelection: {
+                    id: item.object.id,
+                    name: item.object.name
                 },
+                // update view to scales in this scale group
+                view: {
+                    ...state.view,
+                    scale: "navsearchmode"
+                }
             };
+        }, () => {
+            this.updateNavSearchScaleList();
         });
 
     }

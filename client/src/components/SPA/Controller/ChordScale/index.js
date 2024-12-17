@@ -211,7 +211,7 @@ class ChordScaleController extends Component{
             //const list = this.props.modes.get(this.props.search.noteSelect.note.value, this.props.radio.nav, this.props.search.limitByOther);
             const list = this.props.search.nav.scaleGroupList;
             //const itemClick = this.props.search.nav.onScaleItemClick;
-            const itemClick = this.props.search.nav.onModeItemClick;
+            const itemClick = this.props.search.nav.onScaleItemClick;
             listArea = <ListArea modal={this.props.search.listModal} title={"Scale Groups"} handleItemClick={itemClick} list={list} />;
         }
 
