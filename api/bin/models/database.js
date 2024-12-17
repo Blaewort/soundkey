@@ -215,6 +215,8 @@ async function getScales(chordToLimitBy, root, groupID) {
     SELECT
         scale.name,
         scale.root_note,
+        scale.group_id,
+        scale_groups.name AS group_name,
         GROUP_CONCAT(sn.note ORDER BY
             CASE
             WHEN sn.note >= ? THEN 1 -- Root Note alphabetical order starting on root note from navnote selection
@@ -226,10 +228,12 @@ async function getScales(chordToLimitBy, root, groupID) {
     INNER JOIN scale_has_note sn
             ON scale.name = sn.scale_name
             AND scale.root_note = sn.root_note
+    INNER JOIN scale_groups                     -- gsf
+        ON scale.group_id = scale_groups.id
     WHERE
             scale.root_note = ? AND scale.group_id = ? -- root comes from navnote selection, group_id comes from state.scaleGroupSelection
     GROUP BY
-        scale.name, scale.root_note
+        scale.name, scale.root_note, scale_groups.name
     `;
 
     let params;
@@ -249,11 +253,15 @@ async function getScales(chordToLimitBy, root, groupID) {
 
     let qResults = await fetchPreparedStatement(sql, params);
 
+
+
     let results = [];
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            scale.groupID = ele.group_id;
+            scale.groupName = ele.group_name;
             results.push(scale);
         } catch(err) {
             console.log("RUH ROH RAGGY");
@@ -655,6 +663,8 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
     SELECT 
         scale.name,
         scale.root_note,
+        scale.group_id,
+        scale_groups.name AS group_name,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
                 WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
@@ -667,8 +677,10 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
     JOIN scale_has_note sn
         ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
+    INNER JOIN scale_groups
+        ON scale.group_id = scale_groups.id
     GROUP BY 
-        scale.name, scale.root_note
+        scale.name, scale.root_note,  scale_groups.name
     HAVING 
         COUNT(sn.note) = ? -- note count of the scale we are altering
         AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ?
@@ -705,7 +717,9 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            scale.groupID = ele.group_id;
+            scale.groupName = ele.group_name;
             results.push(scale);
         } catch(err) {
         }
@@ -723,6 +737,8 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
     SELECT 
         scale.name,
         scale.root_note,
+        scale.group_id,
+        scale_groups.name AS group_name,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
                 WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
@@ -735,8 +751,10 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
     JOIN scale_has_note sn
         ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
+    INNER JOIN scale_groups
+        ON scale.group_id = scale_groups.id
     GROUP BY 
-        scale.name, scale.root_note
+        scale.name, scale.root_note, scale_groups.name
     HAVING 
         COUNT(sn.note) = ? -- (the count of scale we are altering) plus 1
         AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ? -- Number of matching notes in source scale (all (scale.notes.length)of them)
@@ -762,6 +780,8 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
         params = [baseScaleNotes.length + 1,  ...baseScaleNotes, baseScaleNotes.length, ...notesLimiter, notesLimiter.length, baseScaleNotes[0]];
     } else {
         sql += sqlEnd;
+        console.log(sql);
+        console.log([baseScaleNotes.length + 1, ...baseScaleNotes, baseScaleNotes.length, baseScaleNotes[0]]);
         params = [baseScaleNotes.length + 1, ...baseScaleNotes, baseScaleNotes.length, baseScaleNotes[0]];
     }
 
@@ -771,7 +791,9 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            scale.groupID = ele.group_id;
+            scale.groupName = ele.group_name;
             results.push(scale);
         } catch(err) {
         }
@@ -789,6 +811,8 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
     SELECT 
         scale.name,
         scale.root_note,
+        scale.group_id,
+        scale_groups.name AS group_name, 
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
                 WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
@@ -801,8 +825,10 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
     JOIN scale_has_note sn
         ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
+    INNER JOIN scale_groups
+        ON scale.group_id = scale_groups.id
     GROUP BY 
-        scale.name, scale.root_note
+        scale.name, scale.root_note, scale_groups.name
     HAVING 
         COUNT(sn.note) = ? -- note count of the scale we are altering minus 1
         AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ? -- Number of matching notes in source scale (all (scale.notes.length-1)of them)
@@ -838,7 +864,9 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            scale.groupID = ele.group_id;
+            scale.groupName = ele.group_name;
             results.push(scale);
         } catch(err) {
         }
@@ -858,6 +886,8 @@ async function getScaleRotations(root, baseScale) {
     SELECT 
         s.name, 
         s.root_note, 
+        s.group_id,
+        scale_groups.name AS group_name,
         GROUP_CONCAT(
             sn.note 
             ORDER BY 
@@ -869,11 +899,14 @@ async function getScaleRotations(root, baseScale) {
         scales s 
         INNER JOIN scale_has_note sn ON s.name = sn.scale_name 
         AND s.root_note = sn.root_note 
+    INNER JOIN scale_groups
+        ON s.group_id = scale_groups.id
     WHERE 
         s.root_note != ? -- root of the selected scale
     GROUP BY 
         s.name, 
-        s.root_note 
+        s.root_note,
+        scale_groups.name
     HAVING 
         COUNT(*) = ? -- note count of selected scale
         AND COUNT(CASE WHEN sn.note IN (${baseScaleNotesPlaceholders}) THEN 1 END) = ? -- note count of selected scale
@@ -889,7 +922,9 @@ async function getScaleRotations(root, baseScale) {
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            scale.groupID = ele.group_id;
+            scale.groupName = ele.group_name;
             results.push(scale);
         } catch(err) {
         }
@@ -908,6 +943,8 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
     SELECT 
         scale.name,
         scale.root_note,
+        scale.group_id,
+        scale_groups.name AS group_name,
         GROUP_CONCAT(sn.note ORDER BY 
             CASE 
                 WHEN sn.note >= scale.root_note THEN 1 -- Order note list based on root of scale
@@ -921,8 +958,10 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
     JOIN scale_has_note sn
         ON scale.name = sn.scale_name
         AND scale.root_note = sn.root_note
+    INNER JOIN scale_groups
+        ON scale.group_id = scale_groups.id
     GROUP BY 
-        scale.name, scale.root_note
+        scale.name, scale.root_note, scale_groups.name
     HAVING
         `;
 
@@ -975,7 +1014,9 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
     qResults.forEach(ele => {
         const noteNameList = ele.notes.split(",");
         try{
-            const scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
+            scale.groupID = ele.group_id;
+            scale.groupName = ele.group_name;
             results.push(scale);
         } catch(err) {
         }

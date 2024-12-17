@@ -1289,6 +1289,10 @@ class SPA extends Component{
     onNavSearchModeItemClick(e, item) {
         // click scale item to select
         console.log("onNavSearchModeItemClick");
+        console.log(item.object);
+        console.log(item.object.group_id);
+        console.log(item.object.group_name);
+
         this.setState((state, props) => {
             return {
                 ...state,
@@ -1296,6 +1300,11 @@ class SPA extends Component{
                 view: {
                     ...state.view,
                     scale: "selected"
+                },
+                // update scale group selection to match what our scale has
+                scaleGroupNavSelection: {
+                    id: item.object.groupID,
+                    name: item.object.groupName
                 }
             };
         });
@@ -1429,6 +1438,10 @@ class SPA extends Component{
                     ...state.textInput,
                     scale: ""
                 },
+                scaleGroupNavSelection: {
+                    id: item.object.groupID,
+                    name: item.object.groupName
+                }
             };
         });
 
