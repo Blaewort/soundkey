@@ -1359,12 +1359,6 @@ class SPA extends Component{
 
         this.setState((state, props) => {
 
-            const textInput = {
-                //reset text input state
-                ...state.textInput,
-                scale: ""
-            };
-
             const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
             const scale = item.object;
             const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
@@ -1388,8 +1382,7 @@ class SPA extends Component{
                             ...state.radio.scale,
                             nav: nextRadioValue
                         }
-                    },
-                    textInput: textInput
+                    }
                 });
             } else if (setScaleTypeRadioToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
@@ -1399,8 +1392,7 @@ class SPA extends Component{
                             ...state.radio.scale,
                             nav: nextRadioValue
                         }
-                    },
-                    textInput: textInput
+                    }
                 });
             } else if (setNoteSelectToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
@@ -1415,7 +1407,7 @@ class SPA extends Component{
                 });
             }
             //else
-            return this.updateStateWithNewScaleSelection(item, state, {textInput: textInput});
+            return this.updateStateWithNewScaleSelection(item, state);
 
 
 
