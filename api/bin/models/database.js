@@ -990,9 +990,13 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
     /*sql += `full_name REGEXP CONCAT("\\\\b",?,"\\\\b")
             ORDER BY
             `;*/
-    sql += `full_name REGEXP CONCAT('.*\\\\b', ?, '\\\\b.*')
+    /* sql += `full_name REGEXP CONCAT('.*\\\\b', ?, '\\\\b.*')
+            ORDER BY
+            `;*/
+    sql += `full_name REGEXP CONCAT("\\\\b",?)
             ORDER BY
             `;
+        
     params.push(userString);
 
     // if we have a selected scale (in case user only typed a partial name rather than root+name), order by the root note of that scale
