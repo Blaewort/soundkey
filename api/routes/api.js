@@ -79,8 +79,18 @@ router.post('/getScales/Rotations',async (req,res) => {
 
 router.post('/getChords/fromStrings/' ,(req,res) => {
   console.log(req.body);
-  let chords = chordExpressions.Chord.chordFromNotation(req.body.string);
+  let chords = chordExpressions.Chord.chordFromNotation(req.body.string, true);
   console.log(chords);
+
+  // need label for app, not name
+  chords.notes = chords.notes.map((note) => {
+    const { name, ...rest } = note; 
+      return {
+          ...rest, 
+          label: name, 
+      };
+  });
+
   res.send(JSON.stringify(chords));
 });
 

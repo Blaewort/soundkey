@@ -1265,6 +1265,19 @@ class SPA extends Component{
 
     }
 
+    updateStateWithNewChordSelection(item, state, extraUpdates = {}) {
+        const chord = item.object;
+        return {
+            ...state,
+            chord: chord,
+            view: {
+                ...state.view,
+                chord: "selected"
+            },
+            ...extraUpdates
+        };
+    }
+
     onNavSearchChordItemClick(e, item) {
         // click chord item to select
 
@@ -1272,18 +1285,68 @@ class SPA extends Component{
         //const newItem = {name: item.name};
         console.log("onNavSearchChordItemClick");
         console.log(item);
+        
         this.setState((state, props) => {
-            return {
-                ...state,
-                chord: item.object,
-                view: {
-                    ...state.view,
-                    chord: "selected"
-                    
-                }
-            };
-        });
 
+            const currentChordTypeRadioValue = state.radio.chord.nav || ChordTypeRadio.defaultValue;
+            const chord = item.object;
+            const setChordTypeRadioToChordSelection = ChordTypeRadio.isValidValue(chord.category) && (currentChordTypeRadioValue !== chord.category);
+            const setNoteSelectToChordSelection = this.state.noteSelect.chord.value !== chord.rootNote.value.toString();
+
+            if (setChordTypeRadioToChordSelection && setNoteSelectToChordSelection) {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES");
+
+                return this.updateStateWithNewChordSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        chord: {
+                            ...state.noteSelect.chord,
+                            label: chord.rootNote.name,
+                            value: chord.rootNote.value.toString()
+                        }
+                    },
+                    radio: {
+                        ...state.radio,
+                        chord: {
+                            ...state.radio.chord,
+                            nav: chord.category
+                        }
+                    }
+                });
+
+            } else if (setChordTypeRadioToChordSelection) {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES?>>>>>>>>>>>>>>>");
+
+                return this.updateStateWithNewChordSelection(item, state, {
+                    radio: {
+                        ...state.radio,
+                        chord: {
+                            ...state.radio.chord,
+                            nav: chord.category
+                        }
+                    }
+                });
+
+            } else if (setNoteSelectToChordSelection) {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES????????????????");
+
+                return this.updateStateWithNewChordSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        chord: {
+                            ...state.noteSelect.chord,
+                            label: chord.rootNote.name,
+                            value: chord.rootNote.value.toString()
+                        }
+                    }
+                });
+            }
+            
+
+            // else
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES-------------------------");
+            return this.updateStateWithNewChordSelection(item, state);
+        });
     }
 
     onNavSearchModeItemClick(e, item) {
@@ -1454,7 +1517,80 @@ class SPA extends Component{
         console.log("onSearchChordItemClick");
         console.log(item);
 
-        const newItem = {name: item.name};
+        //const newItem = {name: item.name};
+
+        
+
+        this.setState((state, props) => {
+
+            const textInput= {
+                //reset text input state
+                ...state.textInput,
+                chord: ""
+            };
+
+            const currentChordTypeRadioValue = state.radio.chord.nav || ChordTypeRadio.defaultValue;
+            const chord = item.object;
+            const setChordTypeRadioToChordSelection = ChordTypeRadio.isValidValue(chord.category) && (currentChordTypeRadioValue !== chord.category);
+            const setNoteSelectToChordSelection = this.state.noteSelect.chord.value !== chord.rootNote.value.toString();
+
+            if (setChordTypeRadioToChordSelection && setNoteSelectToChordSelection) {
+                return this.updateStateWithNewChordSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        chord: {
+                            ...state.noteSelect.chord,
+                            label: chord.rootNote.name,
+                            value: chord.rootNote.value.toString()
+                        }
+                    },
+                    radio: {
+                        ...state.radio,
+                        chord: {
+                            ...state.radio.chord,
+                            nav: chord.category
+                        }
+                    },
+                    textInput: textInput
+                });
+
+            } else if (setChordTypeRadioToChordSelection) {
+
+                return this.updateStateWithNewChordSelection(item, state, {
+                    radio: {
+                        ...state.radio,
+                        chord: {
+                            ...state.radio.chord,
+                            nav: chord.category
+                        }
+                    },
+                    textInput: textInput
+                });
+
+            } else if (setNoteSelectToChordSelection) {
+                return this.updateStateWithNewChordSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        chord: {
+                            ...state.noteSelect.chord,
+                            label: chord.rootNote.name,
+                            value: chord.rootNote.value.toString()
+                        }
+                    },
+                    textInput: textInput
+                });
+            }
+            
+
+            // else
+            return this.updateStateWithNewChordSelection(item, state, {textInput: textInput});
+        });
+
+
+
+
+
+
 
         this.setState((state, props) => {
             return {
@@ -1521,7 +1657,6 @@ class SPA extends Component{
                 this.updateNavSearchScaleList();
                 break;
             case "edit":
-                // only supported for alterations so far
                 this.updateEditedScaleList();
                 break;
             case "search":
