@@ -262,6 +262,7 @@ async function getScales(chordToLimitBy, root, groupID) {
             let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             scale.groupID = ele.group_id;
             scale.groupName = ele.group_name;
+            scale.rootNote = Note.fromName(scale.root);
             results.push(scale);
         } catch(err) {
             console.log("RUH ROH RAGGY");
@@ -695,6 +696,8 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
     scale.root_note ASC
     `;
 
+    console.log("WE JUST BUILT SQWL");
+
     let params;
 
     if (chordToLimitBy) { 
@@ -720,10 +723,14 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
             let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             scale.groupID = ele.group_id;
             scale.groupName = ele.group_name;
+            scale.rootNote = Note.fromName(scale.root);
             results.push(scale);
         } catch(err) {
+            console.log(err);
         }
     });
+
+    console.log("about to return");
     return results;
 }
 
@@ -794,6 +801,7 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
             let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             scale.groupID = ele.group_id;
             scale.groupName = ele.group_name;
+            scale.rootNote = Note.fromName(scale.root);
             results.push(scale);
         } catch(err) {
         }
@@ -867,6 +875,7 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
             let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             scale.groupID = ele.group_id;
             scale.groupName = ele.group_name;
+            scale.rootNote = Note.fromName(scale.root);
             results.push(scale);
         } catch(err) {
         }
@@ -925,6 +934,7 @@ async function getScaleRotations(root, baseScale) {
             let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             scale.groupID = ele.group_id;
             scale.groupName = ele.group_name;
+            scale.rootNote = Note.fromName(scale.root);
             results.push(scale);
         } catch(err) {
         }
@@ -977,7 +987,10 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
         params.push(limiterNotes.length);
     } 
 
-    sql += `full_name REGEXP CONCAT("\\\\b",?,"\\\\b")
+    /*sql += `full_name REGEXP CONCAT("\\\\b",?,"\\\\b")
+            ORDER BY
+            `;*/
+    sql += `full_name REGEXP CONCAT('.*\\\\b', ?, '\\\\b.*')
             ORDER BY
             `;
     params.push(userString);
@@ -1017,6 +1030,7 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
             let scale = Scale.fromSimple(ele.root_note, ele.name, noteNameList);
             scale.groupID = ele.group_id;
             scale.groupName = ele.group_name;
+            scale.rootNote = Note.fromName(scale.root);
             results.push(scale);
         } catch(err) {
         }

@@ -320,7 +320,7 @@ function fapi_getScaleAlterations(noteValue, baseScale, chordToLimitBy) {
     console.log("inside fapi_getScaleAlterations");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
-    console.log("made it to fapi_getScaleAlterations")
+    console.log("made it to fapi_getScaleAlterations");
 
     // if its a chord/scale object with .notes prop then convert it to an array of note label strings (["A#, "B", C#, etc])
     if(baseScale?.notes){
@@ -330,7 +330,13 @@ function fapi_getScaleAlterations(noteValue, baseScale, chordToLimitBy) {
         chordToLimitBy = chordToLimitBy.notes.map(val => val.label);
     }
 
+    console.log(noteValue);
+    console.log("noteValu^^^^e");
+    
+
     const root = Note.fromValue(noteValue).name;
+
+    console.log("made it to ________________DDDDDDDDDDDDDDDD");
 
     return postData(urlRoot + '/getScales/Alterations/',
         {

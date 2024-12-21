@@ -1137,6 +1137,7 @@ class SPA extends Component{
                 }));
             }
         } catch (err) {
+            console.log(err);
             console.error("Error fetching new list:", err);
         }
         
@@ -1357,7 +1358,73 @@ class SPA extends Component{
         console.log(item.object.group_name);
 
         this.setState((state, props) => {
-            return {
+
+            const textInput = {
+                //reset text input state
+                ...state.textInput,
+                scale: ""
+            };
+
+            const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
+            const scale = item.object;
+            const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
+            const setScaleTypeRadioToScaleSelection = nextRadioValue !== currentScaleTypeRadioValue;
+            const setNoteSelectToScaleSelection = this.state.noteSelect.scale.value !== scale.rootNote.value.toString();
+
+
+            if (setScaleTypeRadioToScaleSelection && setNoteSelectToScaleSelection) {
+                return this.updateStateWithNewScaleSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        scale: {
+                            ...state.noteSelect.scale,
+                            label: scale.rootNote.name,
+                            value: scale.rootNote.value.toString()
+                        }
+                    },
+                    radio: {
+                        ...state.radio,
+                        scale: {
+                            ...state.radio.scale,
+                            nav: nextRadioValue
+                        }
+                    },
+                    textInput: textInput
+                });
+            } else if (setScaleTypeRadioToScaleSelection) {
+                return this.updateStateWithNewScaleSelection(item, state, {
+                    radio: {
+                        ...state.radio,
+                        scale: {
+                            ...state.radio.scale,
+                            nav: nextRadioValue
+                        }
+                    },
+                    textInput: textInput
+                });
+            } else if (setNoteSelectToScaleSelection) {
+                return this.updateStateWithNewScaleSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        scale: {
+                            ...state.noteSelect.scale,
+                            label: scale.rootNote.name,
+                            value: scale.rootNote.value.toString()
+                        }
+                    },
+                });
+            }
+            //else
+            return this.updateStateWithNewScaleSelection(item, state, {textInput: textInput});
+
+
+
+
+
+
+
+
+            /*return {
                 ...state,
                 scale: item.object,
                 view: {
@@ -1369,7 +1436,7 @@ class SPA extends Component{
                     id: item.object.groupID,
                     name: item.object.groupName
                 }
-            };
+            };*/
         });
     }
 
@@ -1480,6 +1547,24 @@ class SPA extends Component{
         });
     }
 
+    updateStateWithNewScaleSelection(item, state, extraUpdates = {}) {
+        const scale = item.object;
+        return {
+            ...state,
+            scale: scale,
+            view: {
+                ...state.view,
+                scale: "selected"
+                
+            },
+            scaleGroupNavSelection: {
+                id: scale.groupID,
+                name: scale.groupName
+            },
+            ...extraUpdates
+        };
+    }
+
     onSearchScaleItemClick(e, item) {
         // click from a scale navsearch menu (list of modes)
         // should open menu for mode where items are scales to select
@@ -1488,7 +1573,68 @@ class SPA extends Component{
       
         
         this.setState((state, props) => {
-            return {
+
+            const textInput = {
+                //reset text input state
+                ...state.textInput,
+                scale: ""
+            };
+
+            const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
+            const scale = item.object;
+            const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
+            const setScaleTypeRadioToScaleSelection = nextRadioValue !== currentScaleTypeRadioValue;
+            const setNoteSelectToScaleSelection = this.state.noteSelect.scale.value !== scale.rootNote.value.toString();
+
+
+            if (setScaleTypeRadioToScaleSelection && setNoteSelectToScaleSelection) {
+                return this.updateStateWithNewScaleSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        scale: {
+                            ...state.noteSelect.scale,
+                            label: scale.rootNote.name,
+                            value: scale.rootNote.value.toString()
+                        }
+                    },
+                    radio: {
+                        ...state.radio,
+                        scale: {
+                            ...state.radio.scale,
+                            nav: nextRadioValue
+                        }
+                    },
+                    textInput: textInput
+                });
+            } else if (setScaleTypeRadioToScaleSelection) {
+                return this.updateStateWithNewScaleSelection(item, state, {
+                    radio: {
+                        ...state.radio,
+                        scale: {
+                            ...state.radio.scale,
+                            nav: nextRadioValue
+                        }
+                    },
+                    textInput: textInput
+                });
+            } else if (setNoteSelectToScaleSelection) {
+                return this.updateStateWithNewScaleSelection(item, state, {
+                    noteSelect: {
+                        ...state.noteSelect,
+                        scale: {
+                            ...state.noteSelect.scale,
+                            label: scale.rootNote.name,
+                            value: scale.rootNote.value.toString()
+                        }
+                    },
+                });
+            }
+            //else
+            return this.updateStateWithNewScaleSelection(item, state, {textInput: textInput});
+
+
+
+            /*return {
                 ...state,
                 scale: item.object,
                 view: {
@@ -1496,16 +1642,8 @@ class SPA extends Component{
                     scale: "selected"
                     
                 },
-                textInput: {
-                    //reset text input state
-                    ...state.textInput,
-                    scale: ""
-                },
-                scaleGroupNavSelection: {
-                    id: item.object.groupID,
-                    name: item.object.groupName
-                }
-            };
+                textInput: textInput
+            };*/
         });
 
     }
@@ -1592,7 +1730,7 @@ class SPA extends Component{
 
 
 
-        this.setState((state, props) => {
+        /*this.setState((state, props) => {
             return {
                 ...state,
                 chord: item.object,
@@ -1607,7 +1745,7 @@ class SPA extends Component{
                     chord: ""
                 },
             };
-        });
+        });*/
 
     }
 
