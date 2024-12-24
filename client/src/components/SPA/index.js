@@ -98,33 +98,52 @@ class SPA extends Component{
         super(props);
         this.state = {
              chord: {
-                root: "E",
+                rootNote: {
+                    name: "E",
+                    value: 7,
+                },
                 name: "E Minor",
                 symbol: "Em",
                 category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}]
             },
             chord: {
-                root: "E",
+                rootNote: {
+                    name: "E",
+                    value: 7,
+                },
                 name: "E Minor Seven",
                 symbol: "Em7",
                 category: "Seven",
                 notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}, {label: "D", value: 5}]
             },
             chord: {
-                root: "E",
+                rootNote: {
+                    name: "E",
+                    value: 7,
+                },
                 name: "E Major",
                 symbol: "E",
                 category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G#", value: 12}, {label: "B", value: 2}]
             },
             chord: {
+                rootNote: {
+                    name: "B",
+                    value: 2,
+                },
+                name: "B Major",
+                symbol: "B",
+                category: "Triad",
+                notes: [{label: "B", value: 2},{label: "D#", value: 6}, {label: "F#", value: 9}]
+            },
+            /* chord: {
                 root: "E",
                 name: "E Diminished",
                 symbol: "Edim",
                 category: "Triad",
                 notes: [{label: "E", value: 7},{label: "G", value: 10}, {label: "A#", value: 1}]
-            },
+            },*/
             
             /*chord: {
                 root: "E",
@@ -970,7 +989,8 @@ class SPA extends Component{
     
         const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
         try {
-            let response = await fapi_getChordExtensions(parseInt(state.noteSelect.chord.value), state.chord.category, state.chord, scaleToLimitBy);
+            // let response = await fapi_getChordExtensions(parseInt(state.noteSelect.chord.value), state.chord.category, state.chord, scaleToLimitBy);
+            let response = await fapi_getChordExtensions(parseInt(state.chord.rootNote.value), state.chord.category, state.chord, scaleToLimitBy);
             let newList = JSON.parse(response);
 
             if (Array.isArray(newList)) {
@@ -1288,9 +1308,26 @@ class SPA extends Component{
         console.log(item);
         
         this.setState((state, props) => {
+            const chord = item.object;
+
+            const noteSelect = {
+                ...state.noteSelect,
+                chord: {
+                    ...state.noteSelect.chord,
+                    label: chord.rootNote.name,
+                    value: chord.rootNote.value.toString()
+                }
+            };
+
+            const radio = {
+                ...state.radio,
+                chord: {
+                    ...state.radio.chord,
+                    nav: chord.category
+                }
+            };
 
             const currentChordTypeRadioValue = state.radio.chord.nav || ChordTypeRadio.defaultValue;
-            const chord = item.object;
             const setChordTypeRadioToChordSelection = ChordTypeRadio.isValidValue(chord.category) && (currentChordTypeRadioValue !== chord.category);
             const setNoteSelectToChordSelection = this.state.noteSelect.chord.value !== chord.rootNote.value.toString();
 
@@ -1298,48 +1335,22 @@ class SPA extends Component{
                 console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES");
 
                 return this.updateStateWithNewChordSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        chord: {
-                            ...state.noteSelect.chord,
-                            label: chord.rootNote.name,
-                            value: chord.rootNote.value.toString()
-                        }
-                    },
-                    radio: {
-                        ...state.radio,
-                        chord: {
-                            ...state.radio.chord,
-                            nav: chord.category
-                        }
-                    }
+                    noteSelect: noteSelect,
+                    radio: radio
                 });
 
             } else if (setChordTypeRadioToChordSelection) {
                 console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES?>>>>>>>>>>>>>>>");
 
                 return this.updateStateWithNewChordSelection(item, state, {
-                    radio: {
-                        ...state.radio,
-                        chord: {
-                            ...state.radio.chord,
-                            nav: chord.category
-                        }
-                    }
+                    radio: radio
                 });
 
             } else if (setNoteSelectToChordSelection) {
                 console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!LYGGES????????????????");
 
                 return this.updateStateWithNewChordSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        chord: {
-                            ...state.noteSelect.chord,
-                            label: chord.rootNote.name,
-                            value: chord.rootNote.value.toString()
-                        }
-                    }
+                    noteSelect: noteSelect
                 });
             }
             
@@ -1359,76 +1370,47 @@ class SPA extends Component{
 
         this.setState((state, props) => {
 
+            const noteSelect = {
+                ...state.noteSelect,
+                scale: {
+                    ...state.noteSelect.scale,
+                    label: scale.rootNote.name,
+                    value: scale.rootNote.value.toString()
+                }
+            };
+
+            const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
+            const radio = {
+                ...state.radio,
+                scale: {
+                    ...state.radio.scale,
+                    nav: nextRadioValue
+                }
+            };
+
             const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
             const scale = item.object;
-            const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
+            
             const setScaleTypeRadioToScaleSelection = nextRadioValue !== currentScaleTypeRadioValue;
-            const setNoteSelectToScaleSelection = this.state.noteSelect.scale.value !== scale.rootNote.value.toString();
+            const setNoteSelectToScaleSelection = state.noteSelect.scale.value !== scale.rootNote.value.toString();
 
 
             if (setScaleTypeRadioToScaleSelection && setNoteSelectToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        scale: {
-                            ...state.noteSelect.scale,
-                            label: scale.rootNote.name,
-                            value: scale.rootNote.value.toString()
-                        }
-                    },
-                    radio: {
-                        ...state.radio,
-                        scale: {
-                            ...state.radio.scale,
-                            nav: nextRadioValue
-                        }
-                    }
+                    noteSelect: noteSelect,
+                    radio: radio
                 });
             } else if (setScaleTypeRadioToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
-                    radio: {
-                        ...state.radio,
-                        scale: {
-                            ...state.radio.scale,
-                            nav: nextRadioValue
-                        }
-                    }
+                    radio: radio
                 });
             } else if (setNoteSelectToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        scale: {
-                            ...state.noteSelect.scale,
-                            label: scale.rootNote.name,
-                            value: scale.rootNote.value.toString()
-                        }
-                    },
+                    noteSelect: noteSelect
                 });
             }
             //else
             return this.updateStateWithNewScaleSelection(item, state);
-
-
-
-
-
-
-
-
-            /*return {
-                ...state,
-                scale: item.object,
-                view: {
-                    ...state.view,
-                    scale: "selected"
-                },
-                // update scale group selection to match what our scale has
-                scaleGroupNavSelection: {
-                    id: item.object.groupID,
-                    name: item.object.groupName
-                }
-            };*/
         });
     }
 
@@ -1572,53 +1554,46 @@ class SPA extends Component{
                 scale: ""
             };
 
+            const noteSelect = {
+                ...state.noteSelect,
+                scale: {
+                    ...state.noteSelect.scale,
+                    label: scale.rootNote.name,
+                    value: scale.rootNote.value.toString()
+                }
+            };
+
+            const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
+            const radio = {
+                ...state.radio,
+                scale: {
+                    ...state.radio.scale,
+                    nav: nextRadioValue
+                }
+            };
+
             const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
             const scale = item.object;
-            const nextRadioValue = ScaleTypeRadio.getOptionValueFromScaleLength(scale.notes.length);
             const setScaleTypeRadioToScaleSelection = nextRadioValue !== currentScaleTypeRadioValue;
-            const setNoteSelectToScaleSelection = this.state.noteSelect.scale.value !== scale.rootNote.value.toString();
+            const setNoteSelectToScaleSelection = state.noteSelect.scale.value !== scale.rootNote.value.toString();
+
 
 
             if (setScaleTypeRadioToScaleSelection && setNoteSelectToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        scale: {
-                            ...state.noteSelect.scale,
-                            label: scale.rootNote.name,
-                            value: scale.rootNote.value.toString()
-                        }
-                    },
-                    radio: {
-                        ...state.radio,
-                        scale: {
-                            ...state.radio.scale,
-                            nav: nextRadioValue
-                        }
-                    },
+                    noteSelect: noteSelect,
+                    radio: radio,
                     textInput: textInput
                 });
             } else if (setScaleTypeRadioToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
-                    radio: {
-                        ...state.radio,
-                        scale: {
-                            ...state.radio.scale,
-                            nav: nextRadioValue
-                        }
-                    },
+                    radio: radio,
                     textInput: textInput
                 });
             } else if (setNoteSelectToScaleSelection) {
                 return this.updateStateWithNewScaleSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        scale: {
-                            ...state.noteSelect.scale,
-                            label: scale.rootNote.name,
-                            value: scale.rootNote.value.toString()
-                        }
-                    },
+                    noteSelect: noteSelect,
+                    textInput: textInput
                 });
             }
             //else
@@ -1652,6 +1627,7 @@ class SPA extends Component{
         
 
         this.setState((state, props) => {
+            const chord = item.object;
 
             const textInput= {
                 //reset text input state
@@ -1659,59 +1635,47 @@ class SPA extends Component{
                 chord: ""
             };
 
+            const noteSelect = {
+                ...state.noteSelect,
+                chord: {
+                    ...state.noteSelect.chord,
+                    label: chord.rootNote.name,
+                    value: chord.rootNote.value.toString()
+                }
+            };
+
+            const radio = {
+                ...state.radio,
+                chord: {
+                    ...state.radio.chord,
+                    nav: chord.category
+                }
+            };
+
             const currentChordTypeRadioValue = state.radio.chord.nav || ChordTypeRadio.defaultValue;
-            const chord = item.object;
             const setChordTypeRadioToChordSelection = ChordTypeRadio.isValidValue(chord.category) && (currentChordTypeRadioValue !== chord.category);
-            const setNoteSelectToChordSelection = this.state.noteSelect.chord.value !== chord.rootNote.value.toString();
+            const setNoteSelectToChordSelection = state.noteSelect.chord.value !== chord.rootNote.value.toString();
 
             if (setChordTypeRadioToChordSelection && setNoteSelectToChordSelection) {
                 return this.updateStateWithNewChordSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        chord: {
-                            ...state.noteSelect.chord,
-                            label: chord.rootNote.name,
-                            value: chord.rootNote.value.toString()
-                        }
-                    },
-                    radio: {
-                        ...state.radio,
-                        chord: {
-                            ...state.radio.chord,
-                            nav: chord.category
-                        }
-                    },
+                    noteSelect: noteSelect,
+                    radio: radio,
                     textInput: textInput
                 });
 
             } else if (setChordTypeRadioToChordSelection) {
-
                 return this.updateStateWithNewChordSelection(item, state, {
-                    radio: {
-                        ...state.radio,
-                        chord: {
-                            ...state.radio.chord,
-                            nav: chord.category
-                        }
-                    },
+                    radio: radio,
                     textInput: textInput
                 });
 
             } else if (setNoteSelectToChordSelection) {
                 return this.updateStateWithNewChordSelection(item, state, {
-                    noteSelect: {
-                        ...state.noteSelect,
-                        chord: {
-                            ...state.noteSelect.chord,
-                            label: chord.rootNote.name,
-                            value: chord.rootNote.value.toString()
-                        }
-                    },
+                    noteSelect: noteSelect,
                     textInput: textInput
                 });
             }
             
-
             // else
             return this.updateStateWithNewChordSelection(item, state, {textInput: textInput});
         });

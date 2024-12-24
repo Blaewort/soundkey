@@ -152,6 +152,7 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
         c.name,
         c.symbol,
         c.root_note,
+        c.category,
         JSON_ARRAYAGG(cn.note) AS notes
     FROM
         chords c
@@ -193,6 +194,10 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
             const { name, ...rest } = note; 
             return { label: name, ...rest }; 
         });
+
+        // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
+        // this behavior is already in createMod and createAdd in Blueprint class
+        chord.category = ele.category;
 
         results.push(chord);
     });
@@ -362,7 +367,8 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     SELECT 
         chn.chord_symbol,
         chn.root_note,
-        chord.name as name
+        chord.name as name,
+        chord.category as category
     FROM 
         chord_has_note chn
     JOIN 
@@ -374,7 +380,8 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note,
-        name
+        name,
+        category
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -394,6 +401,7 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length];
     }
 
+
     let qResults = await fetchPreparedStatement(sql, params);
     let results = [];
 
@@ -409,11 +417,16 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
             const { name, ...rest } = note; 
             return { label: name, ...rest }; 
         });
+
+        // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
+        // this behavior is already in createMod and createAdd in Blueprint class
+        chord.category = ele.category;
         
         results.push(chord);
     });
 
-    
+    console.log(sql);
+    console.log(params);
 
     return results;
 }
@@ -430,12 +443,16 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
     let sql = `
     SELECT 
         chn.chord_symbol,
-        chn.root_note
+        chn.root_note,
+        chord.category as category
     FROM 
         chord_has_note chn
+    JOIN 
+        chords chord ON chord.symbol = chn.chord_symbol
     GROUP BY 
         chn.chord_symbol, 
-        chn.root_note
+        chn.root_note,
+        category
     HAVING 
         COUNT(*) = ?
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ? 
@@ -476,6 +493,10 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
             return { label: name, ...rest }; 
         });
 
+        // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
+        // this behavior is already in createMod and createAdd in Blueprint class
+        chord.category = ele.category;
+
         results.push(chord);
     });
 
@@ -491,12 +512,16 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
     let sql = `
     SELECT 
         chn.chord_symbol,
-        chn.root_note
+        chn.root_note,
+        chord.category as category
     FROM 
         chord_has_note chn
+    JOIN 
+        chords chord ON chord.symbol = chn.chord_symbol
     GROUP BY 
         chn.chord_symbol, 
-        chn.root_note
+        chn.root_note,
+        category
     HAVING 
         COUNT(*) = ? 
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -540,6 +565,10 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
             return { label: name, ...rest }; 
         });
 
+        // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
+        // this behavior is already in createMod and createAdd in Blueprint class
+        chord.category = ele.category;
+
         results.push(chord);
     });
     return results;
@@ -554,12 +583,16 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     let sql = `
     SELECT 
         chn.chord_symbol,
-        chn.root_note
+        chn.root_note,
+        chord.category as category
     FROM 
         chord_has_note chn
+    JOIN 
+        chords chord ON chord.symbol = chn.chord_symbol
     GROUP BY 
         chn.chord_symbol, 
-        chn.root_note
+        chn.root_note,
+        category
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -602,6 +635,10 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
             return { label: name, ...rest }; 
         });
 
+        // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
+        // this behavior is already in createMod and createAdd in Blueprint class
+        chord.category = ele.category;
+
         results.push(chord);
     });
     return results;
@@ -618,14 +655,18 @@ async function getChordRotations(root, baseChord) {
     let sql = `
     SELECT 
         chn.chord_symbol, 
-        chn.root_note 
+        chn.root_note,
+        chord.category as category
     FROM 
         chord_has_note chn 
+    JOIN 
+        chords chord ON chord.symbol = chn.chord_symbol
     WHERE 
         chn.root_note != ? -- root note of selected chord
     GROUP BY 
         chn.chord_symbol, 
-        chn.root_note 
+        chn.root_note,
+        category
     HAVING 
         COUNT(*) = ? -- note count of selected chord
         AND COUNT(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 END) = ?  -- note count of selected chord
@@ -646,6 +687,10 @@ async function getChordRotations(root, baseChord) {
             const { name, ...rest } = note; 
             return { label: name, ...rest }; 
         });
+
+        // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
+        // this behavior is already in createMod and createAdd in Blueprint class
+        chord.category = ele.category;
 
         results.push(chord);
     });
