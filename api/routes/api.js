@@ -31,9 +31,10 @@ router.post('/getChords/Extensions',async (req,res) => {
   let category = req.body.category ? req.body.category : null;
   let baseChord = req.body.baseChord;
   let scaleToLimitBy = req.body.scaleToLimitBy;
+  let triadBase = req.body.triadBase;
 
   console.log("db.getChords/Extensions(",baseChord,",",root,",",category,",",scaleToLimitBy,")");
-  let chords = await db.getChordExtensions(baseChord,root,category,scaleToLimitBy);
+  let chords = await db.getChordExtensions(baseChord,root,category,scaleToLimitBy, triadBase);
   res.json(JSON.stringify(chords));
 });
 
@@ -79,7 +80,14 @@ router.post('/getScales/Rotations',async (req,res) => {
 
 router.post('/getChords/fromStrings/' ,async (req,res) => {
   console.log(req.body);
-  let chords = chordExpressions.Chord.chordFromNotation(req.body.string, true);
+  let chords;
+  try {
+    chords = chordExpressions.Chord.chordFromNotation(req.body.string, true);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+  
   console.log(chords);
 
   // need label for app, not name
@@ -91,9 +99,15 @@ router.post('/getChords/fromStrings/' ,async (req,res) => {
       };
   });
 
-  // fromNotation (or parser itself) not giving correct chordCategory so we need to override with what we can find in the database
-  // if we can't find it then it's just going to be "Crafted" per db.GetChordCategory
-  chords.category = await db.getChordCategory(chords.rootNote.name, chords.notes.map(note=> note.label));
+
+ // fromNotation (or parser itself) not giving correct chordCategory so we need to override with what we can find in the database
+  // if we can't find it then it's just going to be "Crafted" per db.GetChordCategoryAndTriadBase
+ // same deal for triadBase
+  const { category, triadBase } = await db.getChordCategoryAndTriadBase(chords.rootNote.name, chords.notes.map(note => note.label));
+  chords.category = category;
+  chords.triadBase = triadBase;
+
+
  
 
   res.send(JSON.stringify(chords));

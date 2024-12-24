@@ -105,7 +105,8 @@ class SPA extends Component{
                 name: "E Minor",
                 symbol: "Em",
                 category: "Triad",
-                notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}]
+                notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}],
+                triadBase: "Minor"
             },
             chord: {
                 rootNote: {
@@ -115,7 +116,8 @@ class SPA extends Component{
                 name: "E Minor Seven",
                 symbol: "Em7",
                 category: "Seven",
-                notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}, {label: "D", value: 5}]
+                notes: [{label: "E", value: 7},{label: "G", value: 11}, {label: "B", value: 2}, {label: "D", value: 5}],
+                triadBase: "Minor"
             },
             chord: {
                 rootNote: {
@@ -125,7 +127,8 @@ class SPA extends Component{
                 name: "E Major",
                 symbol: "E",
                 category: "Triad",
-                notes: [{label: "E", value: 7},{label: "G#", value: 12}, {label: "B", value: 2}]
+                notes: [{label: "E", value: 7},{label: "G#", value: 12}, {label: "B", value: 2}],
+                triadBase: "Major"
             },
             chord: {
                 rootNote: {
@@ -135,9 +138,10 @@ class SPA extends Component{
                 name: "B Major",
                 symbol: "B",
                 category: "Triad",
-                notes: [{label: "B", value: 2},{label: "D#", value: 6}, {label: "F#", value: 9}]
+                notes: [{label: "B", value: 2},{label: "D#", value: 6}, {label: "F#", value: 9}],
+                triadBase: "Major"
             },
-            chord: {
+            /*chord: {
                 rootNote: {
                     name: "B",
                     value: 2,
@@ -145,14 +149,16 @@ class SPA extends Component{
                 name: "B Suspended Two",
                 symbol: "B",
                 category: "Triad",
-                notes: [{label: "B", value: 2},{label: "C#", value: 4}, {label: "F#", value: 9}]
-            },
+                notes: [{label: "B", value: 2},{label: "C#", value: 4}, {label: "F#", value: 9}],
+                triadBase: "Suspended Two" // need this for extensions to work properly
+            },*/
             /* chord: {
                 root: "E",
                 name: "E Diminished",
                 symbol: "Edim",
                 category: "Triad",
-                notes: [{label: "E", value: 7},{label: "G", value: 10}, {label: "A#", value: 1}]
+                notes: [{label: "E", value: 7},{label: "G", value: 10}, {label: "A#", value: 1}],
+                triadBase: "Diminished"
             },*/
             
             /*chord: {
@@ -160,21 +166,24 @@ class SPA extends Component{
                 name: "E Major",
                 symbol: "E",
                 category: "Triad",
-                notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}]
+                notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}],
+                triadBase: "Major"
             },*/
             /*chord: {
                 root: "E",
                 name: "E Major Seven",
                 symbol: "Emaj7",
                 category: "Seven",
-                notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}, {label: "D#", value: 6}]
+                notes: [{label: "E", value: 7},{label: "G#", value: 11}, {label: "B", value: 2}, {label: "D#", value: 6}],
+                triadBase: "Major"
             },*/
             /*chord: {
                 root: "A",
                 name: "A Minor",
                 symbol: "Am",
                 category: "Triad",
-                notes: [{label: "A", value: 0},{label: "C", value: 3}, {label: "E", value: 7}]
+                notes: [{label: "A", value: 0},{label: "C", value: 3}, {label: "E", value: 7}],
+                triadBase: "Minor"
             },*/
             scale: {
                 root: "E",
@@ -1000,7 +1009,7 @@ class SPA extends Component{
         const scaleToLimitBy = (state.scale && state.toggle.chord) ? state.scale : null;
         try {
             // let response = await fapi_getChordExtensions(parseInt(state.noteSelect.chord.value), state.chord.category, state.chord, scaleToLimitBy);
-            let response = await fapi_getChordExtensions(parseInt(state.chord.rootNote.value), state.chord.category, state.chord, scaleToLimitBy);
+            let response = await fapi_getChordExtensions(parseInt(state.chord.rootNote.value), state.chord.category, state.chord, scaleToLimitBy, state.chord.triadBase);
             let newList = JSON.parse(response);
 
             if (Array.isArray(newList)) {

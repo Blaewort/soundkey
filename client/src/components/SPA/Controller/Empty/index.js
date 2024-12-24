@@ -26,7 +26,7 @@ class EmptyController extends Component{
                         and happen to exist in the next extension category for B7sus2 ("Seven" -> "Nine"). How fix? Need something in chord generator that makes to a chord table 
                         column "extentionBaseTriad" so query checks they are of the same base triad too. How do we do that and ensure nothing we dont want gets this extentionBaseTriad?
                         Perhaps look at the first two blueprint.intervals after sort. ["3", "5"] basetriad of "Major", ["3", "b5"] "Flat Five" ["4", "5"] "Suspended Two
-                        ["4", "5"] "Suspended Two Flat Five", etc </li>
+                        ["4", "5"] "Suspended Two Flat Five", etc . have to sort and do this both for chord we are extending during query and chord or blueprint built in chord_gen</li>
                     <li>Sus chord extensions broken after you hit the sus note an octave up (Example: B9sus4 cant extend to B9sus13 (should it?) because 
                         B11sus4 technically doesn't exist to bridge the gap—11 is 4— so if it actually makes sense to bridge B9sus4 to B13sus4 where 13sus4 just has no 11, is unclear</li>
                     <li>11sus4, maj11sus4 and 9sus2, maj9sus4 chords shouldn't exist but are being created by the generator and put into the database. Just remove those entries from chord_gen

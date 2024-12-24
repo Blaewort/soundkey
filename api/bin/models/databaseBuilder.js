@@ -20,8 +20,9 @@ function saveToChordNoteTable(chord) {
 }
 
 function saveToChordTable(chord) {
-    let sql = "INSERT IGNORE INTO chords (name, symbol, root_note, category) VALUES(?,?,?,?)"
-    con.query(sql,[chord.name, chord.sym, chord.root.name,chord.category] , function(err,result){
+    let sql = "INSERT IGNORE INTO chords (name, symbol, root_note, category, triad_base) VALUES(?,?,?,?,?)"
+    console.log(`\n\n\n\n${JSON.stringify(chord)}\n\n\n\n`);
+    con.query(sql,[chord.name, chord.sym, chord.root.name,chord.category, chord.triadBase] , function(err,result){
         if (err) throw err;
     });
 }
@@ -101,7 +102,7 @@ con.connect(function(err) {
     con.changeUser({database : 'sound_key'}, function(err) {
         if (err) throw err;
     });
-    con.query("CREATE TABLE IF NOT EXISTS chords (name VARCHAR(255), symbol VARCHAR(255), root_note VARCHAR(255), category VARCHAR(255), PRIMARY KEY (symbol,root_note)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
+    con.query("CREATE TABLE IF NOT EXISTS chords (name VARCHAR(255), symbol VARCHAR(255), root_note VARCHAR(255), category VARCHAR(255), PRIMARY KEY (symbol,root_note), triad_base VARCHAR(255)) DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci", function (err, result) {
         if (err) throw err;
         console.log("chords table created");
     });

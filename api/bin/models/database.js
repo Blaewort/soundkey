@@ -277,8 +277,8 @@ async function getScales(chordToLimitBy, root, groupID) {
     return results;
 }
 
-async function getChordCategory(rootNoteStr, noteStrList) {
-
+// for helping the chord.fromNotation along
+async function getChordCategoryAndTriadBase(rootNoteStr, noteStrList) {
     const notesPlaceholders = noteStrList.map(() => '?').join(', ');
 
     let sql = `
@@ -286,7 +286,8 @@ async function getChordCategory(rootNoteStr, noteStrList) {
         chn.chord_symbol,
         chn.root_note,
         chord.name as name,
-        chord.category as category
+        chord.category as category,
+        chord.triad_base as triad_base
     FROM 
         chord_has_note chn
     JOIN 
@@ -297,7 +298,8 @@ async function getChordCategory(rootNoteStr, noteStrList) {
         chn.chord_symbol, 
         chn.root_note,
         name,
-        category
+        category,
+        triad_base
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN (${notesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -308,11 +310,10 @@ async function getChordCategory(rootNoteStr, noteStrList) {
         let results = [];
 
     qResults.forEach(ele => {
-       results.push(ele.category);
+       results.push({category: ele.category || "Crafted", triadBase: ele.triad_base || null});
     });
-    return results[0] || "Crafted";
+    return results[0] || {category: "Crafted", triadBase: null};
 }
-
 
 
 //should noteValue just be a note instead? it would prevent a lookup that we could do on the client instead
@@ -380,7 +381,7 @@ async function getScaleGroups(chordToLimitBy, root, type){
 //ARG is a chord or notes array
 // RETURN should be an array of chords that have N-1 amount of matching notes but the same amount of notes. Meaning [C,E,G] might return [[C,F,G], [C,D,G], [C,Eb,G], [D,E,G], etc...]
 // USE user can see chord alterations 1 step away
-async function getChordExtensions(baseChord, root = null, category = null, scaleToLimitBy) {
+async function getChordExtensions(baseChord, root = null, category = null, scaleToLimitBy, triadBase) {
     console.log("inside DATABASE.JS getChordExtensions");
 
     validateNotesInput(root);
@@ -405,7 +406,8 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         chn.chord_symbol,
         chn.root_note,
         chord.name as name,
-        chord.category as category
+        chord.category as category,
+        chord.triad_base as triad_base
     FROM 
         chord_has_note chn
     JOIN 
@@ -414,11 +416,13 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         chord.root_note = ?
         AND
         ${categoryCheck}
+        ${triadBase ? "AND triad_base = ?" : ""}
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note,
         name,
-        category
+        category,
+        triad_base
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -432,10 +436,21 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         const constrainerStr = `AND COUNT(CASE WHEN chn.note IN (${placeholders}) THEN 1 END) = LEAST(COUNT(DISTINCT chn.note),?) 
                                 `;
         sql += constrainerStr; 
+
+        if (triadBase) {
+            params = [root, triadBase ,baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length, ...notesLimiter, notesLimiter.length];
+        } else {
+            params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length, ...notesLimiter, notesLimiter.length];
+        }
     
-        params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length, ...notesLimiter, notesLimiter.length];
+        
     } else {
-        params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length];
+        if (triadBase) {
+            params = [root, triadBase ,baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length];
+        } else {
+            params = [root, baseChordNotes.length + 1, ...baseChordNotes, baseChordNotes.length];
+        }
+        
     }
 
 
@@ -458,6 +473,7 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
         // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
         // this behavior is already in createMod and createAdd in Blueprint class
         chord.category = ele.category;
+        chord.triadBase = ele.triad_base;
         
         results.push(chord);
     });
@@ -481,7 +497,8 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
     SELECT 
         chn.chord_symbol,
         chn.root_note,
-        chord.category as category
+        chord.category as category,
+        chord.triad_base as triad_base
     FROM 
         chord_has_note chn
     JOIN 
@@ -489,7 +506,8 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note,
-        category
+        category,
+        triad_base
     HAVING 
         COUNT(*) = ?
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ? 
@@ -533,6 +551,7 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
         // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
         // this behavior is already in createMod and createAdd in Blueprint class
         chord.category = ele.category;
+        chord.triadBase = ele.triad_base;
 
         results.push(chord);
     });
@@ -550,7 +569,8 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
     SELECT 
         chn.chord_symbol,
         chn.root_note,
-        chord.category as category
+        chord.category as category,
+        chord.triad_base as triad_base
     FROM 
         chord_has_note chn
     JOIN 
@@ -558,7 +578,8 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note,
-        category
+        category,
+        triad_base
     HAVING 
         COUNT(*) = ? 
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -605,6 +626,7 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
         // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
         // this behavior is already in createMod and createAdd in Blueprint class
         chord.category = ele.category;
+        chord.triadBase = ele.triad_base;
 
         results.push(chord);
     });
@@ -621,7 +643,8 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     SELECT 
         chn.chord_symbol,
         chn.root_note,
-        chord.category as category
+        chord.category as category,
+        chord.triad_base as triad_base
     FROM 
         chord_has_note chn
     JOIN 
@@ -629,7 +652,8 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note,
-        category
+        category,
+        triad_base
     HAVING 
         COUNT(*) = ?  -- number of notes in the target chords
         AND SUM(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 ELSE 0 END) = ?
@@ -675,6 +699,7 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
         // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
         // this behavior is already in createMod and createAdd in Blueprint class
         chord.category = ele.category;
+        chord.triadBase = ele.triad_base;
 
         results.push(chord);
     });
@@ -693,7 +718,8 @@ async function getChordRotations(root, baseChord) {
     SELECT 
         chn.chord_symbol, 
         chn.root_note,
-        chord.category as category
+        chord.category as category,
+        chord.triad_base as triad_base
     FROM 
         chord_has_note chn 
     JOIN 
@@ -703,7 +729,8 @@ async function getChordRotations(root, baseChord) {
     GROUP BY 
         chn.chord_symbol, 
         chn.root_note,
-        category
+        category,
+        triad_base
     HAVING 
         COUNT(*) = ? -- note count of selected chord
         AND COUNT(CASE WHEN chn.note IN (${baseChordNotesPlaceholders}) THEN 1 END) = ?  -- note count of selected chord
@@ -728,6 +755,7 @@ async function getChordRotations(root, baseChord) {
         // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
         // this behavior is already in createMod and createAdd in Blueprint class
         chord.category = ele.category;
+        chord.triadBase = ele.triad_base;
 
         results.push(chord);
     });
@@ -1188,5 +1216,5 @@ module.exports = {
     getScaleDeductions,
     getScaleRotations,
     getScalesFromUserString,
-    getChordCategory
+    getChordCategoryAndTriadBase
  };

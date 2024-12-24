@@ -147,7 +147,7 @@ function fapi_getChords(noteValue,category = null, scaleToLimitBy, searchString 
     });
 }
 
-function fapi_getChordExtensions(noteValue,category = null, baseChord, scaleToLimitBy) {
+function fapi_getChordExtensions(noteValue,category = null, baseChord, scaleToLimitBy, triadBase) {
     console.log("inside fapi_getChordExtensions");
     noteValue = typeof noteValue === "string" ? parseInt(noteValue) : noteValue;
 
@@ -171,7 +171,8 @@ function fapi_getChordExtensions(noteValue,category = null, baseChord, scaleToLi
             baseChord: baseChord, 
             root: root,
             category: category, //the radio value the UI is set to
-            scaleToLimitBy: scaleToLimitBy
+            scaleToLimitBy: scaleToLimitBy,
+            triadBase: triadBase
         }
     ).then(
         response => {
