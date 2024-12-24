@@ -137,6 +137,16 @@ class SPA extends Component{
                 category: "Triad",
                 notes: [{label: "B", value: 2},{label: "D#", value: 6}, {label: "F#", value: 9}]
             },
+            chord: {
+                rootNote: {
+                    name: "B",
+                    value: 2,
+                },
+                name: "B Suspended Two",
+                symbol: "B",
+                category: "Triad",
+                notes: [{label: "B", value: 2},{label: "C#", value: 4}, {label: "F#", value: 9}]
+            },
             /* chord: {
                 root: "E",
                 name: "E Diminished",
