@@ -153,7 +153,8 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
         c.symbol,
         c.root_note,
         c.category,
-        JSON_ARRAYAGG(cn.note) AS notes
+        JSON_ARRAYAGG(cn.note) AS notes,
+        c.triad_base as triad_base
     FROM
         chords c
     INNER JOIN chord_has_note cn
@@ -162,7 +163,7 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
     WHERE
         c.root_note = ? AND c.category = ?
     GROUP BY
-        c.name, c.symbol, c.root_note
+        c.name, c.symbol, c.root_note, triad_base
     -- Only select chords that contain notes from the allowed list 
     `;
 
@@ -198,6 +199,7 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
         // trust the category stored in the database, not the one made by Chord.chordFromNotation because [TODO] chordFromNotation needs logic for stuff like 7#9 being seen as a 7, not a 9
         // this behavior is already in createMod and createAdd in Blueprint class
         chord.category = ele.category;
+        chord.triadBase = ele.triad_base;
 
         results.push(chord);
     });
