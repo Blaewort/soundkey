@@ -84,8 +84,9 @@ router.post('/getChords/fromStrings/' ,async (req,res) => {
   try {
     chords = chordExpressions.Chord.chordFromNotation(req.body.string, true);
   } catch (error) {
+    // if bad string whatever keep the program flowing
     console.log(error);
-    return;
+    res.send(null);
   }
   
   console.log(chords);
