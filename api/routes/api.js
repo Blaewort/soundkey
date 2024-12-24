@@ -77,7 +77,7 @@ router.post('/getScales/Rotations',async (req,res) => {
   res.json(JSON.stringify(scales));
 });
 
-router.post('/getChords/fromStrings/' ,(req,res) => {
+router.post('/getChords/fromStrings/' ,async (req,res) => {
   console.log(req.body);
   let chords = chordExpressions.Chord.chordFromNotation(req.body.string, true);
   console.log(chords);
@@ -90,6 +90,11 @@ router.post('/getChords/fromStrings/' ,(req,res) => {
           label: name, 
       };
   });
+
+  // fromNotation (or parser itself) not giving correct chordCategory so we need to override with what we can find in the database
+  // if we can't find it then it's just going to be "Crafted" per db.GetChordCategory
+  chords.category = await db.getChordCategory(chords.rootNote.name, chords.notes.map(note=> note.label));
+ 
 
   res.send(JSON.stringify(chords));
 });

@@ -277,6 +277,43 @@ async function getScales(chordToLimitBy, root, groupID) {
     return results;
 }
 
+async function getChordCategory(rootNoteStr, noteStrList) {
+
+    const notesPlaceholders = noteStrList.map(() => '?').join(', ');
+
+    let sql = `
+    SELECT 
+        chn.chord_symbol,
+        chn.root_note,
+        chord.name as name,
+        chord.category as category
+    FROM 
+        chord_has_note chn
+    JOIN 
+        chords chord ON chord.symbol = chn.chord_symbol
+    WHERE 
+        chord.root_note = ?
+    GROUP BY 
+        chn.chord_symbol, 
+        chn.root_note,
+        name,
+        category
+    HAVING 
+        COUNT(*) = ?  -- number of notes in the target chords
+        AND SUM(CASE WHEN chn.note IN (${notesPlaceholders}) THEN 1 ELSE 0 END) = ?
+        `;
+
+        let qResults = await fetchPreparedStatement(sql, [rootNoteStr,noteStrList.length,...noteStrList,noteStrList.length]);
+
+        let results = [];
+
+    qResults.forEach(ele => {
+       results.push(ele.category);
+    });
+    return results[0] || "Crafted";
+}
+
+
 
 //should noteValue just be a note instead? it would prevent a lookup that we could do on the client instead
 //obj is either an array of notes or a chord/scale object
@@ -1150,5 +1187,6 @@ module.exports = {
     getScaleAppendments,
     getScaleDeductions,
     getScaleRotations,
-    getScalesFromUserString
+    getScalesFromUserString,
+    getChordCategory
  };
