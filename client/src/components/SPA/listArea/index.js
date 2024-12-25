@@ -78,6 +78,7 @@ class ListArea extends Component {
         
         console.log(this.props);
         console.log("this.props^");
+
         
         
 
@@ -105,8 +106,7 @@ class ListArea extends Component {
 
         //make the list modal
         const listModalItems = [...listItems];
-        console.log("listModalItems");
-        console.log(listModalItems);
+
 
         //I add a list element to the very beginning of listItems and give it a class that is invisible
         listItems.unshift (<li key="Choose..." onClick={this.props.modal.open} className="listModalButton"><i class="fa fa-bars" aria-hidden="true"></i>  View List</li>);
@@ -123,8 +123,8 @@ class ListArea extends Component {
                 </span>
                 <ul className="list">
                     <div className="option_container">
-                        {STILL_LOADING_DATA ? SPINNER: null}
                         {listItems}
+                        {STILL_LOADING_DATA ? SPINNER: null}
                     </div>
                 </ul>
                 <ul class={modalClassName}>

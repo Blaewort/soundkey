@@ -142,6 +142,13 @@ button.modalButton:hover {
         display: block;
     }
 
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-radio .list .option_container #loading{
+        display: none;
+    }
+
+    
+
     .options.with-list.with-radio .listModal.engaged {
         display: flex;
     }
@@ -186,8 +193,14 @@ button.modalButton:hover {
     .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:not(:first-child) {
         display: none;
     }
+    
     .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:first-child {
         display: block;
+    }
+
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-radio.with-toggle.with-notenav .list .option_container #loading{
+        display: none;
     }
 
     .options.with-list.with-radio.with-toggle.with-notenav .list_area ul .option_container {
@@ -304,6 +317,12 @@ button.modalButton:hover {
         display: block;
     }
 
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-radio.with-toggle.with-notenav .list .option_container #loading{
+        display: none;
+    }
+
+
     .options.with-list.with-radio.with-toggle.with-notenav .listModal.engaged {
         display: flex;
     }
@@ -388,6 +407,11 @@ button.modalButton:hover {
         display: block;
     }
 
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-radio.with-notenav .list .option_container #loading{
+        display: none;
+    }
+
     .options.with-list.with-radio .list_area ul .option_container {
         max-height: 32px;
     }
@@ -403,6 +427,11 @@ button.modalButton:hover {
     }
     .options.with-list.with-radio.with-notenav .list_area ul li:first-child {
         display: block;
+    }
+
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-radio.with-notenav .list .option_container #loading{
+        display: none;
     }
 
     .options.with-list.with-radio.with-notenav .listModal.engaged {
@@ -439,6 +468,11 @@ button.modalButton:hover {
         display: block;
     }
 
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-notenav .list .option_container #loading{
+        display: none;
+    }
+
     .options.with-list.with-notenav .list_area ul .option_container {
         max-height: 32px;
     }
@@ -459,6 +493,11 @@ button.modalButton:hover {
     }
     .options.with-list.with-notenav .list_area ul li:first-child {
         display: block;
+    }
+
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-notenav .list .option_container #loading{
+        display: none;
     }
 
     .options.with-list.with-notenav .listModal.engaged {
@@ -503,6 +542,11 @@ button.modalButton:hover {
         display: block;
     }
 
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-notenav.with-toggle .list .option_container #loading{
+        display: none;
+    }
+
     .options.with-list.with-notenav.with-toggle .listModal.engaged {
         display: flex;
     }
@@ -527,6 +571,11 @@ button.modalButton:hover {
     }
     .options.with-list.with-notenav.with-toggle .list_area ul li:first-child {
         display: block;
+    }
+
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-notenav.with-toggle .list .option_container #loading{
+        display: none;
     }
 
     .options.with-list.with-notenav.with-toggle .list_area ul .option_container {
@@ -565,6 +614,12 @@ button.modalButton:hover {
     .options.with-list.with-radio.with-toggle .list_area ul li:first-child {
         display: block;
     }
+
+    /* non-modal list spinner needs to turn off so its not on the modal-open button */
+    .options.with-list.with-radio.with-toggle .list .option_container #loading{
+        display: none;
+    }
+
     .options.with-list.with-radio.with-toggle .list_area.modal_engaged {
         background-color: #42465c;
     }
