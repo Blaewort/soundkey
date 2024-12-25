@@ -32,6 +32,7 @@
       /* Firefox */
       scrollbar-color: #717696 #393d54;
       scrollbar-width: thin;
+      position:relative;
       
   }
   
@@ -78,5 +79,45 @@
 
   .listModal {
     display: none;
+  }
+
+
+
+
+
+  /* LOADING SPINNER */
+  .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    animation: spin 1s linear infinite;
+    box-sizing: content-box;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  #loading {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+  }
+  
+
+  .modal_option_container .spinner {
+    border: 3px solid #306870;
+    border: 3px solid #3a666c;
+    border-top: 3px solid #d1dee7;
   }
 

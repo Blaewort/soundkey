@@ -7,27 +7,15 @@ const TEMP_ITEMS = [
     {
         label: "thing 1",
     },
-    {
-        label: "thing 2",
-    },
-    {
-        label: "thing 3",
-    },
-    {
-        label: "thing 4",
-    },
-    {
-        label: "thing 5",
-    },
-    {
-        label: "thing 6",
-    },
-    {
-        label: "thing 7",
-    }
 ];
 
 const TEMP_TITLE = "List";
+
+const SPINNER = <>
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
+</>;
 
 
 class ListArea extends Component {
@@ -70,10 +58,13 @@ class ListArea extends Component {
         console.log("_list");
         console.log(list);
 
+        let STILL_LOADING_DATA = false;
+
         if(!this.props.list || !Array.isArray(this.props.list)) { //was this.props.list === undefined
-            //console.log(this.props.list);
+            // if no list at all was passed, not even an empty one (an empty list would indicate that data fetching completed), act like we are loading (we should be)
             console.log("Invalid Object, Expected object with map function, received: ",this.props.list );
             list = TEMP_ITEMS;
+            STILL_LOADING_DATA = true;
         } else {
             list = this.props.list;
         }
@@ -102,8 +93,9 @@ class ListArea extends Component {
             console.log("handleItemClick^");
             
             return <li 
+            style={STILL_LOADING_DATA ? { opacity: 0 } : { opacity: 1 }} // if STILL_LOADING_DATA gonna be a 1-item list just to pad out space
             key={item.label+randomString} 
-            onClick={(e) => {console.log("INTHEBUTTON");return handleItemClick(e,item);}}>
+            onClick={(e) => {return handleItemClick(e,item);}}>
                 {item.label}
             </li>
         });
@@ -131,6 +123,7 @@ class ListArea extends Component {
                 </span>
                 <ul className="list">
                     <div className="option_container">
+                        {STILL_LOADING_DATA ? SPINNER: null}
                         {listItems}
                     </div>
                 </ul>
@@ -138,6 +131,7 @@ class ListArea extends Component {
                     <span>{this.props.title || TEMP_TITLE}</span>
                     <button className="modalButton" onClick={this.props.modal.onExitClick}><i class="fa fa-times" aria-hidden="true"></i></button>
                     <div className="modal_option_container">
+                        {STILL_LOADING_DATA ? SPINNER: null}
                         {listModalItems}
                     </div>
                 </ul>

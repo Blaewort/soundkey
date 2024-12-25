@@ -356,19 +356,6 @@ class SPA extends Component{
             // if sameValue && visFocusIsChordOrScale, keep focus value, otherwise !visFocusIsChordOrScale so set to null
             newFocus =  visFocusIsChordOrScale ? state.focus : null;
 
-            /*if (state.focus === "scale" && (!state.primary && state.view.scale === "selected"))  {
-                return {
-                    ...state, //copy it
-                  focus: newFocus,
-                  //if 'chord' or 'scale' let it update, otherwise keep the old value, visfocus can only be chord or scale
-                  visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus,
-                  view: {
-                      ...state.view,
-                      [state.focus]: (sameValue && visFocusIsChordOrScale) ? "navsearch" : state.view[state.focus],
-                  }
-                }
-            }*/
-
             if (state.focus === "scale" && (!state.primary && state.view.scale === "search"))  {
                 return {
                     ...state, //copy it
@@ -383,6 +370,32 @@ class SPA extends Component{
             }
 
             if (state.focus === "scale" && (state.view.scale === "search" || state.view.scale === "navsearchmode")) {
+
+                // dynadan
+
+                const nullifiedList = getNullifiedList(state); // so we get the loady spinny
+
+                if (nullifiedList) {
+                    return {
+                        ...state, //copy it
+                      focus: newFocus,
+                      //if 'chord' or 'scale' let it update, otherwise keep the old value, visfocus can only be chord or scale
+                      visualizerFocus: visFocusIsChordOrScale ? newValue: state.visualizerFocus,
+                      view: {
+                          ...state.view,
+                          [state.focus]: (sameValue && visFocusIsChordOrScale) ? "navsearch" : state.view[state.focus],
+                      },
+                      list: { // clear the list so the loading icon will appear
+                          ...state.list,
+                          [state.focus]: {
+                              ...state.list[state.focus],
+                              navGroups: null
+                          }
+                      }
+                    }
+                }
+            
+                // else no nullify
                 return {
                     ...state, //copy it
                   focus: newFocus,
@@ -487,7 +500,14 @@ class SPA extends Component{
                     ...state.view,
                     chord: "navsearch",
                 },
-            };
+                list: { // clear the list so the loading icon will appear
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        nav: null
+                    }
+                }
+            }
         },
         async () => {
             // THEN Fetch the new list in the nav only after state is updated
@@ -502,6 +522,13 @@ class SPA extends Component{
                 view: {
                     ...state.view,
                     scale: "navsearch"
+                },
+                list: { // clear the list so the loading icon will appear
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        navGroups: null
+                    }
                 }
             }
         }, async () => {
@@ -520,6 +547,13 @@ class SPA extends Component{
                 view: {
                     ...state.view,
                     scale: "navsearchmode"
+                },
+                list: { // clear the list so the loading icon will appear
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        navModes: null
+                    }
                 }
             }
         }, async () => {
@@ -648,6 +682,13 @@ class SPA extends Component{
                 view: {
                     ...state.view,
                     chord: "edit"
+                },
+                list: { // clear the list so the loading icon will appear
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        edit: null
+                    }
                 }
             }
         },
@@ -663,6 +704,13 @@ class SPA extends Component{
                 view: {
                     ...state.view,
                     scale: "edit"
+                },
+                list: { // clear the list so the loading icon will appear
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        edit: null
+                    }
                 }
             }
         }, async () =>  {
@@ -735,6 +783,25 @@ class SPA extends Component{
         this.setState((state, props) => {
             const whichObj = state.noteSelect[which];
 
+            const nullifiedList = getNullifiedList(state);
+
+            if (nullifiedList) {
+                return {
+                    ...state,
+                    noteSelect: {
+                        ...state.noteSelect,
+                        [which]: {
+                            ...whichObj,
+                            value: updated.value,
+                            label: updated.label
+                        }
+                    },
+                    list: nullifiedList
+                };
+            }
+
+            // else
+
             return {
                 ...state,
                 noteSelect: {
@@ -778,12 +845,34 @@ class SPA extends Component{
         } else if (name === "Settings") {
             which = "settings";
         }
+
+  
     
         // Update state first with the updated radio value
         this.setState((state) => {
                 // FIRST update the radio state
                 const radioFocus = state.radio[state.focus];
+
+                const nullifiedList = getNullifiedList(state); // so we can delete whatever list for the radio we are updating, so we can get the loading icon while data loads
+
                 if (which !== "settings") { //chord or scale view
+                    if (nullifiedList) {
+                        console.log("returning nullified list");
+                        console.log(nullifiedList);
+                        return {
+                            ...state,
+                            radio: {
+                                ...state.radio,
+                                [state.focus]: {
+                                    ...radioFocus,
+                                    [which]: updated,
+                                },
+                            },
+                            list: nullifiedList
+                        };
+                    }
+
+                    // else
                     return {
                         ...state,
                         radio: {
@@ -964,6 +1053,7 @@ class SPA extends Component{
                         ...state.list[state.focus],
                         nav: newList,
                     },
+
                 },
             }));
         }
@@ -1281,14 +1371,26 @@ class SPA extends Component{
         this.setState((state, props) => {
             if (state.scaleGroupNavSelection.id === item.object.id) {return null;}
 
+            const nullifiedList = getNullifiedList(state, "in_nav_groups_but_clear_nav_modes");
 
+            if (nullifiedList) {
+                return {
+                    ...state,
+                    scaleGroupNavSelection: {
+                        id: item.object.id,
+                        name: item.object.name
+                    },
+                    // update view to scales in this scale group
+                    view: {
+                        ...state.view,
+                        scale: "navsearchmode"
+                    },
+                    list: nullifiedList
+                };
+            }
+            // else
             return {
                 ...state,
-                /*view: {
-                    ...state.view,
-                    scale: "navsearchmode",
-                    scaleNavSearchMode: item.label
-                },*/
                 scaleGroupNavSelection: {
                     id: item.object.id,
                     name: item.object.name
@@ -1389,6 +1491,8 @@ class SPA extends Component{
 
         this.setState((state, props) => {
 
+            const scale = item.object;
+
             const noteSelect = {
                 ...state.noteSelect,
                 scale: {
@@ -1408,7 +1512,7 @@ class SPA extends Component{
             };
 
             const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
-            const scale = item.object;
+           
             
             const setScaleTypeRadioToScaleSelection = nextRadioValue !== currentScaleTypeRadioValue;
             const setNoteSelectToScaleSelection = state.noteSelect.scale.value !== scale.rootNote.value.toString();
@@ -1494,6 +1598,13 @@ class SPA extends Component{
                     ...state.textInput,
                     chord: evt,
                 },
+                /*list: { // clear the list so the loading icon will appear // commented this out there was something weird plus what does it matter really
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        text: null
+                    }
+                }*/
             };
         }, //fetch chord list data
         async () => {
@@ -1534,6 +1645,13 @@ class SPA extends Component{
                     ...state.textInput,
                     scale: evt,
                 },
+                list: { // clear the list so the loading icon will appear
+                    ...state.list,
+                    [state.focus]: {
+                        ...state.list[state.focus],
+                        text: null
+                    }
+                }
             };
         }, async () => {
             this.updateScaleTextSearchList();
@@ -1566,6 +1684,8 @@ class SPA extends Component{
       
         
         this.setState((state, props) => {
+            
+            const scale = item.object;
 
             const textInput = {
                 //reset text input state
@@ -1592,7 +1712,6 @@ class SPA extends Component{
             };
 
             const currentScaleTypeRadioValue = state.radio.scale.nav || ScaleTypeRadio.defaultValue;
-            const scale = item.object;
             const setScaleTypeRadioToScaleSelection = nextRadioValue !== currentScaleTypeRadioValue;
             const setNoteSelectToScaleSelection = state.noteSelect.scale.value !== scale.rootNote.value.toString();
 
@@ -1727,6 +1846,20 @@ class SPA extends Component{
      /* delete this when options state is working */
      handleToggleClick(event) {
         this.setState((state, props) => {
+            
+            const nullifiedList = getNullifiedList(state); // nullify appropriate list so list will be empty so ListArea will render a spinning loader until data is fetched
+                                                           // TODO later maybe we should check to see if params changed so we dont needlessly get the same data as before?
+
+            if (nullifiedList) {
+                return {
+                    toggle: {
+                        ...state.toggle,
+                        [state.focus]: !state.toggle[state.focus]
+                    },
+                    list: nullifiedList
+                };
+            }
+            // else
             return {
                 toggle: {
                     ...state.toggle,
@@ -2234,3 +2367,58 @@ class SPA extends Component{
 }
   
 export default SPA;
+
+
+
+// return null if not appliciable
+function getNullifiedList(state, overrideStr) {
+    let nullifiedList = null; // we want to nullify list since we are grabbing anyway. In future, maybe check to see if our last query parameters altogether are the same, 
+                                          // in which case, dont nullify anything and definitely dont fetch data again (the same data)
+
+    if (state.focus === "chord") {
+        console.log("in chord focus");
+
+        const listToNull = {
+            "navsearch": "nav",
+            "edit": "edit"
+
+        }[state.view.chord];
+
+        if (listToNull) {
+            console.log("do have listToNull");
+            nullifiedList = {
+                ...state.list,
+                [state.focus]: {
+                    ...state.list[state.focus],
+                    [listToNull]: null
+                }
+            };
+        }
+    } else if (state.focus === "scale") {
+
+        let listToNull = {
+            "navsearchmode": "navModes",
+            "navsearch": "navGroups" ,
+            "edit": "edit"
+        }[state.view.scale];
+
+        // need this for scale group item click so instead of clearing sclae group item list we clear mode item list 
+        if (overrideStr && overrideStr === "in_nav_groups_but_clear_nav_modes") {
+            listToNull = "navModes";
+        }
+
+
+        if (listToNull) {
+            console.log("do have listToNull");
+            nullifiedList = {
+                ...state.list,
+                [state.focus]: {
+                    ...state.list[state.focus],
+                    [listToNull]: null
+                }
+            };
+        }
+    }
+
+    return nullifiedList;
+}
