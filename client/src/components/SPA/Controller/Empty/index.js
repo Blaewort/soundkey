@@ -21,6 +21,9 @@ class EmptyController extends Component{
             <div class="issues-known">
                 <span>Known Issues</span>
                 <ul>
+                <li>Go to chord nav, turn off toggle, select a note that is not in the selected scale, like F, then turn the toggle back on. It doesn't fetch data...sometimes!
+                    Obviously issue probably has something to do with enforceSelection function which updates to a matching scale note when toggle is turned on again
+                    </li>
                     <li>Chord text search is not working correctly for mods without parentheses (Example: D7b5 should be D7 with the existing 5 in D7 flatted, but is instead D7(add b5).
                         You can work around this with parentheses like D7(b5), D7(b5,b13), D7(b5)(add 13) to get the necessary chord
                     </li>

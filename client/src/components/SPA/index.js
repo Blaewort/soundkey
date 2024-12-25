@@ -10,6 +10,8 @@ import EditChordRadio from './radio/EditChord';
 import EditScaleRadio from './radio/EditScale';
 import SettingsRadio from './radio/Settings';
 
+import ListStateManager from './StateManager/ListStateManager';
+
 import { 
     fapi_getScaleGroups,
     fapi_getScales, 
@@ -371,9 +373,10 @@ class SPA extends Component{
 
             if (state.focus === "scale" && (state.view.scale === "search" || state.view.scale === "navsearchmode")) {
 
-                // dynadan
 
-                const nullifiedList = getNullifiedList(state); // so we get the loady spinny
+                // nullify appropriate list so list will be empty so ListArea will render a spinning loader until data is fetched
+                // TODO later maybe we should check to see if params changed so we dont needlessly get the same data as before?
+                const nullifiedList = ListStateManager.getNullifiedListState(state); 
 
                 if (nullifiedList) {
                     return {
@@ -782,25 +785,8 @@ class SPA extends Component{
 
         this.setState((state, props) => {
             const whichObj = state.noteSelect[which];
-
-            const nullifiedList = getNullifiedList(state);
-
-            if (nullifiedList) {
-                return {
-                    ...state,
-                    noteSelect: {
-                        ...state.noteSelect,
-                        [which]: {
-                            ...whichObj,
-                            value: updated.value,
-                            label: updated.label
-                        }
-                    },
-                    list: nullifiedList
-                };
-            }
-
-            // else
+            
+            const nullifiedList = ListStateManager.getNullifiedListState(state);
 
             return {
                 ...state,
@@ -812,6 +798,7 @@ class SPA extends Component{
                         label: updated.label
                     }
                 },
+                list: nullifiedList || state.list
             };
         },
         async () => {
@@ -853,10 +840,13 @@ class SPA extends Component{
                 // FIRST update the radio state
                 const radioFocus = state.radio[state.focus];
 
-                const nullifiedList = getNullifiedList(state); // so we can delete whatever list for the radio we are updating, so we can get the loading icon while data loads
+                // nullify appropriate list so list will be empty so ListArea will render a spinning loader until data is fetched
+                // TODO later maybe we should check to see if params changed so we dont needlessly get the same data as before?
+                
 
                 if (which !== "settings") { //chord or scale view
-                    if (nullifiedList) {
+                        const nullifiedList = ListStateManager.getNullifiedListState(state);
+
                         console.log("returning nullified list");
                         console.log(nullifiedList);
                         return {
@@ -868,21 +858,8 @@ class SPA extends Component{
                                     [which]: updated,
                                 },
                             },
-                            list: nullifiedList
+                            list: nullifiedList || state.list
                         };
-                    }
-
-                    // else
-                    return {
-                        ...state,
-                        radio: {
-                            ...state.radio,
-                            [state.focus]: {
-                                ...radioFocus,
-                                [which]: updated,
-                            },
-                        },
-                    };
                 }
                 else if (which === "settings") {
                     return {
@@ -1371,24 +1348,10 @@ class SPA extends Component{
         this.setState((state, props) => {
             if (state.scaleGroupNavSelection.id === item.object.id) {return null;}
 
-            const nullifiedList = getNullifiedList(state, "in_nav_groups_but_clear_nav_modes");
+            // nullify appropriate list so list will be empty so ListArea will render a spinning loader until data is fetched
+            // TODO later maybe we should check to see if params changed so we dont needlessly get the same data as before?
+            const nullifiedList = ListStateManager.getNullifiedListState(state, "in_nav_groups_but_clear_nav_modes");
 
-            if (nullifiedList) {
-                return {
-                    ...state,
-                    scaleGroupNavSelection: {
-                        id: item.object.id,
-                        name: item.object.name
-                    },
-                    // update view to scales in this scale group
-                    view: {
-                        ...state.view,
-                        scale: "navsearchmode"
-                    },
-                    list: nullifiedList
-                };
-            }
-            // else
             return {
                 ...state,
                 scaleGroupNavSelection: {
@@ -1399,8 +1362,10 @@ class SPA extends Component{
                 view: {
                     ...state.view,
                     scale: "navsearchmode"
-                }
+                },
+                list: nullifiedList || state.list
             };
+            
         }, () => {
             this.updateNavSearchScaleList();
         });
@@ -1847,24 +1812,16 @@ class SPA extends Component{
      handleToggleClick(event) {
         this.setState((state, props) => {
             
-            const nullifiedList = getNullifiedList(state); // nullify appropriate list so list will be empty so ListArea will render a spinning loader until data is fetched
-                                                           // TODO later maybe we should check to see if params changed so we dont needlessly get the same data as before?
+            // nullify appropriate list so list will be empty so ListArea will render a spinning loader until data is fetched
+            // TODO later maybe we should check to see if params changed so we dont needlessly get the same data as before?
+            const nullifiedList = ListStateManager.getNullifiedListState(state);
 
-            if (nullifiedList) {
-                return {
-                    toggle: {
-                        ...state.toggle,
-                        [state.focus]: !state.toggle[state.focus]
-                    },
-                    list: nullifiedList
-                };
-            }
-            // else
             return {
                 toggle: {
                     ...state.toggle,
                     [state.focus]: !state.toggle[state.focus]
-                }
+                },
+                list: nullifiedList || state.list
             };
         },
         async () => {
@@ -2369,56 +2326,3 @@ class SPA extends Component{
 export default SPA;
 
 
-
-// return null if not appliciable
-function getNullifiedList(state, overrideStr) {
-    let nullifiedList = null; // we want to nullify list since we are grabbing anyway. In future, maybe check to see if our last query parameters altogether are the same, 
-                                          // in which case, dont nullify anything and definitely dont fetch data again (the same data)
-
-    if (state.focus === "chord") {
-        console.log("in chord focus");
-
-        const listToNull = {
-            "navsearch": "nav",
-            "edit": "edit"
-
-        }[state.view.chord];
-
-        if (listToNull) {
-            console.log("do have listToNull");
-            nullifiedList = {
-                ...state.list,
-                [state.focus]: {
-                    ...state.list[state.focus],
-                    [listToNull]: null
-                }
-            };
-        }
-    } else if (state.focus === "scale") {
-
-        let listToNull = {
-            "navsearchmode": "navModes",
-            "navsearch": "navGroups" ,
-            "edit": "edit"
-        }[state.view.scale];
-
-        // need this for scale group item click so instead of clearing sclae group item list we clear mode item list 
-        if (overrideStr && overrideStr === "in_nav_groups_but_clear_nav_modes") {
-            listToNull = "navModes";
-        }
-
-
-        if (listToNull) {
-            console.log("do have listToNull");
-            nullifiedList = {
-                ...state.list,
-                [state.focus]: {
-                    ...state.list[state.focus],
-                    [listToNull]: null
-                }
-            };
-        }
-    }
-
-    return nullifiedList;
-}

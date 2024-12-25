@@ -193,7 +193,7 @@ button.modalButton:hover {
     .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:not(:first-child) {
         display: none;
     }
-    
+
     .options.with-list.with-radio.with-toggle.with-notenav .list_area ul li:first-child {
         display: block;
     }
@@ -598,7 +598,7 @@ button.modalButton:hover {
 .options.with-list.with-radio.with-toggle .list_area ul .option_container {
 
     @media screen and (max-height: 370px) { 
-        max-height: 30px;
+        max-height: 32px;
     }
 
     @media screen and (min-height: 371px) and (max-height: 404px) { 
