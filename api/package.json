@@ -10,7 +10,7 @@
   "dependencies": {
     "@mysql/xdevapi": "^8.0.23",
     "body-parser": "^1.19.0",
-    "chord-expressions": "file:../../chord-expressions",
+    "chord-expressions": "github:Blaewort/chord-expressions-node#main",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
