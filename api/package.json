@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run build-client && node ./bin/www",
+    "start": "npm install && npm run build-client && node ./bin/www",
     "build-client": "cd ../client && npm install && npm run build",
     "dev-start": "node --inspect ./bin/www",
     "build-database": "node ./bin/models/databaseBuilder",
