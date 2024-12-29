@@ -1,7 +1,8 @@
 const result = require('dotenv').config();
-if (result.error) {
+
+/* if (result.error) {
   throw result.error
-}
+}*/
 
 module.exports = {
     port: process.env.PORT || 5000,
