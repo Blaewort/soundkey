@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --inspect ./bin/www",
-    "build": "node ./bin/models/databaseBuilder",
+    "start": "node ./bin/www && npm run build-client",
+    "build-client": "cd ../client && npm run build",
+    "dev-start": "node --inspect ./bin/www",
+    "build-database": "node ./bin/models/databaseBuilder",
     "test": "npx jasmine spec/tests/*Spec.mjs"
   },
   "dependencies": {

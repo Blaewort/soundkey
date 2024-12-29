@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cors = require("cors");
 const bodyParser = require("body-parser");
 var api = require("./routes/api");
+var site = require("./routes/site");
 
 var app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/", site);
 app.use("/api", api);
 
 

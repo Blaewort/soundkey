@@ -1,12 +1,23 @@
 import { Note } from 'chord-expressions';
 
-const urlRoot = "http://localhost:5000/api";
+//const urlRoot = "http://localhost:5000/api";
+
+const host = window.location.hostname;
+
+const urlRoot = host === "localhost" ? `http://${window.location.hostname}:5000/api` : `http://${window.location.hostname}/api`;
+
+//const urlRoot = `${window.location.hostname}/api`;
+
+console.log("+++++++++++++++++++++++///////////////////////////////////+++");
+console.log(urlRoot);
 
 //handle all api requests for the applicatiom
 
 // returns a promise
 
 async function postData(url = '', data = {}) {
+    console.log("+++++++++++++++++++++++///////////////////////////////////+++");
+    console.log(urlRoot);
     // Default options are marked with *
     console.log("fetch it");
     return await fetch(url, {

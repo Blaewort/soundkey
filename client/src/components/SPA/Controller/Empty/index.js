@@ -24,9 +24,6 @@ class EmptyController extends Component{
                 <li>Go to chord nav, turn off toggle, select a note that is not in the selected scale, like F, then turn the toggle back on. It doesn't fetch data...sometimes!
                     Obviously issue probably has something to do with enforceSelection function which updates to a matching scale note when toggle is turned on again
                     </li>
-                    <li>Chord text search is not working correctly for mods without parentheses (Example: D7b5 should be D7 with the existing 5 in D7 flatted, but is instead D7(add b5).
-                        You can work around this with parentheses like D7(b5), D7(b5,b13), D7(b5)(add 13) to get the necessary chord
-                    </li>
                     <li>Sus chord extensions broken (?) after you hit the sus note an octave up (Example: B9sus4 cant extend to B9sus13 (should it?) because 
                         B11sus4 technically doesn't exist to bridge the gap—11 is 4— so if it actually makes sense to bridge B9sus4 to B13sus4 where 13sus4 just has no 11, is unclear</li>
                     <li>11sus4, maj11sus4 and 9sus2, maj9sus4 chords shouldn't exist but are being created by the generator and put into the database. Just remove those entries from chord_gen
