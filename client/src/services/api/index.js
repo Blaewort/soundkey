@@ -4,7 +4,7 @@ import { Note } from 'chord-expressions';
 
 const host = window.location.hostname;
 
-const urlRoot = host === "localhost" ? `http://${window.location.hostname}:5000/api` : `http://${window.location.hostname}/api`;
+const urlRoot = host === "localhost" ? `http://${window.location.hostname}:5000/api` : `https://${window.location.hostname}/api`;
 
 //const urlRoot = `${window.location.hostname}/api`;
 
