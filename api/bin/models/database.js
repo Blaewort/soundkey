@@ -184,7 +184,17 @@ async function getChords(scaleToLimitBy, root = null, category = null) {
     console.log(sql);
     console.log('Parameters:', params);
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+    
 
     let results = [];
     qResults.forEach(ele => {
@@ -258,7 +268,15 @@ async function getScales(chordToLimitBy, root, groupID) {
     console.log(sql);
     console.log('Parameters:', params);
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
 
 
 
@@ -307,7 +325,16 @@ async function getChordCategoryAndTriadBase(rootNoteStr, noteStrList) {
         AND SUM(CASE WHEN chn.note IN (${notesPlaceholders}) THEN 1 ELSE 0 END) = ?
         `;
 
-        let qResults = await fetchPreparedStatement(sql, [rootNoteStr,noteStrList.length,...noteStrList,noteStrList.length]);
+
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, [rootNoteStr,noteStrList.length,...noteStrList,noteStrList.length]);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
 
         let results = [];
 
@@ -376,7 +403,17 @@ async function getScaleGroups(chordToLimitBy, root, type){
     console.log(sql);
     console.log('Parameters:', params);
 
-    let results = await fetchPreparedStatement(sql, params);
+    let results = [];
+
+    try {
+        results = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
     return results;
 }
 
@@ -456,7 +493,20 @@ async function getChordExtensions(baseChord, root = null, category = null, scale
     }
 
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
+
+
     let results = [];
 
 
@@ -538,7 +588,20 @@ async function getChordAlterations(baseChord, scaleToLimitBy) {
         params = [baseChordNotes.length, ...baseChordNotes, baseChordNotes.length - 1, baseChordNotes[0]];
     }
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -613,7 +676,19 @@ async function getChordAppendments(baseChord, scaleToLimitBy) {
 
     console.log(sql);
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -685,8 +760,18 @@ async function getChordDeductions(baseChord, scaleToLimitBy) {
         params = [baseChordNotes.length - 1, ...baseChordNotes, baseChordNotes.length - 1, baseChordNotes[0]];
     }
 
+    let qResults = [];
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -742,7 +827,18 @@ async function getChordRotations(root, baseChord) {
     chn.root_note ASC;
     `;
 
-    let qResults = await fetchPreparedStatement(sql, [root, baseChord.length, ...baseChord, baseChord.length, root]);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, [root, baseChord.length, ...baseChord, baseChord.length, root]);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -826,7 +922,18 @@ async function getScaleAlterations(baseScale, chordToLimitBy) {
         params = [baseScaleNotes.length, ...baseScaleNotes, baseScaleNotes.length - 1, baseScaleNotes[0]];
     }
 
-    let qResults = await fetchPreparedStatement(sql, params);
+
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -904,7 +1011,20 @@ async function getScaleAppendments(baseScale, chordToLimitBy) {
         params = [baseScaleNotes.length + 1, ...baseScaleNotes, baseScaleNotes.length, baseScaleNotes[0]];
     }
 
-    let qResults = await fetchPreparedStatement(sql, params);
+
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -978,7 +1098,18 @@ async function getScaleDeductions(baseScale, chordToLimitBy) {
         params = [baseScaleNotes.length - 1, ...baseScaleNotes, baseScaleNotes.length - 1, baseScaleNotes[0]];
     }
 
-    let qResults = await fetchPreparedStatement(sql, params);
+
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -1037,7 +1168,20 @@ async function getScaleRotations(root, baseScale) {
     s.root_note ASC;
     `;
 
-    let qResults = await fetchPreparedStatement(sql, [root, baseScaleNotes.length, ...baseScaleNotes, baseScaleNotes.length, root]);
+
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, [root, baseScaleNotes.length, ...baseScaleNotes, baseScaleNotes.length, root]);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
@@ -1137,7 +1281,19 @@ async function getScalesFromUserString(chordToLimitBy, userSelectedScaleNotes, u
     console.log(params);
 
 
-    let qResults = await fetchPreparedStatement(sql, params);
+    let qResults = [];
+
+    try {
+        qResults = await fetchPreparedStatement(sql, params);
+      } catch (error) {
+        // Handle error
+        console.error('Database.js fetch Error:', error);
+        return null;
+    }
+
+
+
+
     let results = [];
 
     qResults.forEach(ele => {
