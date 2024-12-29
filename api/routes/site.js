@@ -1,5 +1,4 @@
 const express = require("express");
-const { ConsoleReporter } = require("jasmine");
 const db = require("../bin/models/database");
 const siteRouter = express.Router();
 const chordExpressions =  require('chord-expressions');
