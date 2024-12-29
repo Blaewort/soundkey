@@ -39,6 +39,9 @@ async function fetchSQL(sql){
 }
 
 async function fetchPreparedStatement(sql, params){
+
+    console.log("!!!! going to fetch prepared statment");
+    console.log(pool);
     return new Promise((resolve, reject) => {
         pool.execute(sql, params, function (error, results) {
             if (error) {
