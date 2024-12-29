@@ -1,0 +1,8 @@
+{
+  "name": "soundkey",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cd api && npm start"
+  }
+}
