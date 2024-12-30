@@ -6,15 +6,17 @@ const Settings = require("../../settings");
 const mysql = require('mysql2');
 const dbSettings = Settings[Settings.env].db;
 
+
 const pool = mysql.createPool({
     host: dbSettings.host,
     user:dbSettings.user,
     password: dbSettings.password,
     database: 'sound_key',
+    port: dbSettings.port || 3306,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-});
+}); 
 
 pool.on('acquire', function (connection) {
     console.log('Connection %d acquired', connection.threadId);
