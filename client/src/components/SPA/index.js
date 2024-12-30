@@ -143,6 +143,17 @@ class SPA extends Component{
                 notes: [{label: "B", value: 2},{label: "D#", value: 6}, {label: "F#", value: 9}],
                 triadBase: "Major"
             },
+            chord: {
+                rootNote: {
+                    name: "B",
+                    value: 2,
+                },
+                name: "B Minor",
+                symbol: "Bm",
+                category: "Triad",
+                notes: [{label: "B", value: 2},{label: "D", value: 5}, {label: "F#", value: 9}],
+                triadBase: "Minor"
+            },
             /*chord: {
                 rootNote: {
                     name: "B",
@@ -232,8 +243,8 @@ class SPA extends Component{
             },
             noteSelect: { 
                 chord: {
-                    value: "7",
-                    label: "E",
+                    value: "2",
+                    label: "B",
                     customListIsOpen: false,
                 },
                 scale: {
