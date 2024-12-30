@@ -86,9 +86,11 @@ router.post('/getChords/fromStrings/' ,async (req,res) => {
     // if bad string whatever keep the program flowing
     console.log(error);
     res.send(null);
+    return null;
   }
   
   console.log(chords);
+
 
   // need label for app, not name
   chords.notes = chords.notes.map((note) => {
