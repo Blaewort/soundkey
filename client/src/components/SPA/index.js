@@ -137,7 +137,7 @@ class SPA extends Component{
                     name: "B",
                     value: 2,
                 },
-                name: "B Major",
+                name: "B Major", 
                 symbol: "B",
                 category: "Triad",
                 notes: [{label: "B", value: 2},{label: "D#", value: 6}, {label: "F#", value: 9}],
